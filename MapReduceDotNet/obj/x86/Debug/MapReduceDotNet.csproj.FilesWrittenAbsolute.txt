@@ -1,0 +1,16 @@
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/MapReduceDotNet.exe.mdb
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/MapReduceDotNet.exe
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/obj/x86/Debug/MapReduceDotNet.exe
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/obj/x86/Debug/MapReduceDotNet.exe.mdb
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/Newtonsoft.Json.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/System.Collections.Immutable.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/Akka.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/ServiceStack.Text.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/ServiceStack.Common.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/ServiceStack.Interfaces.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/ServiceStack.OrmLite.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/ServiceStack.OrmLite.SqlServer.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/ServiceStack.Redis.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/ServiceStack.dll
+/home/szymie/Projects/MapReduceDotNet/MapReduceDotNet/bin/Debug/ServiceStack.ServiceInterface.dll
