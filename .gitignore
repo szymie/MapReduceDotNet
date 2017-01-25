@@ -1,0 +1,7 @@
+MapReduceDotNet.userprefs
+*.csproj
+*.sqlite
+*.exe
+*.mdb
+server/obj/Debug
+server/bin/Debug
