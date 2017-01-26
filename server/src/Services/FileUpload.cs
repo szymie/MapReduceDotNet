@@ -7,7 +7,7 @@ using ServiceStack.Common.Web;
 
 namespace Server.Services
 {
-	[Route ("/api/file/{Id}", "PUT")]
+	[Route ("/api/file/{Id}", "Post")]
 	public class FileUpload : IRequiresRequestStream
 	{
 		public string Id { get; set; }
@@ -26,9 +26,9 @@ namespace Server.Services
 		}
 	}
 
-	public class FileUploadService : BaseService
+	public class TestFileUploadService : BaseService
 	{
-		public object Put (FileUpload request)
+		public object Post (FileUpload request)
 		{
 			try{
 				string parentPath = base.Request.GetParentPathUrl();
@@ -36,7 +36,7 @@ namespace Server.Services
 
 				string id = path.Substring(parentPath.Length + 1, path.Length - parentPath.Length - 1);
 
-				var outputStream = File.Open("/tmp/" + id, FileMode.Truncate);
+				var outputStream = File.Open("/tmp/" + id, FileMode.Create);
 
 				request.RequestStream.CopyTo(outputStream);
 				outputStream.Close();
