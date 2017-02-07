@@ -1,0 +1,29 @@
+﻿<Properties StartupConfiguration="{2DCAA596-BF6D-4918-9F84-2475E183C0D9}|Default" RefactoringSettings.EnableRefactorings="True" StartupItem="server/EntryPoint.csproj">
+  <MonoDevelop.Ide.Workbench ActiveDocument="server/src/Services/FileUpload.cs">
+    <Files>
+      <File FileName="server/src/AppHost.cs" Line="55" Column="64" />
+      <File FileName="server/src/Services/Hello.cs" Line="1" Column="1" />
+      <File FileName="server/packages.config" Line="12" Column="1" />
+      <File FileName="server/src/Program.cs" Line="11" Column="1" />
+      <File FileName="server/src/Services/PatientService/PatientsService.cs" Line="11" Column="17" />
+      <File FileName="server/src/Services/PatientService/DtoPatient.cs" Line="9" Column="5" />
+      <File FileName="server/src/Services/PatientService/DtoPatientResponse.cs" Line="1" Column="1" />
+      <File FileName="server/src/Logic/Patients/Patient.cs" Line="1" Column="1" />
+      <File FileName="server/src/Services/PatientService/DtoPatientValidator.cs" Line="1" Column="1" />
+      <File FileName="server/src/Services/BaseService.cs" Line="15" Column="70" />
+      <File FileName="server/src/Services/BaseValidator.cs" Line="32" Column="16" />
+      <File FileName="server/App.config" Line="1" Column="1" />
+      <File FileName="server/src/Services/FileUpload.cs" Line="58" Column="25" />
+      <File FileName="server/src/Services/FileUpload/FileUploadService.cs" Line="16" Column="3" />
+      <File FileName="server/src/Services/FileUpload/FileUploadDto.cs" Line="6" Column="2" />
+      <File FileName="server/src/Services/FileUpload/FileUploadDtoDerived.cs" Line="14" Column="50" />
+      <File FileName="server/src/Services/FileUpload/FileUploadServiceDerived.cs" Line="25" Column="34" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.EntryPoint PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>
