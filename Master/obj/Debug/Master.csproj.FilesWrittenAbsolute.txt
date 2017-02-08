@@ -1,0 +1,15 @@
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Master.exe.mdb
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Master.exe
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/obj/Debug/Master.exe
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/obj/Debug/Master.exe.mdb
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Newtonsoft.Json.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/System.Collections.Immutable.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Akka.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/MapReduceDotNetLib.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/MapReduceDotNetLib.dll.mdb
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Google.ProtocolBuffers.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Google.ProtocolBuffers.Serialization.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Helios.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Akka.Remote.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Master/bin/Debug/Master.exe.config

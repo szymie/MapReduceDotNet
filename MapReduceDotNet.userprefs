@@ -1,4 +1,4 @@
-﻿<Properties StartupConfiguration="{2DCAA596-BF6D-4918-9F84-2475E183C0D9}|Default" RefactoringSettings.EnableRefactorings="True" StartupItem="server/EntryPoint.csproj">
+﻿<Properties StartupConfiguration="{2DCAA596-BF6D-4918-9F84-2475E183C0D9}|Default" RefactoringSettings.EnableRefactorings="True" StartupItem="Master/Master.csproj">
   <MonoDevelop.Ide.Workbench ActiveDocument="server/src/Services/FileUpload.cs">
     <Files>
       <File FileName="server/src/AppHost.cs" Line="55" Column="64" />

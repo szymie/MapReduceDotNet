@@ -1,0 +1,15 @@
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Newtonsoft.Json.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/System.Collections.Immutable.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Akka.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Google.ProtocolBuffers.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Google.ProtocolBuffers.Serialization.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Helios.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Akka.Remote.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/MapReduceDotNetLib.dll
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/MapReduceDotNetLib.dll.mdb
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Worker.exe.mdb
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Worker.exe
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/obj/Debug/Worker.exe
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/obj/Debug/Worker.exe.mdb
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/Worker/bin/Debug/Worker.exe.config
