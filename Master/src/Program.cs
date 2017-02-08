@@ -11,8 +11,6 @@ namespace Master
 		{
 			AkkaConfig akkaConfig = getAkkaConfig ();
 
-
-
 			var configString = String.Format(@"
 				akka {{  
 					actor {{

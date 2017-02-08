@@ -75,25 +75,19 @@
     <Reference Include="ServiceStack.Redis">
       <HintPath>..\packages\ServiceStack.Redis.3.9.71\lib\net35\ServiceStack.Redis.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\AppHost.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Services\Hello.cs" />
-    <Compile Include="src\Logic\Patients\Patient.cs" />
-    <Compile Include="src\Logic\Patients\Address.cs" />
     <Compile Include="src\Services\PatientService\DtoPatient.cs" />
     <Compile Include="src\Services\PatientService\DtoPatientResponse.cs" />
     <Compile Include="src\Services\PatientService\PatientsService.cs" />
     <Compile Include="src\Services\PatientService\DtoPatientValidator.cs" />
     <Compile Include="src\Services\BaseService.cs" />
     <Compile Include="src\Services\BaseValidator.cs" />
-    <Compile Include="src\Logic\Test\Test.cs" />
-    <Compile Include="src\Services\TestService\DtoTest.cs" />
-    <Compile Include="src\Services\TestService\DtoTestResponse.cs" />
-    <Compile Include="src\Services\TestService\TestService.cs" />
-    <Compile Include="src\Services\AuthTest.cs" />
     <Compile Include="src\Services\FileUpload.cs" />
     <Compile Include="src\Services\FileUpload\FileUploadService.cs" />
     <Compile Include="src\Services\FileUpload\FileUploadDto.cs" />
@@ -126,10 +120,7 @@
   -->
   <ItemGroup>
     <Folder Include="src\Logic\" />
-    <Folder Include="src\Logic\Patients\" />
     <Folder Include="src\Services\PatientService\" />
-    <Folder Include="src\Logic\Test\" />
-    <Folder Include="src\Services\TestService\" />
     <Folder Include="src\Services\FileUpload\" />
   </ItemGroup>
 </Project>

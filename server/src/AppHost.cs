@@ -14,6 +14,7 @@ using ServiceStack.WebHost.Endpoints;
 using ServiceStack.Redis;
 using ServiceStack.Logging;
 using ServiceStack.Logging.NLogger;
+using System.Configuration;
 
 namespace Server
 {
@@ -43,8 +44,13 @@ namespace Server
 
 			container.Register<ICacheClient>(new MemoryCacheClient());
 
-            container.Register<IDbConnectionFactory> (
 
+
+			container.Register<IDbConnectionFactory>(c => new OrmLiteConnectionFactory(
+				ConfigurationManager.ConnectionStrings["postgres"].ConnectionString,
+				PostgreSqlDialect.Provider));
+
+            container.Register<IDbConnectionFactory> (
 
                 new OrmLiteConnectionFactory (@"Data Source=db.sqlite;Version=3;",
                                               SqliteOrmLiteDialectProvider.Instance)

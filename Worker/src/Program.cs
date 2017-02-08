@@ -2,6 +2,8 @@
 using Akka.Configuration;
 using Akka.Actor;
 
+using System.Configuration;
+
 namespace Worker
 {
 	class MainClass

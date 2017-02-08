@@ -14,6 +14,11 @@ namespace Server
 			return new HttpResult ("Not implemented", System.Net.HttpStatusCode.NotFound);
 		}*/
 
+		public void X()
+		{
+
+		}
+
 		public object _post (FileUploadDto request)
 		{			
 			string id = getId();
