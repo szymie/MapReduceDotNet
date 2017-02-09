@@ -3,3 +3,11 @@
 *.mdb
 server/obj/Debug
 server/bin/Debug
+MapReduceDotNetLib/obj/Debug
+MapReduceDotNetLib/bin/Debug
+Master/obj/Debug
+Master/bin/Debug
+Worker/obj/Debug
+Worker/bin/Debug
+ClientLib/obj/Debug
+ClientLib/bin/Debug

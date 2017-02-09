@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3A45D07E-2FD1-4BFF-B733-97F80495149B}</ProjectGuid>
+    <ProjectGuid>{DE89949B-9F40-433B-B62B-90B63A7D341F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>MapReduceDotNetLib</RootNamespace>
-    <AssemblyName>MapReduceDotNetLib</AssemblyName>
+    <RootNamespace>ClientLib</RootNamespace>
+    <AssemblyName>ClientLib</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -29,29 +29,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="Akka">
-      <HintPath>..\packages\Akka.1.1.3\lib\net45\Akka.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\WorkerLogic\Worker.cs" />
-    <Compile Include="src\MasterWorkerMessages\RegisterMapWorkerMessage.cs" />
+    <Compile Include="MyWorker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="src\" />
-    <Folder Include="src\WorkerLogic\" />
-    <Folder Include="src\MasterWorkerMessages\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\MapReduceDotNetLib\MapReduceDotNetLib.csproj">
+      <Project>{3A45D07E-2FD1-4BFF-B733-97F80495149B}</Project>
+      <Name>MapReduceDotNetLib</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

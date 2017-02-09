@@ -89,11 +89,6 @@
     <Compile Include="src\Services\PatientService\DtoPatientValidator.cs" />
     <Compile Include="src\Services\BaseService.cs" />
     <Compile Include="src\Services\BaseValidator.cs" />
-    <Compile Include="src\Logic\Test\Test.cs" />
-    <Compile Include="src\Services\TestService\DtoTest.cs" />
-    <Compile Include="src\Services\TestService\DtoTestResponse.cs" />
-    <Compile Include="src\Services\TestService\TestService.cs" />
-    <Compile Include="src\Services\AuthTest.cs" />
     <Compile Include="src\Services\FileUpload.cs" />
     <Compile Include="src\Services\FileUpload\FileUploadService.cs" />
     <Compile Include="src\Services\FileUpload\FileUploadDto.cs" />
@@ -128,8 +123,6 @@
     <Folder Include="src\Logic\" />
     <Folder Include="src\Logic\Patients\" />
     <Folder Include="src\Services\PatientService\" />
-    <Folder Include="src\Logic\Test\" />
-    <Folder Include="src\Services\TestService\" />
     <Folder Include="src\Services\FileUpload\" />
   </ItemGroup>
 </Project>
