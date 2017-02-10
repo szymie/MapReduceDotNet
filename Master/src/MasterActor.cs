@@ -5,25 +5,27 @@ using System.Collections.Generic;
 
 namespace Master
 {
-	public class TestActor : TypedActor, IHandle<RegisterMessage>, IHandle<Terminated>
+	public class TestActor : TypedActor, IHandle<RegisterMapWorkerMessage>, IHandle<Terminated>
 	{
 		List<IActorRef> registeredWorkers = new List<IActorRef>();
 
-		public void Handle (RegisterMessage message)
+		public void Handle (RegisterMapWorkerMessage message)
 		{
 			if (registeredWorkers.Count != 0) {
 				var actorRef = registeredWorkers [0];
 			
 				try {
-					actorRef.Tell("costam");
-					Console.WriteLine("No exception while sending.");
+					//actorRef.Tell("costam");
+					//Context.Stop();
+					actorRef.Tell(Kill.Instance);
+					Console.WriteLine("Killed actor");
+
 				} catch (Exception e) {
 					Console.WriteLine ("Exception while sending.");
 				}
 			}
 
 			Console.WriteLine ("Registered actor: {0}", Sender.Path);
-			//IActorRef a = Sender;
 			registeredWorkers.Add(Sender);
 			Context.Watch (Sender);
 		}
