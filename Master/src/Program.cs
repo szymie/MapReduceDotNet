@@ -9,6 +9,14 @@ namespace Master
 	{
 		public static void Main (string[] args)
 		{
+			ActorSystem system = getActorSystem ();
+
+			//system.ActorOf<TestActor>("MasterActor");
+
+			Console.ReadLine();
+		}
+
+		private static ActorSystem getActorSystem(){
 			AkkaConfig akkaConfig = getAkkaConfig ();
 
 			var configString = String.Format(@"
@@ -28,12 +36,7 @@ namespace Master
 
 			var config = ConfigurationFactory.ParseString (configString);
 
-			var system = ActorSystem.Create("MasterSystem", config);
-			system.ActorOf<TestActor>("MasterActor");
-
-			//testActor.Tell(new TestMessage("some data"));
-
-			Console.ReadLine();
+			return ActorSystem.Create("MasterSystem", config);
 		}
 
 		private static AkkaConfig getAkkaConfig(){

@@ -1,5 +1,0 @@
-/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/MapReduceDotNetLib/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
-/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/MapReduceDotNetLib/bin/Debug/MapReduceDotNetLib.dll.mdb
-/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/MapReduceDotNetLib/bin/Debug/MapReduceDotNetLib.dll
-/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/MapReduceDotNetLib/obj/Debug/MapReduceDotNetLib.dll
-/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/MapReduceDotNetLib/obj/Debug/MapReduceDotNetLib.dll.mdb
