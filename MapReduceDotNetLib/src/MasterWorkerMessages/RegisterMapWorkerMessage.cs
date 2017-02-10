@@ -2,12 +2,8 @@
 
 namespace MapReduceDotNetLib
 {
-	public enum WorkerType{
-		Map, Reduce
-	};
+	public class RegisterMapWorkerMessage{
 
-	public class RegisterMessage{
-		
 	}
 }
 
