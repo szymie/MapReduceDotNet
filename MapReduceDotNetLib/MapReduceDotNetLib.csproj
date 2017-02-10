@@ -51,12 +51,14 @@
     <Compile Include="src\S3ObjectMetadata.cs" />
     <Compile Include="src\Config\WorkerConfig.cs" />
     <Compile Include="src\AssemblyMetadata.cs" />
+    <Compile Include="src\MasterWorkerMessages\NewWorkMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\NewWorkAckMessage.cs" />
+    <Compile Include="src\WorkerLogic\Map.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="messages\" />
     <Folder Include="src\" />
-    <Compile Include="src\WorkerLogic\Worker.cs" />
     <Compile Include="src\MasterWorkerMessages\RegisterMapWorkerMessage.cs" />
     <Folder Include="src\Config\" />
   </ItemGroup>

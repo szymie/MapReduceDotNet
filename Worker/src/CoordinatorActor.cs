@@ -1,11 +1,15 @@
 ﻿using System;
 using Akka.Actor;
 using MapReduceDotNetLib;
+using System.Collections.Generic;
 
 namespace Worker
 {
-	public class CoordinatorActor : TypedActor
+	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>
 	{
+		private Dictionary<int, IActorRef> workers;
+		private int currentWorkerId = 0;
+
 		public CoordinatorActor ()
 		{
 			ActorSelection masterActorRef = getMasterActorRef ();
@@ -25,6 +29,34 @@ namespace Worker
 
 			return Context.ActorSelection("akka.tcp://MasterSystem@" + masterAddress + "/user/MasterActor");
 		}
+
+		public void Handle (NewWorkMessage message)
+		{
+			int workerId = getUniqueWorkerId ();
+			IActorRef workerActor = createWorkerActor(message.WorkerConfig, workerId);
+
+
+			workers.Add (workerId, workerActor);
+			Context.Watch (workerActor);
+			Sender.Tell (new NewWorkAckMessage(workerId, message.WorkConfigId));
+		}
+
+		int getUniqueWorkerId ()
+		{
+			currentWorkerId++;
+
+			currentWorkerId %= Int32.MaxValue;
+
+			return currentWorkerId;
+		}
+
+		public void Handle (Terminated message)
+		{			
+			string disconnectedActorPath = message.ActorRef.Path.ToString();
+			throw new NotImplementedException ();
+		}
+
+		protected abstract IActorRef createWorkerActor(WorkerConfig config, int workerId);
 	}
 }
 

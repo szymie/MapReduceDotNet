@@ -4,9 +4,9 @@ using Akka.Actor;
 
 namespace MapReduceDotNetLib
 {
-	public abstract class Worker
+	public abstract class Map
 	{
-		public Worker ()
+		public Map ()
 		{
 			
 		}

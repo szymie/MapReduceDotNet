@@ -3,7 +3,7 @@ using MapReduceDotNetLib;
 
 namespace ClientLib
 {
-	public class MyWorker : Worker
+	public class MyWorker : Map
 	{
 
 		public MyWorker ()

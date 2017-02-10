@@ -11,7 +11,7 @@ namespace Worker
 		public static void Main (string[] args)
 		{
 			ActorSystem system = createActorSystem ("WorkerSystem");
-			var workerActor = system.ActorOf<CoordinatorActor>("WorkerActor");
+			system.ActorOf<CoordinatorMapActor>("CoordinatorMapActor");
 
 			Console.ReadLine ();
 			//executeAssemblyTest();
@@ -38,7 +38,7 @@ namespace Worker
 		public static void executeAssemblyTest(){
 			Assembly assembly = Assembly.LoadFrom("ClientLib.dll");
 			Type type = assembly.GetType("ClientLib.MyWorker");
-			MapReduceDotNetLib.Worker clientWorker = (MapReduceDotNetLib.Worker) Activator.CreateInstance(type);
+			MapReduceDotNetLib.Map clientWorker = (MapReduceDotNetLib.Map) Activator.CreateInstance(type);
 			clientWorker.map ("fileName", "fileContent2");
 		}
 	}
