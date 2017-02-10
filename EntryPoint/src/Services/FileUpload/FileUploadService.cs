@@ -3,21 +3,11 @@ using System.IO;
 using ServiceStack.Common.Web;
 using ServiceStack.ServiceHost;
 
-namespace Server
+namespace EntryPoint
 {
-	public abstract class FileUploadService : BaseService
+	/*public abstract class FileUploadService : BaseService
 	{
-		//TODO jakos ladnie podawac bazowa lokalizacje plikow
-		protected string baseFileDirectory = "/tmp/";
-		/*
-		public object Get(FileUploadDto request){
-			return new HttpResult ("Not implemented", System.Net.HttpStatusCode.NotFound);
-		}*/
-
-		public void X()
-		{
-
-		}
+		
 
 		public object _post (FileUploadDto request)
 		{			
@@ -56,11 +46,6 @@ namespace Server
 
 			return "";
 		}
-
-		protected virtual string getFileDirectory ()
-		{
-			return baseFileDirectory + GetCurrentAuthUserId() + "/";
-		}
-	}
+	}*/
 }
 

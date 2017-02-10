@@ -1,43 +1,25 @@
 ﻿using System;
+using ServiceStack.Common.Web;
+using System.Net;
+using MapReduceDotNetLib;
+using ServiceStack.ServiceInterface;
 
-namespace Server.Services
+namespace EntryPoint
 {
-	public class ConfigFileUploadService : FileUploadService
+	public class AssemblyFileService : Service
 	{
-		public object Post(ConfigFileUploadDto request){
-			return base._post(request);
-		}
-
-		protected override string getFileDirectory ()
+		public object Put(DataFileDto request)
 		{
-			return base.getFileDirectory() + "config/";
+
+			var file = new S3ObjectMetadata("map-reduce-dot-net", "file1");
+
+			Console.WriteLine(request.RequestStream.Length);
+
+			//file.upStream(request.RequestStream);
+
+			return new HttpResult(HttpStatusCode.OK, "Ok");
 		}
 	}
 
-	public class AssemblyFileUploadService : FileUploadService
-	{
-		public object Post(AssemblyFileUploadDto request){
-			return base._post(request);
-		}
-
-
-
-		protected override string getFileDirectory ()
-		{
-			return base.getFileDirectory() + "assembly/";
-		}
-	}
-
-	public class DataFileUploadService : FileUploadService
-	{
-		public object Post(DataFileUploadDto request){
-			return base._post(request);
-		}
-
-		protected override string getFileDirectory ()
-		{
-			return base.getFileDirectory() + "data/";
-		}
-	}
 }
 

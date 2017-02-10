@@ -2,15 +2,18 @@
 using ServiceStack.ServiceHost;
 using System.IO;
 
-namespace Server
+namespace EntryPoint
 {
-	[Route ("/resources/configs/{Id}", "POST")]
-	public class ConfigFileUploadDto : FileUploadDto{}
+	[Route("/api/resources/data/{Id}", "PUT")]
+	public class DataFileDto : FileDto
+	{
 
-	[Route ("/resources/assemblies/{Id}", "POST")]
-	public class AssemblyFileUploadDto : FileUploadDto{}
+	}
 
-	[Route ("/resources/datas/{Id}", "POST")]
-	public class DataFileUploadDto : FileUploadDto{}
+	[Route ("/api/resources/assemblies/{Id}", "PUT")]
+	public class AssemblyFileDto : FileDto
+	{
+		
+	}
 }
 

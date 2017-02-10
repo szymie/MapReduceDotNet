@@ -2,11 +2,10 @@
 using System.IO;
 using ServiceStack.ServiceHost;
 
-namespace Server
+namespace EntryPoint
 {
-	public class FileUploadDto : IRequiresRequestStream
+	public abstract class FileDto : IRequiresRequestStream
 	{
-		public string Id { get; set; }
 		public Stream RequestStream { get; set; }
 	}
 }
