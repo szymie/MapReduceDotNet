@@ -1,5 +1,5 @@
 ﻿<Properties StartupConfiguration="{301CFA0D-9AF3-4876-B4D1-FF616973E5A8}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="EntryPoint/src/Services/FileUpload/FileUploadService.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="EntryPoint/src/Services/BaseValidator.cs">
     <Files>
       <File FileName="MapReduceDotNetLib/src/S3ObjectMetadata.cs" Line="22" Column="4" />
       <File FileName="ClientLib/MyWorker.cs" Line="7" Column="3" />
@@ -9,6 +9,10 @@
       <File FileName="EntryPoint/src/Services/FileUpload/FileUploadDtoDerived.cs" Line="1" Column="1" />
       <File FileName="EntryPoint/src/Services/FileUpload/FileUploadServiceDerived.cs" Line="1" Column="1" />
       <File FileName="EntryPoint/src/Services/FileUpload/FileUploadService.cs" Line="17" Column="18" />
+      <File FileName="EntryPoint/packages.config" Line="3" Column="66" />
+      <File FileName="EntryPoint/src/Services/BaseService.cs" Line="1" Column="1" />
+      <File FileName="EntryPoint/src/Services/FileUpload.cs" Line="1" Column="1" />
+      <File FileName="EntryPoint/src/Services/BaseValidator.cs" Line="2" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.S3Test PreferredExecutionTarget="MonoDevelop.Default" />
