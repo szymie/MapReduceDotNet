@@ -1,7 +1,6 @@
 ﻿<Properties StartupConfiguration="{2DCAA596-BF6D-4918-9F84-2475E183C0D9}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="MapReduceDotNetLib/src/S3ObjectMetadata.cs">
     <Files>
-      <File FileName="server/App.config" Line="1" Column="1" />
       <File FileName="server/src/Logic/Patients/Address.cs" Line="1" Column="1" />
       <File FileName="server/src/Logic/Patients/Patient.cs" Line="1" Column="1" />
       <File FileName="server/src/Services/FileUpload/FileUploadDtoDerived.cs" Line="1" Column="1" />
@@ -12,7 +11,7 @@
       <File FileName="server/src/Services/FileUpload/FileUploadService.cs" Line="1" Column="1" />
       <File FileName="server/packages.config" Line="1" Column="1" />
       <File FileName="server/NLog.config" Line="1" Column="1" />
-      <File FileName="MapReduceDotNetLib/src/S3ObjectMetadata.cs" Line="6" Column="3" />
+      <File FileName="MapReduceDotNetLib/src/S3ObjectMetadata.cs" Line="15" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.S3Test PreferredExecutionTarget="MonoDevelop.Default" />

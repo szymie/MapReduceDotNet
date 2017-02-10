@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using Amazon.S3;
+using Amazon.S3.Model;
 
 namespace MapReduceDotNetLib
 {
@@ -7,6 +9,8 @@ namespace MapReduceDotNetLib
 	{
 		public string BucketName { get; private set; }
 		public string Filename { get; private set; }
+
+		private static IAmazonS3 client = new AmazonS3Client(Amazon.RegionEndpoint.EUCentral1);
 
 		public S3ObjectMetadata(string bucketName, string filename)
 		{
@@ -16,7 +20,7 @@ namespace MapReduceDotNetLib
 
 		public void remove()
 		{
-
+			
 		}
 
 		public void upStream(Stream stream)
