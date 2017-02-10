@@ -2,6 +2,7 @@
 using System.IO;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.S3.Transfer;
 
 namespace MapReduceDotNetLib
 {
@@ -11,6 +12,7 @@ namespace MapReduceDotNetLib
 		public string Filename { get; private set; }
 
 		private static IAmazonS3 client = new AmazonS3Client(Amazon.RegionEndpoint.EUCentral1);
+		private static TransferUtility transferUtility = new TransferUtility(client);
 
 		public S3ObjectMetadata(string bucketName, string filename)
 		{
@@ -31,12 +33,20 @@ namespace MapReduceDotNetLib
 
 		public void upStream(Stream stream)
 		{
-
+			transferUtility.Upload(stream, BucketName, Filename);
 		}
 
 		public Stream downStream()
 		{
-			return null;
+			GetObjectRequest request = new GetObjectRequest
+			{
+				BucketName = BucketName,
+				Key = Filename
+			};
+
+			GetObjectResponse response = client.GetObject(request);
+
+			return response.ResponseStream;
 		}
 	}
 }
