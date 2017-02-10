@@ -4,14 +4,14 @@ namespace MapReduceDotNetLib
 {
 	public class NewWorkMessage
 	{
-		public NewWorkMessage (int workConfigId, WorkerConfig workerConfig)
+		public NewWorkMessage (int workConfigId, WorkConfig workConfig)
 		{
 			this.WorkConfigId = workConfigId;
-			this.WorkerConfig = workerConfig;
+			this.WorkConfig = workConfig;
 		}
 		
 		public int WorkConfigId{ get; set; }
-		public WorkerConfig WorkerConfig { get; set; }
+		public WorkConfig WorkConfig { get; set; }
 	}
 }
 

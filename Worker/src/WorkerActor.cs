@@ -4,13 +4,13 @@ using MapReduceDotNetLib;
 
 namespace Worker
 {
-	public abstract class WorkerActor : TypedActor, IHandle<WorkerConfig>
+	public abstract class WorkerActor : TypedActor, IHandle<NewWorkerMessage>
 	{
 		public WorkerActor ()
 		{
 		}
 
-		public abstract void Handle (WorkerConfig message);
+		public abstract void Handle (NewWorkerMessage message);
 	}
 }
 

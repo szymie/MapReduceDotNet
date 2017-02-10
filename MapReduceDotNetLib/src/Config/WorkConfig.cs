@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MapReduceDotNetLib
 {
-	public class WorkerConfig
+	public class WorkConfig
 	{
 		public int TaskId{ get; set;}
 		public string Username{ get; set;}

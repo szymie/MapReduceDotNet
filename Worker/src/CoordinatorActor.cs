@@ -33,12 +33,13 @@ namespace Worker
 		public void Handle (NewWorkMessage message)
 		{
 			int workerId = getUniqueWorkerId ();
-			IActorRef workerActor = createWorkerActor(message.WorkerConfig, workerId);
+			IActorRef workerActor = createWorkerActor(message.WorkConfig, workerId);
 
 
 			workers.Add (workerId, workerActor);
 			Context.Watch (workerActor);
 			Sender.Tell (new NewWorkAckMessage(workerId, message.WorkConfigId));
+			workerActor.Tell(new NewWorkerMessage(new WorkerConfig(workerId, message.WorkConfig)));
 		}
 
 		int getUniqueWorkerId ()
@@ -56,7 +57,7 @@ namespace Worker
 			throw new NotImplementedException ();
 		}
 
-		protected abstract IActorRef createWorkerActor(WorkerConfig config, int workerId);
+		protected abstract IActorRef createWorkerActor(WorkConfig config, int workerId);
 	}
 }
 

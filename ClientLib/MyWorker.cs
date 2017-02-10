@@ -10,11 +10,11 @@ namespace ClientLib
 		{
 
 		}
-
-		public override void map (string key, string value)
+			
+		public override void map (string key, LineReader lineReader)
 		{
-			Console.WriteLine (key + " " + value);
-				
+			emit ("", "");
+			throw new NotImplementedException ();
 		}
 	}
 }

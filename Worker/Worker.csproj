@@ -59,6 +59,8 @@
     <Compile Include="src\WorkerActor.cs" />
     <Compile Include="src\CoordinatorMapActor.cs" />
     <Compile Include="src\MapActor.cs" />
+    <Compile Include="src\Config\WorkerConfig.cs" />
+    <Compile Include="src\Messages\NewWorkerMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -72,5 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\Messages\" />
+    <Folder Include="src\Config\" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,11 @@ namespace MapReduceDotNetLib
 			
 		}
 
-		public abstract void map (string key, string value);
+		public abstract void map (string key, LineReader lineReader);
+
+		protected void emit (string key, string value){
+
+		}
 	}
 }
 

@@ -6,7 +6,7 @@ namespace Worker
 {
 	public class CoordinatorMapActor : CoordinatorActor
 	{
-		protected override IActorRef createWorkerActor (WorkerConfig config, int workerId)
+		protected override IActorRef createWorkerActor (WorkConfig config, int workerId)
 		{
 			return Context.System.ActorOf<MapActor> ("mapWorker" + workerId);
 		}

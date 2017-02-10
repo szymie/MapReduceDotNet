@@ -34,12 +34,5 @@ namespace Worker
 
 			return ActorSystem.Create(systemName, config);
 		}
-
-		public static void executeAssemblyTest(){
-			Assembly assembly = Assembly.LoadFrom("ClientLib.dll");
-			Type type = assembly.GetType("ClientLib.MyWorker");
-			MapReduceDotNetLib.Map clientWorker = (MapReduceDotNetLib.Map) Activator.CreateInstance(type);
-			clientWorker.map ("fileName", "fileContent2");
-		}
 	}
 }
