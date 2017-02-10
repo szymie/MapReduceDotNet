@@ -1,17 +1,18 @@
 ﻿<Properties StartupConfiguration="{2DCAA596-BF6D-4918-9F84-2475E183C0D9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="server/src/Services/FileUpload/FileUploadService.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MapReduceDotNetLib/src/S3ObjectMetadata.cs">
     <Files>
-      <File FileName="Master/src/TestActor.cs" Line="13" Column="4" />
-      <File FileName="Worker/src/Program.cs" Line="1" Column="1" />
-      <File FileName="server/App.config" Line="6" Column="17" />
+      <File FileName="server/App.config" Line="1" Column="1" />
       <File FileName="server/src/Logic/Patients/Address.cs" Line="1" Column="1" />
       <File FileName="server/src/Logic/Patients/Patient.cs" Line="1" Column="1" />
       <File FileName="server/src/Services/FileUpload/FileUploadDtoDerived.cs" Line="1" Column="1" />
-      <File FileName="server/src/Services/FileUpload/FileUploadDto.cs" Line="7" Column="1" />
+      <File FileName="server/src/Services/FileUpload/FileUploadDto.cs" Line="1" Column="1" />
       <File FileName="server/src/Services/FileUpload/FileUploadServiceDerived.cs" Line="1" Column="1" />
       <File FileName="server/src/Program.cs" Line="1" Column="1" />
-      <File FileName="server/src/AppHost.cs" Line="27" Column="10" />
-      <File FileName="server/src/Services/FileUpload/FileUploadService.cs" Line="17" Column="14" />
+      <File FileName="server/src/AppHost.cs" Line="1" Column="1" />
+      <File FileName="server/src/Services/FileUpload/FileUploadService.cs" Line="1" Column="1" />
+      <File FileName="server/packages.config" Line="1" Column="1" />
+      <File FileName="server/NLog.config" Line="1" Column="1" />
+      <File FileName="MapReduceDotNetLib/src/S3ObjectMetadata.cs" Line="6" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.S3Test PreferredExecutionTarget="MonoDevelop.Default" />
