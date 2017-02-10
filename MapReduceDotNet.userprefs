@@ -1,5 +1,5 @@
 ﻿<Properties StartupConfiguration="{2DCAA596-BF6D-4918-9F84-2475E183C0D9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="MapReduceDotNetLib/src/S3ObjectMetadata.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ClientLib/MyWorker.cs">
     <Files>
       <File FileName="server/src/Logic/Patients/Address.cs" Line="1" Column="1" />
       <File FileName="server/src/Logic/Patients/Patient.cs" Line="1" Column="1" />
@@ -12,6 +12,7 @@
       <File FileName="server/packages.config" Line="1" Column="1" />
       <File FileName="server/NLog.config" Line="1" Column="1" />
       <File FileName="MapReduceDotNetLib/src/S3ObjectMetadata.cs" Line="10" Column="35" />
+      <File FileName="ClientLib/MyWorker.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.S3Test PreferredExecutionTarget="MonoDevelop.Default" />

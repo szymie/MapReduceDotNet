@@ -1,6 +1,7 @@
 *.sqlite
 *.exe
 *.mdb
+*.userprefs
 server/obj/Debug
 server/bin/Debug
 MapReduceDotNetLib/obj/Debug
