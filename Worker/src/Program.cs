@@ -4,8 +4,6 @@ using Akka.Actor;
 using System.Reflection;
 using System.Configuration;
 
-using System.Configuration;
-
 namespace Worker
 {
 	class MainClass
@@ -13,8 +11,7 @@ namespace Worker
 		public static void Main (string[] args)
 		{
 			ActorSystem system = createActorSystem ("WorkerSystem");
-			var workerActor = system.ActorOf<TestActor>("WorkerActor");
-			workerActor.Tell(new Object());
+			var workerActor = system.ActorOf<CoordinatorActor>("WorkerActor");
 
 			Console.ReadLine ();
 			//executeAssemblyTest();

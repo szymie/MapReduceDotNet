@@ -2,8 +2,8 @@
 *.exe
 *.mdb
 *.userprefs
-server/obj/Debug
-server/bin/Debug
+EntryPoint/obj/Debug
+EntryPoint/bin/Debug
 MapReduceDotNetLib/obj/Debug
 MapReduceDotNetLib/bin/Debug
 Master/obj/Debug
