@@ -10,19 +10,16 @@ namespace Worker
 	{
 		public static void Main (string[] args)
 		{
-			//ConfigurationManager.AppSettings.Get
-			//remoteActorTest ();
-			executeAssemblyTest();
+			ActorSystem system = createActorSystem ("WorkerSystem");
+			var workerActor = system.ActorOf<TestActor>("WorkerActor");
+			workerActor.Tell(new Object());
+
+			Console.ReadLine ();
+			//executeAssemblyTest();
 		}
 
-		public static void executeAssemblyTest(){
-			Assembly assembly = Assembly.LoadFrom("ClientLib.dll");
-			Type type = assembly.GetType("ClientLib.MyWorker");
-			MapReduceDotNetLib.Worker clientWorker =  (MapReduceDotNetLib.Worker) Activator.CreateInstance(type);
-			clientWorker.map ("fileName", "fileContent2");
-		}
-
-		public static void remoteActorTest(){
+		static ActorSystem createActorSystem (string systemName)
+		{
 			var config = ConfigurationFactory.ParseString(@"
 				akka {  
 					actor {
@@ -36,11 +33,14 @@ namespace Worker
 				}
 			");
 
-			var clientSystem = ActorSystem.Create("WorkerSystem", config);
-			var workerActor = clientSystem.ActorOf<TestActor>("WorkerActor");
-			workerActor.Tell (new object());
+			return ActorSystem.Create(systemName, config);
+		}
 
-			Console.ReadLine ();
+		public static void executeAssemblyTest(){
+			Assembly assembly = Assembly.LoadFrom("ClientLib.dll");
+			Type type = assembly.GetType("ClientLib.MyWorker");
+			MapReduceDotNetLib.Worker clientWorker = (MapReduceDotNetLib.Worker) Activator.CreateInstance(type);
+			clientWorker.map ("fileName", "fileContent2");
 		}
 	}
 }
