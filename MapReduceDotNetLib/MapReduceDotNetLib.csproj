@@ -49,6 +49,7 @@
     <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\S3ObjectMetadata.cs" />
+    <Compile Include="src\Config\WorkerConfig.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -56,6 +57,7 @@
     <Folder Include="src\" />
     <Compile Include="src\WorkerLogic\Worker.cs" />
     <Compile Include="src\MasterWorkerMessages\RegisterMapWorkerMessage.cs" />
+    <Folder Include="src\Config\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
