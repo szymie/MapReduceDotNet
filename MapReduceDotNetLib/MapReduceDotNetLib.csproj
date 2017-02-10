@@ -59,7 +59,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="src\" />
     <Folder Include="src\WorkerLogic\" />
     <Folder Include="src\MasterWorkerMessages\" />
   </ItemGroup>
