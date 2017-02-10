@@ -20,13 +20,13 @@ namespace MapReduceDotNetLib
 
 		public void remove()
 		{
-			DeleteObjectRequest deleteObjectRequest =
-				new DeleteObjectRequest()
-					{
-						BucketName = BucketName,
-						Key = Filename
-					};
+			DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest()
+			{
+				BucketName = BucketName,
+				Key = Filename
+			};
 
+			client.DeleteObject(deleteObjectRequest);
 		}
 
 		public void upStream(Stream stream)
