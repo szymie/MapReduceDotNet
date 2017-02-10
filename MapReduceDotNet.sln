@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntryPoint", "server\EntryPoint.csproj", "{2DCAA596-BF6D-4918-9F84-2475E183C0D9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Master", "Master\Master.csproj", "{301CFA0D-9AF3-4876-B4D1-FF616973E5A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapReduceDotNetLib", "MapReduceDotNetLib\MapReduceDotNetLib.csproj", "{3A45D07E-2FD1-4BFF-B733-97F80495149B}"
@@ -11,16 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worker", "Worker\Worker.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientLib", "ClientLib\ClientLib.csproj", "{DE89949B-9F40-433B-B62B-90B63A7D341F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntryPoint", "EntryPoint\EntryPoint.csproj", "{422D512C-8D42-44C7-BBE0-10A230F93F5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2DCAA596-BF6D-4918-9F84-2475E183C0D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DCAA596-BF6D-4918-9F84-2475E183C0D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DCAA596-BF6D-4918-9F84-2475E183C0D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DCAA596-BF6D-4918-9F84-2475E183C0D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{301CFA0D-9AF3-4876-B4D1-FF616973E5A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{301CFA0D-9AF3-4876-B4D1-FF616973E5A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{301CFA0D-9AF3-4876-B4D1-FF616973E5A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,6 +33,10 @@ Global
 		{DE89949B-9F40-433B-B62B-90B63A7D341F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE89949B-9F40-433B-B62B-90B63A7D341F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE89949B-9F40-433B-B62B-90B63A7D341F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{422D512C-8D42-44C7-BBE0-10A230F93F5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{422D512C-8D42-44C7-BBE0-10A230F93F5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{422D512C-8D42-44C7-BBE0-10A230F93F5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{422D512C-8D42-44C7-BBE0-10A230F93F5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

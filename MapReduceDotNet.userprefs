@@ -1,25 +1,21 @@
-﻿<Properties StartupConfiguration="{2DCAA596-BF6D-4918-9F84-2475E183C0D9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="ClientLib/MyWorker.cs">
+﻿<Properties StartupConfiguration="{301CFA0D-9AF3-4876-B4D1-FF616973E5A8}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="EntryPoint/src/Services/FileUpload/FileUploadService.cs">
     <Files>
-      <File FileName="server/src/Logic/Patients/Address.cs" Line="1" Column="1" />
-      <File FileName="server/src/Logic/Patients/Patient.cs" Line="1" Column="1" />
-      <File FileName="server/src/Services/FileUpload/FileUploadDtoDerived.cs" Line="1" Column="1" />
-      <File FileName="server/src/Services/FileUpload/FileUploadDto.cs" Line="1" Column="1" />
-      <File FileName="server/src/Services/FileUpload/FileUploadServiceDerived.cs" Line="1" Column="1" />
-      <File FileName="server/src/Program.cs" Line="1" Column="1" />
-      <File FileName="server/src/AppHost.cs" Line="1" Column="1" />
-      <File FileName="server/src/Services/FileUpload/FileUploadService.cs" Line="1" Column="1" />
-      <File FileName="server/packages.config" Line="1" Column="1" />
-      <File FileName="server/NLog.config" Line="1" Column="1" />
-      <File FileName="MapReduceDotNetLib/src/S3ObjectMetadata.cs" Line="10" Column="35" />
-      <File FileName="ClientLib/MyWorker.cs" Line="1" Column="1" />
+      <File FileName="MapReduceDotNetLib/src/S3ObjectMetadata.cs" Line="22" Column="4" />
+      <File FileName="ClientLib/MyWorker.cs" Line="7" Column="3" />
+      <File FileName="EntryPoint/Program.cs" Line="1" Column="1" />
+      <File FileName="EntryPoint/src/Services/Hello.cs" Line="10" Column="6" />
+      <File FileName="EntryPoint/src/Services/FileUpload/FileUploadDto.cs" Line="1" Column="1" />
+      <File FileName="EntryPoint/src/Services/FileUpload/FileUploadDtoDerived.cs" Line="1" Column="1" />
+      <File FileName="EntryPoint/src/Services/FileUpload/FileUploadServiceDerived.cs" Line="1" Column="1" />
+      <File FileName="EntryPoint/src/Services/FileUpload/FileUploadService.cs" Line="17" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.S3Test PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.EntryPoint PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Master PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>
