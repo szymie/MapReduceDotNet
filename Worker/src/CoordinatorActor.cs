@@ -5,16 +5,18 @@ using System.Collections.Generic;
 
 namespace Worker
 {
-	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>
+	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>, IHandle<RegisterCoordinatorAckMessage>
 	{
+		protected IActorRef MasterActor{ get; set; }
 		private Dictionary<int, IActorRef> workers;
-		private int currentWorkerId = 0;
+		private UniqueKeyGenerator keyGenerator = new UniqueKeyGenerator();
+		private int CoordinatorId{get;set;}
 
 		public CoordinatorActor ()
 		{
 			ActorSelection masterActorRef = getMasterActorRef ();
 
-			masterActorRef.Tell (new RegisterMapWorkerMessage ());
+			masterActorRef.Tell (new RegisterMapCoordinatorMessage ());
 		}
 
 		ActorSelection getMasterActorRef ()
@@ -32,23 +34,19 @@ namespace Worker
 
 		public void Handle (NewWorkMessage message)
 		{
-			int workerId = getUniqueWorkerId ();
+			int workerId = keyGenerator.generateKey();
 			IActorRef workerActor = createWorkerActor(message.WorkConfig, workerId);
-
+			MasterActor = Sender;
 
 			workers.Add (workerId, workerActor);
 			Context.Watch (workerActor);
-			Sender.Tell (new NewWorkAckMessage(workerId, message.WorkConfigId));
-			workerActor.Tell(new NewWorkerMessage(new WorkerConfig(workerId, message.WorkConfig)));
+			MasterActor.Tell (new NewWorkAckMessage(workerId, message.WorkConfigId));
+			workerActor.Tell(new NewWorkerMessage(new WorkerConfig(workerId, message.WorkConfig, CoordinatorId)));
 		}
 
-		int getUniqueWorkerId ()
+		public void Handle (RegisterCoordinatorAckMessage message)
 		{
-			currentWorkerId++;
-
-			currentWorkerId %= Int32.MaxValue;
-
-			return currentWorkerId;
+			this.CoordinatorId = message.CoordinatorId;
 		}
 
 		public void Handle (Terminated message)

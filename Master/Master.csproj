@@ -68,5 +68,9 @@
       <Project>{3A45D07E-2FD1-4BFF-B733-97F80495149B}</Project>
       <Name>MapReduceDotNetLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Worker\Worker.csproj">
+      <Project>{51FE728F-7C94-48C1-B163-BFE647CA5133}</Project>
+      <Name>Worker</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

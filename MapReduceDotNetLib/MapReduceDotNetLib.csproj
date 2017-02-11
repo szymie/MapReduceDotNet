@@ -55,12 +55,15 @@
     <Compile Include="src\WorkerLogic\Map.cs" />
     <Compile Include="src\LineReader.cs" />
     <Compile Include="src\Config\WorkConfig.cs" />
+    <Compile Include="src\UniqueKeyGenerator.cs" />
+    <Compile Include="src\MasterWorkerMessages\RegisterCoordinatorAckMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\RegisterMapCoordinatorMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\MapWorkFinishedMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="messages\" />
     <Folder Include="src\" />
-    <Compile Include="src\MasterWorkerMessages\RegisterMapWorkerMessage.cs" />
     <Folder Include="src\Config\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
