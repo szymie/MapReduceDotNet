@@ -68,19 +68,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Services\BaseService.cs" />
-    <Compile Include="src\Services\BaseValidator.cs" />
-    <Compile Include="src\Services\FileUpload.cs" />
-    <Compile Include="src\Services\Hello.cs" />
-    <Compile Include="src\Services\FileUpload\FileUploadDto.cs" />
-    <Compile Include="src\Services\FileUpload\FileUploadDtoDerived.cs" />
-    <Compile Include="src\Services\FileUpload\FileUploadService.cs" />
-    <Compile Include="src\Services\FileUpload\FileUploadServiceDerived.cs" />
-    <Compile Include="src\AppHost.cs" />
-    <Compile Include="src\Program.cs" />
+    <Compile Include="Src\Services\BaseService.cs" />
+    <Compile Include="Src\Services\BaseValidator.cs" />
+    <Compile Include="Src\Services\FileUpload.cs" />
+    <Compile Include="Src\Services\Hello.cs" />
+    <Compile Include="Src\Services\FileUpload\FileDto.cs" />
+    <Compile Include="Src\Services\FileUpload\FileDtoDerived.cs" />
+    <Compile Include="Src\Services\FileUpload\FileUploadService.cs" />
+    <Compile Include="Src\Services\FileUpload\FileServiceDerived.cs" />
+    <Compile Include="Src\AppHost.cs" />
+    <Compile Include="Src\Program.cs" />
+    <Compile Include="Src\Services\FileUpload\InputFile.cs" />
+    <Compile Include="Src\DTOs\InputFileMetadataDto.cs" />
+    <Compile Include="Src\DTOs\AssemblyMetadataDto.cs" />
+    <Compile Include="Src\Services\MetadataService.cs" />
+    <Compile Include="Src\Entities\InputFileMetadata.cs" />
+    <Compile Include="Src\Entities\AssemblyMetadata.cs" />
+    <Compile Include="Src\Validators\AssemblyMetadataDtoValidator.cs" />
+    <Compile Include="Src\Validators\InputFileMetadataDtoValidator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\" />
+    <Folder Include="Src\" />
+    <Folder Include="Src\DTOs\" />
+    <Folder Include="Src\Entities\" />
+    <Folder Include="Src\Validators\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -6,7 +6,7 @@ namespace EntryPoint
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		/*public static void Main(string[] args)
 		{
 			var file0 = new S3ObjectMetadata("map-reduce-dot-net", "file0");
 
@@ -24,10 +24,10 @@ namespace EntryPoint
 
 			Console.WriteLine("Press...");
 			Console.ReadLine();
-		}
+		}*/
 
 
-		/*public static void Main(string[] args)
+		public static void Main(string[] args)
 		{
 			ushort port = 8888;
 
@@ -45,6 +45,6 @@ namespace EntryPoint
 			Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
 			Console.WriteLine("Press <ENTER> key to exit...");
 			Console.ReadLine();
-		}*/
+		}
 	}
 }

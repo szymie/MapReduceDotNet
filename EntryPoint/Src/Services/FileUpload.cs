@@ -4,6 +4,7 @@ using System.IO;
 using System;
 using System.Web;
 using ServiceStack.Common.Web;
+using EntryPoint;
 
 namespace Server.Services
 {

@@ -110,7 +110,8 @@ namespace EntryPoint
 			container.Register<IUserAuthRepository>(c => new OrmLiteAuthRepository(c.Resolve<IDbConnectionFactory>()));
 
 			Plugins.Add(new ValidationFeature());
-			//container.RegisterValidators(typeof(DtoPatientValidator).Assembly);
+			container.RegisterValidators(typeof(InputFileMetadataDtoValidator).Assembly);
+			container.RegisterValidators(typeof(AssemblyMetadataDtoValidator).Assembly);
 
 			var config = new EndpointHostConfig();
 
