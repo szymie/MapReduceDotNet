@@ -3,6 +3,7 @@ using Akka.Configuration;
 using Akka.Actor;
 using System.Reflection;
 using System.Configuration;
+using System.IO;
 
 namespace Worker
 {
@@ -14,7 +15,6 @@ namespace Worker
 			system.ActorOf<CoordinatorMapActor>("CoordinatorMapActor");
 
 			Console.ReadLine ();
-			//executeAssemblyTest();
 		}
 
 		static ActorSystem createActorSystem (string systemName)

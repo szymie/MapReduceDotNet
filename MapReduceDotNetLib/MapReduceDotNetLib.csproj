@@ -59,6 +59,8 @@
     <Compile Include="src\MasterWorkerMessages\RegisterCoordinatorAckMessage.cs" />
     <Compile Include="src\MasterWorkerMessages\RegisterMapCoordinatorMessage.cs" />
     <Compile Include="src\MasterWorkerMessages\MapWorkFinishedMessage.cs" />
+    <Compile Include="src\WorkerLogic\Work.cs" />
+    <Compile Include="src\LocalFileIO.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

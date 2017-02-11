@@ -10,7 +10,7 @@ namespace MapReduceDotNetLib
 		public string BucketName { get; private set; }
 		public string Filename { get; private set; }
 
-		private static IAmazonS3 client = new AmazonS3Client(Amazon.RegionEndpoint.EUCentral1);
+		//private static IAmazonS3 client = new AmazonS3Client(Amazon.RegionEndpoint.EUCentral1);
 
 		public S3ObjectMetadata(string bucketName, string filename)
 		{
@@ -26,17 +26,23 @@ namespace MapReduceDotNetLib
 				Key = Filename
 			};
 
-			client.DeleteObject(deleteObjectRequest);
+			//client.DeleteObject(deleteObjectRequest);
 		}
 
 		public void upStream(Stream stream)
 		{
-
+			using (stream) {
+				using (FileStream fileStream = File.Open ("/tmp/" + Filename, FileMode.Create)) {
+					stream.CopyTo (fileStream);
+				}
+			}
+			//throw new NotImplementedException();
 		}
 
 		public Stream downStream()
 		{
-			return null;
+			return File.OpenRead (Filename);
+			//throw new NotImplementedException();
 		}
 	}
 }

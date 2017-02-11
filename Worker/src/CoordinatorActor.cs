@@ -8,15 +8,13 @@ namespace Worker
 	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>, IHandle<RegisterCoordinatorAckMessage>
 	{
 		protected IActorRef MasterActor{ get; set; }
-		private Dictionary<int, IActorRef> workers;
+		private Dictionary<int, IActorRef> workers = new Dictionary<int, IActorRef>();
 		private UniqueKeyGenerator keyGenerator = new UniqueKeyGenerator();
 		private int CoordinatorId{get;set;}
-
+		protected ActorSelection MasterActorRef{ get; set; }
 		public CoordinatorActor ()
 		{
-			ActorSelection masterActorRef = getMasterActorRef ();
-
-			masterActorRef.Tell (new RegisterMapCoordinatorMessage ());
+			MasterActorRef = getMasterActorRef ();
 		}
 
 		ActorSelection getMasterActorRef ()

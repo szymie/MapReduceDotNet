@@ -7,19 +7,9 @@ using System.IO;
 
 namespace MapReduceDotNetLib
 {
-	public abstract class Map
+	public abstract class Map : Work
 	{
-		private int TaskId{ get; set; }
-		private int WorkerId{ get; set; }
-		private UniqueKeyGenerator KeyGenerator = new UniqueKeyGenerator();
-
 		public Dictionary<UserGeneratedKey, FileName> createdFiles = new Dictionary<UserGeneratedKey, FileName>();
-
-		public void setEmitParams (int taskId, int workerId)
-		{
-			this.TaskId = taskId;
-			this.WorkerId = workerId;
-		}
 
 		public abstract void map (string key, LineReader lineReader);
 
@@ -27,14 +17,12 @@ namespace MapReduceDotNetLib
 			string filename;
 			if (!createdFiles.TryGetValue (key, out filename)) {
 				int artificialKey = KeyGenerator.generateKey ();
-				filename = TaskId + "-map-" + WorkerId + "-" + artificialKey;
+				filename = String.Format (LocalFileIO.localFilesLocation + "{0}-{1}-{2}-{3}", TaskId, CoordinatorId, WorkerId, artificialKey);
 
 				createdFiles.Add (key, filename);
 			}
 
-			using(StreamWriter streamWriter = File.AppendText (filename)){
-				streamWriter.WriteLine (value);
-			}
+			File.AppendAllText (filename, value);
 		}
 	}
 }
