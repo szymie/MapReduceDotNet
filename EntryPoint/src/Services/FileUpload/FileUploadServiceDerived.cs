@@ -11,16 +11,12 @@ namespace EntryPoint
 	{
 		public object Put(DataFileDto request)
 		{
-			Console.WriteLine("1");
-
 			var file = new S3ObjectMetadata("map-reduce-dot-net", "file1");
 
-			var ms = new MemoryStream();
-			request.RequestStream.CopyTo(ms);
+			var memoryStream = new MemoryStream();
+			request.RequestStream.CopyTo(memoryStream);
 
-			file.upStream2(ms);
-
-			Console.WriteLine("2");
+			file.upStream(memoryStream);
 
 			return new HttpResult(HttpStatusCode.OK, "Ok");
 		}

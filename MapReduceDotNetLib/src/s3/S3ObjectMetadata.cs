@@ -4,6 +4,9 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+using System.Net;
 
 namespace MapReduceDotNetLib
 {
@@ -19,6 +22,7 @@ namespace MapReduceDotNetLib
 		{
 			BucketName = bucketName;
 			Filename = filename;
+			ServicePointManager.ServerCertificateValidationCallback = CustomRemoteCertificateValidationCallback;
 		}
 
 		public void remove()
@@ -37,9 +41,10 @@ namespace MapReduceDotNetLib
 			transferUtility.Upload(stream, BucketName, Filename);
 		}
 
-		public void upStream2(Stream stream)
+		public void detailedUpStream(Stream stream)
 		{
 			List<UploadPartResponse> uploadResponses = new List<UploadPartResponse>();
+			List<UploadPartRequest> uploadRequests = new List<UploadPartRequest>();
 
 			InitiateMultipartUploadRequest initiateRequest = new InitiateMultipartUploadRequest
 			{
@@ -47,20 +52,14 @@ namespace MapReduceDotNetLib
 				Key = Filename
 			};
 
-			Console.WriteLine("1-0");
-
 
 			InitiateMultipartUploadResponse initiateResponse = client.InitiateMultipartUpload(initiateRequest);
-
-			Console.WriteLine("1-00");
 
 			int partSize = 5 * (int) Math.Pow(2, 20); // 5 MB
 
 			try
 			{
-				int partNumber = 0, bytesCopied;
-
-				Console.WriteLine("1-1");
+				int partNumber = 1, bytesCopied;
 
 				do
 				{
@@ -74,26 +73,43 @@ namespace MapReduceDotNetLib
 						Key = Filename,
 						UploadId = initiateResponse.UploadId,
 						PartNumber = partNumber++,
-						PartSize = partSize,
+						PartSize = bytesCopied,
 						InputStream = memoryStream,
+						IsLastPart = false
 					};
 
+					Console.WriteLine("bytesCopied= " + bytesCopied);
+
+					uploadRequests.Add(uploadRequest);
+				} while(bytesCopied == partSize);
+
+				uploadRequests[uploadRequests.Count - 1].IsLastPart = true;
+
+				foreach (UploadPartRequest uploadRequest in uploadRequests)
+				{
+					Console.WriteLine(uploadRequest.IsLastPart);
+
 					uploadResponses.Add(client.UploadPart(uploadRequest));
-				} while(bytesCopied > 0);
-
-				Console.WriteLine("1-2");
-
+				}
+			
 				CompleteMultipartUploadRequest completeRequest = new CompleteMultipartUploadRequest
 				{
 					BucketName = BucketName,
 					Key = Filename,
 					UploadId = initiateResponse.UploadId,
 				};
+
+				Console.WriteLine("1-3");
 					
 				completeRequest.AddPartETags(uploadResponses);
 
+				Console.WriteLine("1-4");
+
 				CompleteMultipartUploadResponse completeUploadResponse =
 					client.CompleteMultipartUpload(completeRequest);
+
+				Console.WriteLine("1-5");
+
 			}
 			catch (Exception exception)
 			{
@@ -137,6 +153,34 @@ namespace MapReduceDotNetLib
 			GetObjectResponse response = client.GetObject(request);
 
 			return response.ResponseStream;
+		}
+
+		public bool CustomRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		{
+			bool isOk = true;
+			// If there are errors in the certificate chain, look at each error to determine the cause.
+			if (sslPolicyErrors != SslPolicyErrors.None)
+			{
+				for (int i = 0; i < chain.ChainStatus.Length; i++)
+				{
+					if (chain.ChainStatus[i].Status != X509ChainStatusFlags.RevocationStatusUnknown)
+					{
+						chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
+						chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+						chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 1, 0);
+						chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllFlags;
+					
+						bool isChainValid = chain.Build((X509Certificate2)certificate);
+
+						if (!isChainValid)
+						{
+							isOk = false;
+						}
+					}
+				}
+			}
+
+			return isOk;
 		}
 	}
 }
