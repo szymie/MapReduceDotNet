@@ -10,7 +10,6 @@ namespace EntryPoint
 		{
 			RuleSet(ApplyTo.Post, () =>
 			{
-				RuleFor(r => r.Name).NotEmpty();
 				RuleFor(r => r.Description).NotEmpty();
 			});
 		}

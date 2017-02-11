@@ -77,15 +77,18 @@
     <Compile Include="Src\AppHost.cs" />
     <Compile Include="Src\Program.cs" />
     <Compile Include="Src\Services\FileUpload\InputFile.cs" />
-    <Compile Include="Src\DTOs\InputFileMetadataDto.cs" />
-    <Compile Include="Src\DTOs\AssemblyMetadataDto.cs" />
-    <Compile Include="Src\Entities\InputFileMetadata.cs" />
-    <Compile Include="Src\Entities\AssemblyMetadata.cs" />
     <Compile Include="Src\Validators\AssemblyMetadataDtoValidator.cs" />
     <Compile Include="Src\Validators\InputFileMetadataDtoValidator.cs" />
     <Compile Include="Src\Validators\BaseValidator.cs" />
     <Compile Include="Src\Services\Metadata\MetadataService.cs" />
     <Compile Include="Src\Services\Metadata\MetadataDtoResponse.cs" />
+    <Compile Include="Src\DTOs\Metadata\AssemblyMetadataDto.cs" />
+    <Compile Include="Src\DTOs\Metadata\InputFileMetadataDto.cs" />
+    <Compile Include="Src\Entities\Metadata\AssemblyMetadata.cs" />
+    <Compile Include="Src\Entities\Metadata\InputFileMetadata.cs" />
+    <Compile Include="Src\DTOs\Content\InputFileContentDto.cs" />
+    <Compile Include="Src\DTOs\Content\AssemblyContentDto.cs" />
+    <Compile Include="Src\Services\Content\ContentService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Src\" />
@@ -93,6 +96,10 @@
     <Folder Include="Src\Entities\" />
     <Folder Include="Src\Validators\" />
     <Folder Include="Src\Services\Metadata\" />
+    <Folder Include="Src\DTOs\Metadata\" />
+    <Folder Include="Src\Entities\Metadata\" />
+    <Folder Include="Src\DTOs\Content\" />
+    <Folder Include="Src\Services\Content\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
