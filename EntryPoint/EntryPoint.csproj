@@ -69,9 +69,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\Services\BaseService.cs" />
-    <Compile Include="Src\Services\BaseValidator.cs" />
     <Compile Include="Src\Services\FileUpload.cs" />
-    <Compile Include="Src\Services\Hello.cs" />
     <Compile Include="Src\Services\FileUpload\FileDto.cs" />
     <Compile Include="Src\Services\FileUpload\FileDtoDerived.cs" />
     <Compile Include="Src\Services\FileUpload\FileUploadService.cs" />
@@ -81,17 +79,20 @@
     <Compile Include="Src\Services\FileUpload\InputFile.cs" />
     <Compile Include="Src\DTOs\InputFileMetadataDto.cs" />
     <Compile Include="Src\DTOs\AssemblyMetadataDto.cs" />
-    <Compile Include="Src\Services\MetadataService.cs" />
     <Compile Include="Src\Entities\InputFileMetadata.cs" />
     <Compile Include="Src\Entities\AssemblyMetadata.cs" />
     <Compile Include="Src\Validators\AssemblyMetadataDtoValidator.cs" />
     <Compile Include="Src\Validators\InputFileMetadataDtoValidator.cs" />
+    <Compile Include="Src\Validators\BaseValidator.cs" />
+    <Compile Include="Src\Services\Metadata\MetadataService.cs" />
+    <Compile Include="Src\Services\Metadata\MetadataDtoResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Src\" />
     <Folder Include="Src\DTOs\" />
     <Folder Include="Src\Entities\" />
     <Folder Include="Src\Validators\" />
+    <Folder Include="Src\Services\Metadata\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

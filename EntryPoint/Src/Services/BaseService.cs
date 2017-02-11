@@ -12,14 +12,15 @@ namespace EntryPoint
 		{
 			var session = this.GetSession();
 
-			if (!session.IsAuthenticated)
+			if(!session.IsAuthenticated)
 			{
+				return 0;
 				throw new HttpError(HttpStatusCode.Unauthorized, "Not authorized");
 			}
 
 			int id;
 
-			if (!int.TryParse(session.UserAuthId, out id))
+			if(!int.TryParse(session.UserAuthId, out id))
 			{
 				throw new Exception("Error");
 			}

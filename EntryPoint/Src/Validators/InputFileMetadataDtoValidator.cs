@@ -8,7 +8,11 @@ namespace EntryPoint
 	{
 		public InputFileMetadataDtoValidator()
 		{
-			RuleSet(ApplyTo.Post, () => { RuleFor(r => r.Description).NotEmpty(); });
+			RuleSet(ApplyTo.Post, () =>
+			{
+				RuleFor(r => r.Name).NotEmpty();
+				RuleFor(r => r.Description).NotEmpty();
+			});
 		}
 	}
 }
