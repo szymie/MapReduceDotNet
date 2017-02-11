@@ -3,6 +3,7 @@ using Akka.Actor;
 using MapReduceDotNetLib;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 namespace Worker
 {
@@ -13,6 +14,9 @@ namespace Worker
 		protected int CoordinatorId{ get; set; }
 		protected int WorkerId{ get; set; }
 		protected IActorRef Coordinator{ get; set;}
+		protected LocalFilesDirectory LocalFileUtils{ get; set; }
+		protected Thread WorkThread{ get; set; }
+
 		public WorkerActor ()
 		{
 		}
@@ -23,10 +27,30 @@ namespace Worker
 			CoordinatorId = WorkerConfig.CoordinatorId;
 			WorkerId = WorkerConfig.WorkerId;
 			Coordinator = Sender;
+			LocalFileUtils = new LocalFilesDirectory (WorkerConfig);
+
+			WorkThread = new Thread (() => {
+				LocalFileUtils.createDirectory ();
+
+				try{
+					workProcessing();
+				}
+				catch(Exception e){
+					Coordinator.Tell(new WorkerFailureMessage(WorkerId, TaskId, e));
+				}
+				finally{
+					LocalFileUtils.removeDirectory();
+				}
+			});
+
+			WorkThread.Start ();
+			
 		}
 
+		protected abstract void workProcessing ();
+
 		protected Work loadClientAssembly(S3ObjectMetadata file, string @namespace, string className){
-			string asseblyFileName = String.Format (LocalFileIO.localFilesLocation + "{0}-{1}-{2}-assembly.dll", TaskId, CoordinatorId, WorkerId);
+			string asseblyFileName = LocalFileUtils.DirectoryPath + "assembly.dll";
 
 			try{
 				using (Stream stream = file.downStream ()) {
@@ -38,7 +62,7 @@ namespace Worker
 				Assembly assembly = Assembly.LoadFrom(asseblyFileName);
 				Type type = assembly.GetType(@namespace + "." + className);
 				Work work = (Work) Activator.CreateInstance(type);
-				work.setEmitParams (TaskId, CoordinatorId, WorkerId);
+				work.setEmitParams (LocalFileUtils.DirectoryPath);
 
 				return work;
 			}

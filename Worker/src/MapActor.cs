@@ -14,28 +14,21 @@ namespace Worker
 		{
 		}
 			
-		public new void Handle (NewWorkerMessage message)
-		{
-			base.Handle (message);
-
+		protected override void workProcessing(){
 			AssemblyMetadata assemblyMetaData = WorkerConfig.WorkConfig.AssemblyMetaData;
 
 			Map map = (Map) loadClientAssembly (assemblyMetaData.File, assemblyMetaData.Namespace, assemblyMetaData.MapClassName);
 
-			Thread mapThread = new Thread (() => {
-				var filesToProcess = WorkerConfig.WorkConfig.FilesToProcess;
-				foreach (KeyValuePair<string, S3ObjectMetadata> entry in filesToProcess) {
-					string filename = entry.Key;
-					LineReader lineReader = new LineReader (entry.Value.downStream ());
+			var filesToProcess = WorkerConfig.WorkConfig.FilesToProcess;
+			foreach (KeyValuePair<string, S3ObjectMetadata> entry in filesToProcess) {
+				string filename = entry.Key;
+				LineReader lineReader = new LineReader (entry.Value.downStream ());
 
-					map.map(filename, lineReader);
-				}
+				map.map(filename, lineReader);
+			}
 
-				Dictionary<string, S3ObjectMetadata> uploadedResult = uploadResult(map.createdFiles);
-				Coordinator.Tell(new MapWorkFinishedMessage(WorkerId, TaskId, uploadedResult));
-			});
-
-			mapThread.Start ();
+			Dictionary<string, S3ObjectMetadata> uploadedResult = uploadResult(map.createdFiles);
+			Coordinator.Tell(new MapWorkFinishedMessage(WorkerId, TaskId, uploadedResult));
 		}
 
 		private Dictionary<string, S3ObjectMetadata> uploadResult (Dictionary<string, string> createdFiles)

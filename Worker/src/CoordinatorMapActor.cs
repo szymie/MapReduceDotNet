@@ -7,7 +7,7 @@ namespace Worker
 	public class CoordinatorMapActor : CoordinatorActor, IHandle<MapWorkFinishedMessage>
 	{
 		public CoordinatorMapActor(){
-			MasterActorRef.Tell (new RegisterMapCoordinatorMessage ());
+			MasterActor.Tell (new RegisterMapCoordinatorMessage ());
 		}
 
 		public void Handle (MapWorkFinishedMessage message){

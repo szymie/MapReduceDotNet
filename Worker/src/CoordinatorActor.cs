@@ -5,16 +5,15 @@ using System.Collections.Generic;
 
 namespace Worker
 {
-	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>, IHandle<RegisterCoordinatorAckMessage>
+	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>, IHandle<RegisterCoordinatorAckMessage>, IHandle<WorkerFailureMessage>
 	{
-		protected IActorRef MasterActor{ get; set; }
 		private Dictionary<int, IActorRef> workers = new Dictionary<int, IActorRef>();
 		private UniqueKeyGenerator keyGenerator = new UniqueKeyGenerator();
 		private int CoordinatorId{get;set;}
-		protected ActorSelection MasterActorRef{ get; set; }
+		protected ActorSelection MasterActor{ get; set; }
 		public CoordinatorActor ()
 		{
-			MasterActorRef = getMasterActorRef ();
+			MasterActor = getMasterActorRef ();
 		}
 
 		ActorSelection getMasterActorRef ()
@@ -34,7 +33,6 @@ namespace Worker
 		{
 			int workerId = keyGenerator.generateKey();
 			IActorRef workerActor = createWorkerActor(message.WorkConfig, workerId);
-			MasterActor = Sender;
 
 			workers.Add (workerId, workerActor);
 			Context.Watch (workerActor);
@@ -45,6 +43,11 @@ namespace Worker
 		public void Handle (RegisterCoordinatorAckMessage message)
 		{
 			this.CoordinatorId = message.CoordinatorId;
+		}
+
+		public void Handle (WorkerFailureMessage message){
+			MasterActor.Tell (message);
+			throw new NotImplementedException ();
 		}
 
 		public void Handle (Terminated message)

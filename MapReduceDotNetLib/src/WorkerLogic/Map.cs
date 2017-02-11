@@ -17,7 +17,7 @@ namespace MapReduceDotNetLib
 			string filename;
 			if (!createdFiles.TryGetValue (key, out filename)) {
 				int artificialKey = KeyGenerator.generateKey ();
-				filename = String.Format (LocalFileIO.localFilesLocation + "{0}-{1}-{2}-{3}", TaskId, CoordinatorId, WorkerId, artificialKey);
+				filename = LocalFolder + artificialKey;
 
 				createdFiles.Add (key, filename);
 			}
