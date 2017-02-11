@@ -11,7 +11,7 @@ namespace ClientLib
 		{
 			String line;
 			while((line = lineReader.readLine()) != null){
-				emit ("myKey", "value:" + Counter);
+				emit ("key:"+Counter%2, "value:" + Counter);
 				Counter += 1;
 			}
 				

@@ -22,7 +22,7 @@ namespace MapReduceDotNetLib
 				createdFiles.Add (key, filename);
 			}
 
-			File.AppendAllText (filename, value);
+			File.AppendAllText (filename, value + "\n");
 		}
 	}
 }
