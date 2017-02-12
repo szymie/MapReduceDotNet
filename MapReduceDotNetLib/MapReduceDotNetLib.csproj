@@ -65,12 +65,14 @@
     <Compile Include="src\MasterWorkerMessages\ReduceWorkFinishedMessage.cs" />
     <Compile Include="src\MasterWorkerMessages\RegisterReduceCoordinatorMessage.cs" />
     <Compile Include="src\WorkerLogic\Reduce.cs" />
+    <Compile Include="src\MasterSSMessages\NewTaskMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="messages\" />
     <Folder Include="src\" />
     <Folder Include="src\Config\" />
+    <Folder Include="src\MasterSSMessages\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
