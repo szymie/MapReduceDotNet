@@ -24,9 +24,12 @@ namespace Worker
 			var filesToProcess = WorkerConfig.WorkConfig.FilesToProcess;
 			foreach (KeyValuePair<string, S3ObjectMetadata> entry in filesToProcess) {
 				string filename = entry.Key;
-				LineReader lineReader = new LineReader (entry.Value.downStream ());
 
-				map.map(filename, lineReader);
+				using (Stream fileStream = entry.Value.downStream ()) {
+					LineReader lineReader = new LineReader (fileStream);
+
+					map.map (filename, lineReader);
+				}
 			}
 
 		}

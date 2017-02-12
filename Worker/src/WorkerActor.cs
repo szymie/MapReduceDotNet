@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Worker
 {
-	public abstract class WorkerActor : TypedActor, IHandle<NewWorkerMessage>, IHandle<StopWorkerMessage>, IHandle<string>
+	public abstract class WorkerActor : TypedActor, IHandle<NewWorkerMessage>, IHandle<StopWorkerMessage>
 	{
 		protected WorkerConfig WorkerConfig{ get; set; }
 		protected int TaskId{ get; set; }
@@ -22,10 +22,6 @@ namespace Worker
 
 		public WorkerActor ()
 		{
-		}
-
-		public void Handle (string message){
-			Console.WriteLine (message);
 		}
 
 		public void Handle (NewWorkerMessage message){
@@ -48,10 +44,13 @@ namespace Worker
 						uploadResult();
 					}
 				}
-				catch(Exception e){
-					Coordinator.Tell(new WorkerFailureMessage(WorkerId, TaskId, e), self);
+				catch(ThreadAbortException e){
+
 				}
-				finally{
+				catch(Exception e){
+					Coordinator.Tell(new WorkerFailureMessage(WorkerId, TaskId, e.Message), self);
+				}
+				finally{					
 					LocalFileUtils.removeDirectory();
 
 					Monitor.Exit(uploadFilesLock);
@@ -59,7 +58,6 @@ namespace Worker
 			});
 
 			WorkerThread.Start ();
-			Context.System.Scheduler.ScheduleTellRepeatedly (TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1), Self, "kill me", Self);
 		}
 		public void Handle (StopWorkerMessage message){
 			if (Monitor.TryEnter (uploadFilesLock)) {
@@ -74,26 +72,28 @@ namespace Worker
 
 		protected abstract void uploadResult ();
 
+		protected override void PostStop(){
+			if (Monitor.TryEnter (uploadFilesLock)) {
+				this.WorkerThread.Abort ();
+				Monitor.Exit (uploadFilesLock);
+			}
+		}
+
 		protected Work loadClientAssembly(S3ObjectMetadata file, string @namespace, string className){
 			string asseblyFileName = LocalFileUtils.DirectoryPath + "assembly.dll";
 
-			try{
-				using (Stream stream = file.downStream ()) {
-					using(FileStream fileStream = File.Create (asseblyFileName)){
-						stream.CopyTo (fileStream);
-					}
-				}			
+			using (Stream stream = file.downStream ()) {
+				using(FileStream fileStream = File.Create (asseblyFileName)){
+					stream.CopyTo (fileStream);
+				}
+			}			
 
-				Assembly assembly = Assembly.LoadFrom(asseblyFileName);
-				Type type = assembly.GetType(@namespace + "." + className);
-				Work work = (Work) Activator.CreateInstance(type);
-				work.setEmitParams (LocalFileUtils.DirectoryPath);
+			Assembly assembly = Assembly.LoadFrom(asseblyFileName);
+			Type type = assembly.GetType(@namespace + "." + className);
+			Work work = (Work) Activator.CreateInstance(type);
+			work.setEmitParams (LocalFileUtils.DirectoryPath);
 
-				return work;
-			}
-			catch(Exception e){
-				throw new NotImplementedException ();
-			}
+			return work;			
 		}
 	}
 }

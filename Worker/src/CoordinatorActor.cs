@@ -2,6 +2,7 @@
 using Akka.Actor;
 using MapReduceDotNetLib;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Worker
 {
@@ -32,8 +33,12 @@ namespace Worker
 		public void Handle (NewWorkMessage message)
 		{
 			int workerId = keyGenerator.generateKey();
+
+
+
 			WorkerConfig workerConfig = new WorkerConfig (workerId, message.WorkConfig, CoordinatorId);
 
+			startNewWorker (workerConfig);
 
 			MasterActor.Tell (new NewWorkAckMessage(workerId, message.WorkConfigId));
 
@@ -68,6 +73,7 @@ namespace Worker
 
 					worker.Tell (new StopWorkerMessage());
 					Context.Stop (worker);
+
 					return;
 				}
 			}
@@ -80,9 +86,9 @@ namespace Worker
 				LocalFilesDirectory dir = new LocalFilesDirectory (workerConfig);
 				dir.removeDirectory ();
 
+				Console.WriteLine ("Restarting worker...");
 
-			} else {
-				Console.WriteLine ("actor does not exist");
+				startNewWorker (workerConfig);
 			}
 		}
 
