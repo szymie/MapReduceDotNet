@@ -75,7 +75,6 @@
     <Compile Include="Src\Validators\InputFileMetadataDtoValidator.cs" />
     <Compile Include="Src\Validators\BaseValidator.cs" />
     <Compile Include="Src\Services\Metadata\MetadataService.cs" />
-    <Compile Include="Src\Services\Metadata\MetadataDtoResponse.cs" />
     <Compile Include="Src\DTOs\Metadata\AssemblyMetadataDto.cs" />
     <Compile Include="Src\DTOs\Metadata\InputFileMetadataDto.cs" />
     <Compile Include="Src\Entities\Metadata\AssemblyMetadata.cs" />
@@ -89,6 +88,12 @@
     <Compile Include="Src\Validators\TaskDtoValidator.cs" />
     <Compile Include="Src\Entities\Entity.cs" />
     <Compile Include="Src\Entities\IOwnable.cs" />
+    <Compile Include="Src\DTOs\ResultsDto\ResultsDto.cs" />
+    <Compile Include="Src\DTOs\Metadata\MetadataDtoResponse.cs" />
+    <Compile Include="Src\DTOs\ResultsDto\ResultsDtoResponse.cs" />
+    <Compile Include="Src\Entities\Results\ResultMetadata.cs" />
+    <Compile Include="Src\Services\Results\ResultsService.cs" />
+    <Compile Include="Src\DTOs\ResultsDto\ResultDto.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Src\" />
@@ -103,6 +108,9 @@
     <Folder Include="Src\DTOs\Task\" />
     <Folder Include="Src\Services\Task\" />
     <Folder Include="Src\Entities\Task\" />
+    <Folder Include="Src\DTOs\ResultsDto\" />
+    <Folder Include="Src\Entities\Results\" />
+    <Folder Include="Src\Services\Results\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

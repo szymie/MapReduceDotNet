@@ -36,7 +36,7 @@ namespace EntryPoint
 			request.PopulateWith(entity);
 			request.Id = id;
 
-			//start processing
+			startTask(request);
 
 			return new HttpResult(request)
 			{
@@ -62,6 +62,11 @@ namespace EntryPoint
 					throw new HttpError(HttpStatusCode.BadRequest, "Input file does not exist or you are not its owner");
 				}
 			}
+		}
+
+		private void startTask(TaskDto request)
+		{
+			
 		}
 
 		public object Get(TaskDto request)
