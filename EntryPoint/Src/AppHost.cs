@@ -15,6 +15,8 @@ using ServiceStack.WebHost.Endpoints;
 using ServiceStack.ServiceInterface.Admin;
 using ServiceStack.Logging;
 using System.Data;
+using Akka.Configuration;
+using Akka.Actor;
 
 namespace EntryPoint
 {
@@ -114,7 +116,8 @@ namespace EntryPoint
 			container.RegisterValidators(typeof(InputFileMetadataDtoValidator).Assembly);
 			container.RegisterValidators(typeof(AssemblyMetadataDtoValidator).Assembly);
 			container.RegisterValidators(typeof(TaskDtoValidator).Assembly);
-			
+
+			configureActorSystem(container);
 
 			var config = new EndpointHostConfig();
 
@@ -127,6 +130,32 @@ namespace EntryPoint
 
 			SetConfig(config);
 			CreateMissingTables(container);
+		}
+
+		private void configureActorSystem(Container container)
+		{
+			var actorSystem = startActorSystem("EntryPointActorSystem");
+			var actor = actorSystem.ActorOf<EntryPointActor>("EntryPointActor");
+
+			container.Register(actor);
+		}
+
+		private ActorSystem startActorSystem(string name)
+		{
+			var config = ConfigurationFactory.ParseString(@"
+				akka {  
+					actor {
+						provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
+					}
+					remote {
+						helios.tcp {
+							port = 0
+						}
+					}
+				}
+			");
+
+			return ActorSystem.Create(name, config);
 		}
 
 

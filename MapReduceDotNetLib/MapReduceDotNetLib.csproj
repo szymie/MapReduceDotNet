@@ -49,17 +49,20 @@
     <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Config\WorkerConfig.cs" />
-    <Compile Include="src\AssemblyMetadata.cs" />
     <Compile Include="src\S3\S3ObjectMetadata.cs" />
+    <Compile Include="src\MasterEntryPointMessages\NewTaskMessage.cs" />
+    <Compile Include="src\AssemblyMetadata.cs" />
+    <Compile Include="src\MasterEntryPointMessages\TaskFinishedMessage.cs" />
+    <Compile Include="src\MasterEntryPointMessages\TaskFailureMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="messages\" />
     <Folder Include="src\" />
     <Compile Include="src\WorkerLogic\Worker.cs" />
     <Compile Include="src\MasterWorkerMessages\RegisterMapWorkerMessage.cs" />
     <Folder Include="src\S3\" />
     <Folder Include="src\Config\" />
+    <Folder Include="src\MasterEntryPointMessages\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

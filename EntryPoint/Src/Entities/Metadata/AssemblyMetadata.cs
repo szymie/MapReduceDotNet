@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ServiceStack.DataAnnotations;
+using MapReduceDotNetLib;
 
 namespace EntryPoint
 {

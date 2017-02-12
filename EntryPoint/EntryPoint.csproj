@@ -65,6 +65,27 @@
     <Reference Include="Mono.Security">
       <HintPath>..\packages\Npgsql.2.2.5\lib\net35\Mono.Security.dll</HintPath>
     </Reference>
+    <Reference Include="Google.ProtocolBuffers">
+      <HintPath>..\packages\Google.ProtocolBuffers.2.4.1.555\lib\net40\Google.ProtocolBuffers.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.ProtocolBuffers.Serialization">
+      <HintPath>..\packages\Google.ProtocolBuffers.2.4.1.555\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="Helios">
+      <HintPath>..\packages\Helios.2.1.2\lib\net45\Helios.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="Akka">
+      <HintPath>..\packages\Akka.1.1.3\lib\net45\Akka.dll</HintPath>
+    </Reference>
+    <Reference Include="Akka.Remote">
+      <HintPath>..\packages\Akka.Remote.1.1.3\lib\net45\Akka.Remote.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,12 +109,18 @@
     <Compile Include="Src\Validators\TaskDtoValidator.cs" />
     <Compile Include="Src\Entities\Entity.cs" />
     <Compile Include="Src\Entities\IOwnable.cs" />
-    <Compile Include="Src\DTOs\ResultsDto\ResultsDto.cs" />
+    <Compile Include="Src\DTOs\Results\ResultsDto.cs" />
     <Compile Include="Src\DTOs\Metadata\MetadataDtoResponse.cs" />
-    <Compile Include="Src\DTOs\ResultsDto\ResultsDtoResponse.cs" />
+    <Compile Include="Src\DTOs\Results\ResultsDtoResponse.cs" />
     <Compile Include="Src\Entities\Results\ResultMetadata.cs" />
     <Compile Include="Src\Services\Results\ResultsService.cs" />
-    <Compile Include="Src\DTOs\ResultsDto\ResultDto.cs" />
+    <Compile Include="Src\DTOs\Results\ResultDto.cs" />
+    <Compile Include="Src\Actors\EntryPointActor.cs" />
+    <Compile Include="Src\Messages\NewTaskRequestMessage.cs" />
+    <Compile Include="Src\Entities\Results\Failure.cs" />
+    <Compile Include="Src\DTOs\Status\StatusDto.cs" />
+    <Compile Include="Src\DTOs\Status\StatusDtoResponse.cs" />
+    <Compile Include="Src\Services\Status\StatusService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Src\" />
@@ -108,9 +135,13 @@
     <Folder Include="Src\DTOs\Task\" />
     <Folder Include="Src\Services\Task\" />
     <Folder Include="Src\Entities\Task\" />
-    <Folder Include="Src\DTOs\ResultsDto\" />
+    <Folder Include="Src\DTOs\Results\" />
     <Folder Include="Src\Entities\Results\" />
     <Folder Include="Src\Services\Results\" />
+    <Folder Include="Src\Actors\" />
+    <Folder Include="Src\Messages\" />
+    <Folder Include="Src\DTOs\Status\" />
+    <Folder Include="Src\Services\Status\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -7,12 +7,15 @@ using ServiceStack.Common;
 using ServiceStack.OrmLite;
 using MapReduceDotNetLib;
 using ServiceStack.ServiceInterface;
+using Akka.Actor;
 
 namespace EntryPoint
 {
 	[Authenticate]
 	public class TaskService : BaseService
 	{
+		public IActorRef EntryPointActor { get; set; }
+
 		public TaskService()
 		{
 			Db.CreateTableIfNotExists<Task>();
@@ -66,7 +69,18 @@ namespace EntryPoint
 
 		private void startTask(TaskDto request)
 		{
-			
+			var newTask = new NewTaskRequestMessage()
+			{
+				TaskId = request.Id.Value,
+				M = request.M,
+				R = request.R,
+				InputFileIds = request.InputFileIds,
+				Assembly = Db.Select<AssemblyMetadata>(e => e.Id == request.AssemblyId).FirstOrDefault(),
+				Username = this.GetSession().UserName,
+				UserId = GetCurrentAuthUserId()
+			};
+
+			EntryPointActor.Tell(request);
 		}
 
 		public object Get(TaskDto request)

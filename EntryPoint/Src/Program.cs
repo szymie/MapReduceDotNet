@@ -1,12 +1,18 @@
 ﻿using System;
-using MapReduceDotNetLib;
-using System.IO;
 
 namespace EntryPoint
 {
 	public class Program
 	{
 		public static void Main(string[] args)
+		{
+			var listeningOn = startEntryPoint(args);
+			Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
+			Console.WriteLine("Press <ENTER> key to exit...");
+			Console.ReadLine();
+		}
+
+		private static string startEntryPoint(string[] args)
 		{
 			ushort port = 8888;
 
@@ -18,12 +24,11 @@ namespace EntryPoint
 
 			var appHost = new AppHost();
 			appHost.Init();
-			string listeningOn = string.Format("http://*:{0}/", port);
+
+			var listeningOn = string.Format("http://*:{0}/", port);
 			appHost.Start(listeningOn);
 
-			Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
-			Console.WriteLine("Press <ENTER> key to exit...");
-			Console.ReadLine();
+			return listeningOn;
 		}
 	}
 }
