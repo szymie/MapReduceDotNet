@@ -10,6 +10,8 @@ namespace Worker
 {
 	public class MapActor : WorkerActor
 	{
+		private Map map{ get; set; }
+
 		public MapActor ()
 		{
 		}
@@ -17,7 +19,7 @@ namespace Worker
 		protected override void workProcessing(){
 			AssemblyMetadata assemblyMetaData = WorkerConfig.WorkConfig.AssemblyMetaData;
 
-			Map map = (Map) loadClientAssembly (assemblyMetaData.File, assemblyMetaData.Namespace, assemblyMetaData.MapClassName);
+			map = (Map) loadClientAssembly (assemblyMetaData.File, assemblyMetaData.Namespace, assemblyMetaData.MapClassName);
 
 			var filesToProcess = WorkerConfig.WorkConfig.FilesToProcess;
 			foreach (KeyValuePair<string, S3ObjectMetadata> entry in filesToProcess) {
@@ -27,12 +29,12 @@ namespace Worker
 				map.map(filename, lineReader);
 			}
 
-			Dictionary<string, S3ObjectMetadata> uploadedResult = uploadResult(map.createdFiles);
-			Coordinator.Tell(new MapWorkFinishedMessage(WorkerId, TaskId, uploadedResult));
 		}
 
-		private Dictionary<string, S3ObjectMetadata> uploadResult (Dictionary<string, string> createdFiles)
+		protected override void uploadResult ()
 		{
+			Dictionary<string, string> createdFiles = map.createdFiles;
+
 			Dictionary<string, S3ObjectMetadata> mapResult = new Dictionary<string, S3ObjectMetadata> ();
 
 			UniqueKeyGenerator keyGenerator = new UniqueKeyGenerator ();
@@ -50,7 +52,7 @@ namespace Worker
 				mapResult.Add (pair.Key, resultS3Object);
 			}
 
-			return mapResult;
+			Coordinator.Tell(new MapWorkFinishedMessage(WorkerId, TaskId, mapResult), self);
 		}
 	}
 }

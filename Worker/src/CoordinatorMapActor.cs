@@ -1,6 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 using MapReduceDotNetLib;
+using System.Collections.Generic;
 
 namespace Worker
 {
@@ -11,10 +12,22 @@ namespace Worker
 		}
 
 		public void Handle (MapWorkFinishedMessage message){
-			MasterActor.Tell (message);
+			
+
+			if (workers.ContainsKey (Sender)) {
+				workers.Remove (Sender);
+				MasterActor.Tell (message);
+			} else {
+				foreach (KeyValuePair<string, S3ObjectMetadata> pair in message.MapResult) {
+					pair.Value.remove ();
+				}
+			}
+
+
+			Context.Stop (Sender);
 		}
 
-		protected override IActorRef createWorkerActor (WorkConfig config, int workerId)
+		protected override IActorRef createWorkerActor (int workerId)
 		{
 			return Context.System.ActorOf<MapActor> ("mapWorker" + workerId);
 		}

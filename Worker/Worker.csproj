@@ -62,6 +62,7 @@
     <Compile Include="src\Config\WorkerConfig.cs" />
     <Compile Include="src\Messages\NewWorkerMessage.cs" />
     <Compile Include="src\Config\LocalFilesDirectory.cs" />
+    <Compile Include="src\Messages\StopWorkerMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

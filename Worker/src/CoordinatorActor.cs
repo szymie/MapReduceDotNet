@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Worker
 {
-	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>, IHandle<RegisterCoordinatorAckMessage>, IHandle<WorkerFailureMessage>
+	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>, IHandle<RegisterCoordinatorAckMessage>, IHandle<WorkerFailureMessage>, IHandle<AbortWorkMessage>
 	{
-		private Dictionary<int, IActorRef> workers = new Dictionary<int, IActorRef>();
+		protected Dictionary<IActorRef, WorkerConfig> workers = new Dictionary<IActorRef, WorkerConfig>();
 		private UniqueKeyGenerator keyGenerator = new UniqueKeyGenerator();
 		private int CoordinatorId{get;set;}
 		protected ActorSelection MasterActor{ get; set; }
@@ -32,12 +32,19 @@ namespace Worker
 		public void Handle (NewWorkMessage message)
 		{
 			int workerId = keyGenerator.generateKey();
-			IActorRef workerActor = createWorkerActor(message.WorkConfig, workerId);
+			WorkerConfig workerConfig = new WorkerConfig (workerId, message.WorkConfig, CoordinatorId);
 
-			workers.Add (workerId, workerActor);
-			Context.Watch (workerActor);
+
 			MasterActor.Tell (new NewWorkAckMessage(workerId, message.WorkConfigId));
-			workerActor.Tell(new NewWorkerMessage(new WorkerConfig(workerId, message.WorkConfig, CoordinatorId)));
+
+		}
+
+		private void startNewWorker(WorkerConfig workerConfig){
+			IActorRef workerActor = createWorkerActor(workerConfig.WorkerId);
+
+			workers.Add (workerActor, workerConfig);
+			Context.Watch (workerActor);
+			workerActor.Tell(new NewWorkerMessage(workerConfig));
 		}
 
 		public void Handle (RegisterCoordinatorAckMessage message)
@@ -47,16 +54,39 @@ namespace Worker
 
 		public void Handle (WorkerFailureMessage message){
 			MasterActor.Tell (message);
-			throw new NotImplementedException ();
+
+			workers.Remove (Sender);
+			Context.Stop (Sender);
+		}
+
+		public void Handle(AbortWorkMessage message){
+			foreach (KeyValuePair<IActorRef, WorkerConfig> pair in workers) {
+				if (pair.Value.WorkerId == message.WorkerId) {
+					IActorRef worker = pair.Key;
+
+					workers.Remove (worker);
+
+					worker.Tell (new StopWorkerMessage());
+					Context.Stop (worker);
+					return;
+				}
+			}
 		}
 
 		public void Handle (Terminated message)
 		{			
-			string disconnectedActorPath = message.ActorRef.Path.ToString();
-			throw new NotImplementedException ();
+			WorkerConfig workerConfig;
+			if (workers.TryGetValue (message.ActorRef, out workerConfig)) {
+				LocalFilesDirectory dir = new LocalFilesDirectory (workerConfig);
+				dir.removeDirectory ();
+
+
+			} else {
+				Console.WriteLine ("actor does not exist");
+			}
 		}
 
-		protected abstract IActorRef createWorkerActor(WorkConfig config, int workerId);
+		protected abstract IActorRef createWorkerActor(int workerId);
 	}
 }
 

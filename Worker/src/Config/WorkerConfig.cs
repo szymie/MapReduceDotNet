@@ -15,6 +15,7 @@ namespace Worker
 		public int WorkerId{ get; set;}
 		public WorkConfig WorkConfig{get;set;}
 		public int CoordinatorId{get;set;}
+		public bool Working{ get; set; }=true;
 	}
 }
 
