@@ -9,6 +9,7 @@ namespace EntryPoint
 	public class Metadata : Entity, IOwnable
 	{
 		public string Description { get; set; }
+		public string Name { get; set; }
 		public bool IsUploaded { get; set; }
 		public DateTime CreatedAt { get; set; }
 		public int OwnerId { get; set; }

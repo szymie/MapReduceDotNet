@@ -87,13 +87,13 @@ namespace EntryPoint
 
 		private HttpResult getById<Dto, Entity>(int id) where Dto : MetadataDto, new() where Entity : Metadata
 		{
-			var entity = Db.Select<Entity>(e => e.OwnerId == GetCurrentAuthUserId() && e.Id == id)
+			var dto = Db.Select<Entity>(e => e.OwnerId == GetCurrentAuthUserId() && e.Id == id)
 						   .Select(e => new Dto().PopulateWith(e))
 			               .FirstOrDefault();
 
-			if (entity != null)
+			if (dto != null)
 			{
-				return new HttpResult(entity, HttpStatusCode.OK);
+				return new HttpResult(dto, HttpStatusCode.OK);
 			}
 			else
 			{

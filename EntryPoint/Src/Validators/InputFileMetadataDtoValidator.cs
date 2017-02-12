@@ -11,6 +11,7 @@ namespace EntryPoint
 			RuleSet(ApplyTo.Post, () =>
 			{
 				RuleFor(r => r.Description).NotEmpty();
+				RuleFor(r => r.Name).NotEmpty();
 			});
 		}
 	}

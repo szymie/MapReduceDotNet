@@ -14,5 +14,6 @@ namespace EntryPoint
 	[Route("/api/resources/input-files/{Id}", "GET,DELETE")]
 	public class InputFileMetadataDto : MetadataDto, IReturn<MetadataDtoResponse<InputFileMetadata>>
 	{
+		public string Name { get; set; }
 	}
 }

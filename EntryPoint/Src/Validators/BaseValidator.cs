@@ -46,8 +46,6 @@ namespace EntryPoint
 
 		protected int getCurrentUserId()
 		{
-			var s = SessionFeature.GetOrCreateSession<AuthUserSession>(CacheClinet);
-
 			/*var sessionKey = SessionFeature.GetSessionKey();
 
 			Console.WriteLine("2");
