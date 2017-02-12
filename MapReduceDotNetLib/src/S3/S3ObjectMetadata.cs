@@ -38,92 +38,17 @@ namespace MapReduceDotNetLib
 
 		public void upStream(Stream stream)
 		{
-			transferUtility.Upload(stream, BucketName, Filename);
-		}
+			var tmpFileName = $"/tmp/{Filename}";
 
-		public void detailedUpStream(Stream stream)
-		{
-			List<UploadPartResponse> uploadResponses = new List<UploadPartResponse>();
-			List<UploadPartRequest> uploadRequests = new List<UploadPartRequest>();
-
-			InitiateMultipartUploadRequest initiateRequest = new InitiateMultipartUploadRequest
+			using(var outputFileStream = File.Create(tmpFileName))
 			{
-				BucketName = BucketName,
-				Key = Filename
-			};
-
-
-			InitiateMultipartUploadResponse initiateResponse = client.InitiateMultipartUpload(initiateRequest);
-
-			int partSize = 5 * (int) Math.Pow(2, 20); // 5 MB
-
-			try
-			{
-				int partNumber = 1, bytesCopied;
-
-				do
-				{
-					var memoryStream = new MemoryStream();
-
-					bytesCopied = copyStream(stream, memoryStream, partSize);
-
-					UploadPartRequest uploadRequest = new UploadPartRequest
-					{
-						BucketName = BucketName,
-						Key = Filename,
-						UploadId = initiateResponse.UploadId,
-						PartNumber = partNumber++,
-						PartSize = bytesCopied,
-						InputStream = memoryStream,
-						IsLastPart = false
-					};
-
-					Console.WriteLine("bytesCopied= " + bytesCopied);
-
-					uploadRequests.Add(uploadRequest);
-				} while(bytesCopied == partSize);
-
-				uploadRequests[uploadRequests.Count - 1].IsLastPart = true;
-
-				foreach (UploadPartRequest uploadRequest in uploadRequests)
-				{
-					Console.WriteLine(uploadRequest.IsLastPart);
-
-					uploadResponses.Add(client.UploadPart(uploadRequest));
-				}
-			
-				CompleteMultipartUploadRequest completeRequest = new CompleteMultipartUploadRequest
-				{
-					BucketName = BucketName,
-					Key = Filename,
-					UploadId = initiateResponse.UploadId,
-				};
-
-				Console.WriteLine("1-3");
-					
-				completeRequest.AddPartETags(uploadResponses);
-
-				Console.WriteLine("1-4");
-
-				CompleteMultipartUploadResponse completeUploadResponse =
-					client.CompleteMultipartUpload(completeRequest);
-
-				Console.WriteLine("1-5");
-
-			}
-			catch (Exception exception)
-			{
-				Console.WriteLine("Exception occurred: {0}", exception.Message);
-				AbortMultipartUploadRequest abortMPURequest = new AbortMultipartUploadRequest
-				{
-					BucketName = BucketName,
-					Key = Filename,
-					UploadId = initiateResponse.UploadId
-				};
-
-				client.AbortMultipartUpload(abortMPURequest);
+				stream.CopyTo(outputFileStream);		
 			}
 
+			var inputFileStream = File.OpenRead(tmpFileName);
+			transferUtility.Upload(inputFileStream, BucketName, Filename);
+
+			File.Delete(tmpFileName);
 		}
 
 		public static int copyStream(Stream input, Stream output, int bytes)

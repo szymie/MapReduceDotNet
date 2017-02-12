@@ -57,10 +57,10 @@ namespace EntryPoint
 				var objectKey = $"{GetCurrentAuthUserId()}-{type}-{entity.Id}";
 				var S3Object = new S3ObjectMetadata("map-reduce-dot-net", objectKey);
 
-				var memoryStream = new MemoryStream();
-				request.RequestStream.CopyTo(memoryStream);
+				//var memoryStream = new MemoryStream();
+				//request.RequestStream.CopyTo(memoryStream);
 
-				S3Object.upStream(memoryStream);
+				S3Object.upStream(request.RequestStream);
 
 				entity.IsUploaded = true;
 				Db.Save(entity);
