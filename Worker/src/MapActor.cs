@@ -11,15 +11,9 @@ namespace Worker
 	public class MapActor : WorkerActor
 	{
 		private Map map{ get; set; }
-
-		public MapActor ()
-		{
-		}
 			
-		protected override void workProcessing(){
-			AssemblyMetadata assemblyMetaData = WorkerConfig.WorkConfig.AssemblyMetaData;
-
-			map = (Map) loadClientAssembly (assemblyMetaData.File, assemblyMetaData.Namespace, assemblyMetaData.MapClassName);
+		protected override void workProcessing(){	
+			map = (Map) loadClientAssembly (AssemblyMetaData.MapClassName);
 
 			var filesToProcess = WorkerConfig.WorkConfig.FilesToProcess;
 			foreach (KeyValuePair<string, S3ObjectMetadata> entry in filesToProcess) {

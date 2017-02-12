@@ -62,6 +62,9 @@
     <Compile Include="src\WorkerLogic\Work.cs" />
     <Compile Include="src\MasterWorkerMessages\WorkerFailureMessage.cs" />
     <Compile Include="src\MasterWorkerMessages\AbortWorkMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\ReduceWorkFinishedMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\RegisterReduceCoordinatorMessage.cs" />
+    <Compile Include="src\WorkerLogic\Reduce.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

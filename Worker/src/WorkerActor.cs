@@ -17,8 +17,9 @@ namespace Worker
 		protected LocalFilesDirectory LocalFileUtils{ get; set; }
 		protected Thread WorkerThread{ get; set; }
 		protected IActorRef self{ get; set; }
-
+		protected AssemblyMetadata AssemblyMetaData{ get; set; }
 		protected Object uploadFilesLock{ get; set; } = new Object();
+		protected string ReduceKey{ get; set; }
 
 		public WorkerActor ()
 		{
@@ -31,6 +32,8 @@ namespace Worker
 			WorkerId = WorkerConfig.WorkerId;
 			Coordinator = Sender;
 			self = Self;
+			AssemblyMetaData = WorkerConfig.WorkConfig.AssemblyMetaData;
+			ReduceKey = WorkerConfig.WorkConfig.ReduceKey;
 
 			LocalFileUtils = new LocalFilesDirectory (WorkerConfig);
 
@@ -79,7 +82,10 @@ namespace Worker
 			}
 		}
 
-		protected Work loadClientAssembly(S3ObjectMetadata file, string @namespace, string className){
+		protected Work loadClientAssembly(string className){
+			S3ObjectMetadata file = AssemblyMetaData.File;
+			string @namespace = AssemblyMetaData.Namespace;
+
 			string asseblyFileName = LocalFileUtils.DirectoryPath + "assembly.dll";
 
 			using (Stream stream = file.downStream ()) {

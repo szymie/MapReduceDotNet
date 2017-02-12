@@ -13,6 +13,7 @@ namespace Worker
 		{
 			ActorSystem system = createActorSystem ("WorkerSystem");
 			system.ActorOf<CoordinatorMapActor>("CoordinatorMapActor");
+			system.ActorOf<CoordinatorReduceActor>("CoordinatorReduceActor");
 
 			Console.ReadLine ();
 		}

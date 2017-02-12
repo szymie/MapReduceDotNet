@@ -15,14 +15,11 @@ namespace Worker
 			if (workers.ContainsKey (Sender)) {
 				workers.Remove (Sender);
 				MasterActor.Tell (message);
-
-
 			} else {
 				foreach (KeyValuePair<string, S3ObjectMetadata> pair in message.MapResult) {
 					pair.Value.remove ();
 				}
 			}
-
 
 			Context.Stop (Sender);
 		}
