@@ -2,7 +2,7 @@
 using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.ServiceInterface;
-
+using ServiceStack.OrmLite;
 
 namespace EntryPoint
 {
@@ -13,8 +13,7 @@ namespace EntryPoint
 			var session = this.GetSession();
 
 			if(!session.IsAuthenticated)
-			{
-				return 0;
+			{				
 				throw new HttpError(HttpStatusCode.Unauthorized, "Not authorized");
 			}
 
@@ -26,6 +25,18 @@ namespace EntryPoint
 			}
 
 			return id;
+		}
+	
+		protected bool existsAndIsOwnedByCurrentUser<U>(int id) where U : Entity, IOwnable
+		{
+			Console.WriteLine(Db == null);
+
+			return Db.Select<U>(entity => entity.Id == id && entity.OwnerId == GetCurrentAuthUserId()).Count > 0;
+		}
+
+		protected bool exists<U>(int id) where U : Entity
+		{
+			return Db.Select<U>(entity => entity.Id == id).Count > 0;
 		}
 	}
 }

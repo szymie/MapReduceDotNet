@@ -6,9 +6,11 @@ using System.Linq;
 using ServiceStack.Common;
 using ServiceStack.OrmLite;
 using MapReduceDotNetLib;
+using ServiceStack.ServiceInterface;
 
 namespace EntryPoint
 {
+	[Authenticate]
 	public class TaskService : BaseService
 	{
 		public TaskService()
@@ -18,6 +20,7 @@ namespace EntryPoint
 
 		public object Post(TaskDto request)
 		{
+			validateNewTaskRequest(request);
 
 			var entity = new Task().PopulateWith(request);
 
@@ -29,6 +32,9 @@ namespace EntryPoint
 
 			request.PopulateWith(entity);
 			request.Id = id;
+			request.status = "in progress";
+
+			//start processing
 
 			return new HttpResult(request)
 			{
@@ -39,7 +45,21 @@ namespace EntryPoint
 				}
 			};
 		}
+
+		private void validateNewTaskRequest(TaskDto request)
+		{
+			if (!existsAndIsOwnedByCurrentUser<AssemblyMetadata>(request.AssemblyId))
+			{
+				throw new HttpError(HttpStatusCode.BadRequest, "Assembly does not exist or you are not its owner");
+			}
+
+			foreach (int inputFileId in request.InputFileIds)
+			{
+				if (!existsAndIsOwnedByCurrentUser<InputFileMetadata>(inputFileId))
+				{
+					throw new HttpError(HttpStatusCode.BadRequest, "Input file does not exist or you are not its owner");
+				}
+			}
+		}
 	}
-
-
 }

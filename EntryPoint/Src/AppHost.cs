@@ -14,6 +14,7 @@ using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
 using ServiceStack.ServiceInterface.Admin;
 using ServiceStack.Logging;
+using System.Data;
 
 namespace EntryPoint
 {
@@ -112,6 +113,8 @@ namespace EntryPoint
 			Plugins.Add(new ValidationFeature());
 			container.RegisterValidators(typeof(InputFileMetadataDtoValidator).Assembly);
 			container.RegisterValidators(typeof(AssemblyMetadataDtoValidator).Assembly);
+			container.RegisterValidators(typeof(TaskDtoValidator).Assembly);
+			
 
 			var config = new EndpointHostConfig();
 

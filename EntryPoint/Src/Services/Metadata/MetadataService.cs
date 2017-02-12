@@ -4,34 +4,37 @@ using ServiceStack.Common.Web;
 using System.Linq;
 using ServiceStack.Common;
 using ServiceStack.OrmLite;
+using ServiceStack.ServiceInterface;
+using MapReduceDotNetLib;
 
 namespace EntryPoint
 {
+	[Authenticate]
 	public class MetadataService : BaseService
 	{
 		private const string all = "0";
 
 		public MetadataService()
-		{
+		{			
 			Db.CreateTableIfNotExists<InputFileMetadata>();
 			Db.CreateTableIfNotExists<AssemblyMetadata>();
 		}
 
 		public object Post(InputFileMetadataDto request)
 		{
-			return saveMetadataDto(request, new InputFileMetadata().PopulateWith(request));
+			return saveNewMetadata(request, new InputFileMetadata().PopulateWith(request));
 		}
 
 		public object Post(AssemblyMetadataDto request)
 		{
-			return saveMetadataDto(request, new AssemblyMetadata().PopulateWith(request));
+			return saveNewMetadata(request, new AssemblyMetadata().PopulateWith(request));
 		}
 
-		private HttpResult saveMetadataDto(MetadataDto metadataDto, Metadata metadata)
+		private HttpResult saveNewMetadata(MetadataDto metadataDto, Metadata metadata)
 		{
 			metadata.IsUploaded = false;
 			metadata.CreatedAt = DateTime.Now;
-			//metadata.OwnerId = GetCurrentAuthUserId();
+			metadata.OwnerId = GetCurrentAuthUserId();
 
 			Db.Insert(metadata);
 			var id = (int) Db.GetLastInsertId();
@@ -101,22 +104,30 @@ namespace EntryPoint
 
 		public object Delete(InputFileMetadataDto request)
 		{
-			return deleteMetadata<InputFileMetadata>(request);
+			return deleteMetadata<InputFileMetadata>(request, "input");
 		}
 
 		public object Delete(AssemblyMetadataDto request)
 		{
-			return deleteMetadata<AssemblyMetadata>(request);
+			return deleteMetadata<AssemblyMetadata>(request, "assembly");
 		}
 
-		private HttpResult deleteMetadata<Entity>(MetadataDto dto) where Entity : Metadata, new()
+		private HttpResult deleteMetadata<Entity>(MetadataDto dto, string type) where Entity : Metadata, new()
 		{
 			var found = Db.Select<Entity>(e => e.OwnerId == GetCurrentAuthUserId() && e.Id == dto.Id);
 
+			//TODO - transaction?
 			if (found.Count != 0)
 			{
-				Db.DeleteById<Entity>(dto.Id); 
-				//TODO - delete from S3
+				var inProgressTasks = Db.Select<Task>(entity => entity.Status == "in progres");
+
+				if (found[0].CanDelete(inProgressTasks))
+				{
+					Db.DeleteById<Entity>(dto.Id);
+
+					var S3Object = new S3ObjectMetadata("map-reduce-dot-net", $"{GetCurrentAuthUserId()}-{type}-{dto.Id}");
+					S3Object.remove();
+				}
 			}
 
 			return new HttpResult { StatusCode = HttpStatusCode.NoContent };
