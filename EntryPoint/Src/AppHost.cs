@@ -131,7 +131,6 @@ namespace EntryPoint
 		{
 			var authRepository = (OrmLiteAuthRepository) container.Resolve<IUserAuthRepository>();
 			authRepository.CreateMissingTables();
-
 		}
 	}
 }

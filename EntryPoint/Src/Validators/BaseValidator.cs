@@ -6,7 +6,7 @@ using ServiceStack.OrmLite;
 using ServiceStack.ServiceInterface; 
 using ServiceStack.ServiceInterface.Auth; 
 
-namespace Server
+namespace EntryPoint
 {
 	public abstract class BaseValidator<T> : AbstractValidator<T>
 	{
@@ -32,6 +32,10 @@ namespace Server
 			return true;
 		}
 
+		protected bool exists<U>(int id) where U : Entity
+		{
+			return Db.Select<U>(entity => entity.Id == id).Count > 0;
+		}
 	}
 }
 

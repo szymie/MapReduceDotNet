@@ -4,7 +4,7 @@ using ServiceStack.ServiceInterface;
 
 namespace EntryPoint
 {
-	public class InputFileMetadataDtoValidator : AbstractValidator<InputFileMetadata>
+	public class InputFileMetadataDtoValidator : AbstractValidator<InputFileMetadataDto>
 	{
 		public InputFileMetadataDtoValidator()
 		{

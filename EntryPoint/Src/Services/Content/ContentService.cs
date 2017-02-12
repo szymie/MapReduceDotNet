@@ -23,14 +23,34 @@ namespace EntryPoint
 		{
 			if(request.Id == null)
 			{
-				var segments = base.Request.PathInfo.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-				request.Id = int.Parse(segments[3]);
+				populateWithId(request);
 			}
 
-			var entity = Db.Select<InputFileMetadata>(e => e.OwnerId == GetCurrentAuthUserId() && e.Id == request.Id)					
-						   .FirstOrDefault();
+			return put<InputFileMetadata>(request);
+		}
 
-			if(entity != null)
+		public object Put(AssemblyContentDto request)
+		{
+			if (request.Id == null)
+			{
+				populateWithId(request);
+			}
+
+			return put<AssemblyMetadata>(request);
+		}
+
+		private void populateWithId(ContentDto dto)
+		{
+			var segments = base.Request.PathInfo.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+			dto.Id = int.Parse(segments[3]);
+		}
+
+		private HttpResult put<Entity>(ContentDto request) where Entity : Metadata, new()
+		{
+			var entity = Db.Select<Entity>(e => e.OwnerId == GetCurrentAuthUserId() && e.Id == request.Id)
+							   .FirstOrDefault();
+
+			if (entity != null)
 			{
 				var objectKey = $"{GetCurrentAuthUserId()}-input-{entity.Id}";
 				var S3Object = new S3ObjectMetadata("map-reduce-dot-net", objectKey);

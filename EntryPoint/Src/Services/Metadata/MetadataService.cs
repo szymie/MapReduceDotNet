@@ -31,7 +31,7 @@ namespace EntryPoint
 		{
 			metadata.IsUploaded = false;
 			metadata.CreatedAt = DateTime.Now;
-			//newInputFileMetadata.OwnerId = GetCurrentAuthUserId();
+			//metadata.OwnerId = GetCurrentAuthUserId();
 
 			Db.Insert(metadata);
 			var id = (int) Db.GetLastInsertId();
@@ -53,11 +53,11 @@ namespace EntryPoint
 		{
 			if(request.Id != null)
 			{
-				return getMetadataById<InputFileMetadataDto, InputFileMetadata>(request.Id.Value);
+				return getById<InputFileMetadataDto, InputFileMetadata>(request.Id.Value);
 			}
 			else
 			{
-				return getMetadata<InputFileMetadataDto, InputFileMetadata>(request);
+				return getAll<InputFileMetadataDto, InputFileMetadata>(request);
 			}
 		}
 
@@ -65,15 +65,15 @@ namespace EntryPoint
 		{
 			if(request.Id != null)
 			{
-				return getMetadataById<AssemblyMetadataDto, AssemblyMetadata>(request.Id.Value);
+				return getById<AssemblyMetadataDto, AssemblyMetadata>(request.Id.Value);
 			}
 			else
 			{
-				return getMetadata<AssemblyMetadataDto, AssemblyMetadata>(request);
+				return getAll<AssemblyMetadataDto, AssemblyMetadata>(request);
 			}
 		}
 
-		private MetadataDtoResponse<Dto> getMetadata<Dto, Entity>(Dto dto) where Dto : MetadataDto, new() where Entity : Metadata
+		private MetadataDtoResponse<Dto> getAll<Dto, Entity>(Dto dto) where Dto : MetadataDto, new() where Entity : Metadata
 		{
 			var entities = Db.Select<Entity>(e => e.OwnerId == GetCurrentAuthUserId());
 			             
@@ -82,7 +82,7 @@ namespace EntryPoint
 			return new MetadataDtoResponse<Dto>(dtos);
 		}
 
-		private HttpResult getMetadataById<Dto, Entity>(int id) where Dto : MetadataDto, new() where Entity : Metadata
+		private HttpResult getById<Dto, Entity>(int id) where Dto : MetadataDto, new() where Entity : Metadata
 		{
 			var entity = Db.Select<Entity>(e => e.OwnerId == GetCurrentAuthUserId() && e.Id == id)
 						   .Select(e => new Dto().PopulateWith(e))
@@ -94,7 +94,7 @@ namespace EntryPoint
 			}
 			else
 			{
-				return new HttpResult(HttpStatusCode.NotFound); 
+				return new HttpResult(HttpStatusCode.NotFound);
 				//return HttpError.NotFound("Not found");
 			}
 		}

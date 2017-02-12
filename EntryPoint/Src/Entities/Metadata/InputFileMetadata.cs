@@ -3,10 +3,8 @@ using ServiceStack.DataAnnotations;
 
 namespace EntryPoint
 {
-	public class Metadata
+	public class Metadata : Entity
 	{
-		[AutoIncrement]
-		public int Id { get; set; }
 		public string Description { get; set; }
 		public bool IsUploaded { get; set; }
 		public DateTime CreatedAt { get; set; }

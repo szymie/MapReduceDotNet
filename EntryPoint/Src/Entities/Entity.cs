@@ -3,10 +3,9 @@ using ServiceStack.DataAnnotations;
 
 namespace EntryPoint
 {
-	public class InputFile
+	public class Entity
 	{
 		[AutoIncrement]
 		public int Id { get; set; }
-		public string Description { get; set; }
 	}
 }

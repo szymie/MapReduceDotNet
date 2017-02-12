@@ -69,14 +69,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\Services\BaseService.cs" />
-    <Compile Include="Src\Services\FileUpload.cs" />
-    <Compile Include="Src\Services\FileUpload\FileDto.cs" />
-    <Compile Include="Src\Services\FileUpload\FileDtoDerived.cs" />
-    <Compile Include="Src\Services\FileUpload\FileUploadService.cs" />
-    <Compile Include="Src\Services\FileUpload\FileServiceDerived.cs" />
     <Compile Include="Src\AppHost.cs" />
     <Compile Include="Src\Program.cs" />
-    <Compile Include="Src\Services\FileUpload\InputFile.cs" />
     <Compile Include="Src\Validators\AssemblyMetadataDtoValidator.cs" />
     <Compile Include="Src\Validators\InputFileMetadataDtoValidator.cs" />
     <Compile Include="Src\Validators\BaseValidator.cs" />
@@ -89,6 +83,11 @@
     <Compile Include="Src\DTOs\Content\InputFileContentDto.cs" />
     <Compile Include="Src\DTOs\Content\AssemblyContentDto.cs" />
     <Compile Include="Src\Services\Content\ContentService.cs" />
+    <Compile Include="Src\DTOs\Task\TaskDto.cs" />
+    <Compile Include="Src\Services\Task\TaskService.cs" />
+    <Compile Include="Src\Entities\Task\Task.cs" />
+    <Compile Include="Src\Validators\TaskDtoValidator.cs" />
+    <Compile Include="Src\Entities\Entity.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Src\" />
@@ -100,6 +99,9 @@
     <Folder Include="Src\Entities\Metadata\" />
     <Folder Include="Src\DTOs\Content\" />
     <Folder Include="Src\Services\Content\" />
+    <Folder Include="Src\DTOs\Task\" />
+    <Folder Include="Src\Services\Task\" />
+    <Folder Include="Src\Entities\Task\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
