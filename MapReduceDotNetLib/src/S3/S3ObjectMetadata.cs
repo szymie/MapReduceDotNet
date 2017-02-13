@@ -37,11 +37,16 @@ namespace MapReduceDotNetLib
 
 		public void upStream(Stream stream)
 		{
+			transferUtility.Upload(stream, BucketName, Filename);
+		}
+
+		public void upStreamWithLocalWrite(Stream stream)
+		{
 			var tmpFileName = $"/tmp/{Filename}.tmp";
 
-			using(var outputFileStream = File.Create(tmpFileName))
+			using (var outputFileStream = File.Create(tmpFileName))
 			{
-				stream.CopyTo(outputFileStream);		
+				stream.CopyTo(outputFileStream);
 			}
 
 			var inputFileStream = File.OpenRead(tmpFileName);
