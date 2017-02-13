@@ -6,15 +6,10 @@ namespace EntryPoint
 	{
 		public static void Main(string[] args)
 		{
-			var x = 2000;
-
-			Console.WriteLine(x / 3);
-
-
-			//var listeningOn = startEntryPoint(args);
-			//Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
-			//Console.WriteLine("Press <ENTER> key to exit...");
-			//Console.ReadLine();
+			var listeningOn = startEntryPoint(args);
+			Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
+			Console.WriteLine("Press <ENTER> key to exit...");
+			Console.ReadLine();
 		}
 
 		private static string startEntryPoint(string[] args)
