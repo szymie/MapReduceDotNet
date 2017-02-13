@@ -12,7 +12,6 @@ namespace EntryPoint
 	public class EntryPointActor : TypedActor,IHandle<NewTaskRequestMessage>, IHandle<TaskFinishedMessage>, IHandle<TaskFailureMessage>, IDisposable
 	{
 		private IDbConnection db;
-
 		public virtual IDbConnection Db
 		{
 			get
@@ -21,11 +20,13 @@ namespace EntryPoint
 			}
 		}
 
-		private NewTaskMessage newTask;
+		private NewTaskMessage NewTask { get; set; }
+		private ActorSelection MasterActor { get; set; }
 
 		public EntryPointActor()
 		{
 			Db.CreateTableIfNotExists<Failure>();
+			MasterActor = getMasterActorRef();
 		}
 
 		public void Handle(NewTaskRequestMessage message)
@@ -34,12 +35,27 @@ namespace EntryPoint
 			fillAssembly(message);
 			fillInputFiles(message);
 
-			//to master
+			MasterActor.Tell(NewTask);
+		}
+
+		private ActorSelection getMasterActorRef()
+		{
+			string masterAddress = Environment.GetEnvironmentVariable("MASTER_ADDRESS");
+
+			if (masterAddress == null)
+			{
+				masterAddress = "localhost:8081";
+				Console.WriteLine("No MASTER_ADDRESS found.");
+			}
+
+			Console.WriteLine("MASTER_ADDRESS {0}", masterAddress);
+
+			return Context.ActorSelection("akka.tcp://MasterSystem@" + masterAddress + "/user/MasterActor");
 		}
 
 		private void initNewTask(NewTaskRequestMessage message)
 		{
-			newTask = new NewTaskMessage()
+			NewTask = new NewTaskMessage()
 			{
 				M = message.M,
 				R = message.R,
@@ -51,7 +67,7 @@ namespace EntryPoint
 
 		private void fillAssembly(NewTaskRequestMessage message)
 		{
-			newTask.Assembly = new MapReduceDotNetLib.AssemblyMetadata()
+			NewTask.Assembly = new MapReduceDotNetLib.AssemblyMetadata()
 			{
 				Namespace = message.Assembly.Namespace,
 				MapClassName = message.Assembly.MapClassName,
@@ -64,7 +80,7 @@ namespace EntryPoint
 		{
 			foreach(int inputFileId in message.InputFileIds)
 			{
-				newTask.InputFiles.Add(new S3ObjectMetadata("map-reduce-dot-net", $"{message.UserId}-input-{inputFileId}"));
+				NewTask.InputFiles.Add(new S3ObjectMetadata("map-reduce-dot-net", $"{message.UserId}-input-{inputFileId}"));
 			}
 		}
 
