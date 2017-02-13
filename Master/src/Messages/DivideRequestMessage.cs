@@ -6,16 +6,18 @@ namespace Master
 {
 	public class DivideRequestMessage
 	{
-		public DivideRequestMessage(int m, Dictionary<string, S3ObjectMetadata> files, int taskId)
+		public DivideRequestMessage(int m, Dictionary<string, S3ObjectMetadata> files, int taskId, string username)
 		{
-			this.M = m;
-			this.Files = files;
-			this.TaskId = taskId;
+			M = m;
+			Files = files;
+			TaskId = taskId;
+			Username = username;
 		}
 
 		public int M {get;set;}
 		public Dictionary<string, S3ObjectMetadata> Files {get;set;}
 		public int TaskId {get;set;}
+		public string Username { get; set; }
 	}
 }
 
