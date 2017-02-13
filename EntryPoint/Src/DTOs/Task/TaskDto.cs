@@ -11,7 +11,7 @@ namespace EntryPoint
 		public int? Id { get; set; }
 		public string Status { get; set; }
 		public int AssemblyId { get; set; }
-		public IList<int> InputFileIds { get; set; }
+		public List<int> InputFileIds { get; set; }
 		public int M { get; set; }
 		public int R { get; set; }
 		public DateTime CreatedAt { get; set; }

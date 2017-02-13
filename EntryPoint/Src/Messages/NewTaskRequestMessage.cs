@@ -7,7 +7,7 @@ namespace EntryPoint
 	{
 		public int TaskId { get; set; }
 		public AssemblyMetadata Assembly { get; set; }
-		public IList<int> InputFileIds { get; set; }
+		public List<int> InputFileIds { get; set; }
 		public int M { get; set; }
 		public int R { get; set; }
 		public string Username { get; set; }

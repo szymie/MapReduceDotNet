@@ -61,7 +61,7 @@ namespace EntryPoint
 				R = message.R,
 				TaskId = message.TaskId,
 				Username = message.Username,
-				InputFiles = new List<S3ObjectMetadata>()
+				InputFiles = new Dictionary<string, S3ObjectMetadata>()
 			};
 		}
 
@@ -78,9 +78,12 @@ namespace EntryPoint
 
 		private void fillInputFiles(NewTaskRequestMessage message)
 		{
-			foreach(int inputFileId in message.InputFileIds)
+			var inputFiles = Db.Select<InputFileMetadata>(e => message.InputFileIds.Contains(e.Id));
+
+			foreach(var inputFile in inputFiles)
 			{
-				NewTask.InputFiles.Add(new S3ObjectMetadata("map-reduce-dot-net", $"{message.UserId}-input-{inputFileId}"));
+				NewTask.InputFiles.Add(inputFile.Name,
+					new S3ObjectMetadata("map-reduce-dot-net", $"{message.UserId}-input-{inputFile.Id}"));
 			}
 		}
 

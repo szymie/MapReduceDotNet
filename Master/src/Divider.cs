@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using MapReduceDotNetLib;
@@ -7,11 +8,11 @@ namespace Master
 {
 	public class Divider
 	{
-		public List<S3ObjectMetadata> Files { get; private set; }
+		public Dictionary<string, S3ObjectMetadata> Files { get; private set; }
 		public int M { get; private set; }
 		public int TaskId { get; private set; }
 
-		public Divider(List<S3ObjectMetadata> files, int m, int taskId)
+		public Divider(Dictionary<string, S3ObjectMetadata> files, int m, int taskId)
 		{
 			Files = files;
 			M = m;
@@ -26,7 +27,7 @@ namespace Master
 
 		private long sumFilesSize()
 		{
-			long totalSize = Files.Aggregate(0L, (acc, file) => acc + file.getSize());
+			long totalSize = Files.Values.Aggregate(0L, (acc, file) => acc + file.getSize());
 
 			long partSize = totalSize / M;
 

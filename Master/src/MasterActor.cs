@@ -42,7 +42,6 @@ namespace Master
 		public void Handle (NewTaskMessage message){
 			int taskId = taskKeyGenerator.generateKey ();
 			NewTaskData.Add (taskId, message);
-
 			fileDivider.Tell(new DivideRequestMessage (message.M, message.InputFiles, taskId));
 		}
 
