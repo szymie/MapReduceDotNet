@@ -68,8 +68,9 @@ namespace MapReduceDotNetLib
 
 		public Stream downStream()
 		{
-			GetObjectResponse response = requestObjectMetadata();
-			return response.ResponseStream;
+			//GetObjectResponse response = requestObjectMetadata();
+			//return response.ResponseStream;
+			return File.OpenRead(Filename);
 		}
 
 		private GetObjectResponse requestObjectMetadata()
@@ -85,8 +86,9 @@ namespace MapReduceDotNetLib
 
 		public long getSize()
 		{
-			GetObjectResponse response = requestObjectMetadata();
-			return response.ContentLength;
+			//GetObjectResponse response = requestObjectMetadata();
+			//return response.ContentLength;
+			return new FileInfo(Filename).Length;
 		}
 
 		public bool CustomRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

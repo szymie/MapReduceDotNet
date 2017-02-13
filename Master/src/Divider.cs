@@ -18,26 +18,31 @@ namespace Master
 		Dictionary<string, S3ObjectMetadata>.Enumerator inputFilesEnumerator;
 
 		StreamWriter fragmentWriter;
-		int currentFragmentSize;
+		long currentFragmentSize;
+		long maxFragmentSize;
 
-		public Divider(Dictionary<string, S3ObjectMetadata> inputFiles, int m, int taskId)
+		string currentFilename;
+
+		public Divider(Dictionary<string, S3ObjectMetadata> inputFiles, int m, int taskId, string username)
 		{
 			InputFiles = inputFiles;
 			M = m;
 			TaskId = taskId;
+			Username = username;
 
-			currentFragmentNumber = 0;
 			inputFilesEnumerator = InputFiles.GetEnumerator();
+			inputFilesEnumerator.MoveNext();
 		}
 
 		string getCurrentFragmentName()
 		{
-			return $"{Username}-{TaskId}-{inputFilesEnumerator.Current.Key}-{currentFragmentNumber}";
+			return $"{Username}-{TaskId}-{currentFilename}-{currentFragmentNumber}";
 		}
 
 		string getNextFragmentName()
 		{
 			currentFragmentNumber++;
+			inputFilesEnumerator.MoveNext();
 			return getCurrentFragmentName();
 		}
 
@@ -69,41 +74,55 @@ namespace Master
 
 		void closeCurrentFragmentWriter()
 		{
-			fragmentWriter.Close();
-			fragmentWriter = null;
+			if (fragmentWriter != null)
+			{
+				fragmentWriter.Close();
+				fragmentWriter = null;
+			}
+		}
+
+		void writeToCurrentFragment(string line)
+		{
+			getCurrentFragmentWriter().WriteLine(line);
+			currentFragmentSize += getStringByteSize(line);
+		}
+
+		bool shouldCloseFragment()
+		{
+			return currentFragmentSize >= maxFragmentSize; // && currentFragmentNumber != M;
 		}
 
 		public List<Dictionary<string, S3ObjectMetadata>> divide()
 		{
 			long totalSize = InputFiles.Values.Aggregate(0L, (acc, file) => acc + file.getSize());
+			maxFragmentSize = totalSize / M;
 
-			long maxFragmentSize = totalSize / M;
+			Console.WriteLine("totalSize= " + totalSize);
+			Console.WriteLine("maxFragmentSize= " + maxFragmentSize);
 
 			foreach (var pair in InputFiles)
 			{
-				var filename = pair.Key;
-				var file = pair.Value;
+				currentFilename = pair.Key;
+				currentFragmentNumber = 0;
 
-				var fileStreamReader = new StreamReader(file.downStream());
-
-				string line;
-
-				while ((line = fileStreamReader.ReadLine()) != null)
+				using (var fileStreamReader = new StreamReader(pair.Value.downStream()))
 				{
-					var fragmentWriter = getCurrentFragmentWriter();
+					string line;
 
-					fragmentWriter.WriteLine(line);
-					currentFragmentSize += getStringByteSize(line);
-
-					if (currentFragmentSize >= maxFragmentSize && currentFragmentNumber != M)
+					while ((line = fileStreamReader.ReadLine()) != null)
 					{
-						closeCurrentFragmentWriter();
-						//send to S3
+						writeToCurrentFragment(line);
+
+						if (shouldCloseFragment())
+						{
+							closeCurrentFragmentWriter();
+							//send to S3
+						}
 					}
 				}
-
-				fileStreamReader.Close();
 			}
+
+			closeCurrentFragmentWriter();
 
 			return null;
 		}

@@ -2,6 +2,7 @@
 using Akka.Actor;
 using Akka.Configuration;
 using MapReduceDotNetLib;
+using System.Collections.Generic;
 
 namespace Master
 {
@@ -11,7 +12,23 @@ namespace Master
 		{
 			ActorSystem system = getActorSystem ();
 
-			system.ActorOf<MasterActor>("MasterActor");
+			var master = system.ActorOf<MasterActor>("MasterActor");
+
+
+			var InputFiles = new Dictionary<string, S3ObjectMetadata>();
+
+			InputFiles.Add("x.txt", new S3ObjectMetadata("", "/tmp/x.txt"));
+			InputFiles.Add("y.txt", new S3ObjectMetadata("", "/tmp/y.txt"));
+
+			var newTask = new NewTaskMessage()
+			{
+				M = 3,
+				InputFiles = InputFiles,
+				TaskId = 1,
+				Username = "szymie"
+			};
+
+			master.Tell(newTask);
 
 			Console.ReadLine();
 		}

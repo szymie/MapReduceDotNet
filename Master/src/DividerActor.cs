@@ -10,10 +10,10 @@ namespace Master
 	{
 		public void Handle(DivideRequestMessage message)
 		{
-			var divider = new Divider(message.Files, message.M, message.TaskId);
+			var divider = new Divider(message.Files, message.M, message.TaskId, message.Username);
 			var result = divider.divide();
-			var response = new DivideResponseMessage(result, message.TaskId);
-			Sender.Tell(response);
+			//var response = new DivideResponseMessage(result, message.TaskId);
+			//Sender.Tell(response);
 		}
 	}
 }
