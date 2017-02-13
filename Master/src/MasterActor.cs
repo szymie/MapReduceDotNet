@@ -57,16 +57,16 @@ namespace Master
 					task.Id,
 					newTaskMessage.Username,
 					files,
-					newTaskMessage.Assembly,
-					""
+					newTaskMessage.Assembly
 				);
 
-				int orderedWorkConfig = coordinator.storeOrderedWork (workConfig);
-				NewWorkMessage newWorkMessage = new NewWorkMessage (orderedWorkConfig, workConfig);
+				int orderedWorkConfigId = coordinator.storeOrderedWork (workConfig);
+				NewWorkMessage newWorkMessage = new NewWorkMessage (orderedWorkConfigId, workConfig);
 				coordinator.CoordinatorActor.Tell (newWorkMessage);
 
-				if(task.MapCoordinators.ContainsKey(coordinator.Id)){
 
+				if(!task.MapCoordinators.ContainsKey(coordinator.CoordinatorActor)){
+					task.MapCoordinators.Add(coordinator.CoordinatorActor, coordinator);
 				}
 			}
 		}
@@ -74,13 +74,14 @@ namespace Master
 		public void Handle (NewWorkAckMessage message){
 			int orderedWorkId = message.OrderedWorkId;
 			Task task = tasks [message.TaskId];
-			Coordinator coordinator = task.getCoordinatorByActorRef (Sender);
+			Coordinator coordinator;
+			if (task.getCoordinatorByActorRef (Sender, out coordinator)) {
+				WorkConfig orderedWorkConfig = coordinator.OrderedWorks[orderedWorkId];
+				coordinator.OrderedWorks.Remove (orderedWorkId);
 
-			WorkConfig orderedWorkConfig = coordinator.OrderedWorks[orderedWorkId];
-			coordinator.OrderedWorks.Remove (orderedWorkId);
-
-			Work work = new Work (message.WorkerId, orderedWorkConfig);
-			coordinator.Works.Add (message.WorkerId, work);
+				Work work = new Work (message.WorkerId, orderedWorkConfig);
+				coordinator.Works.Add (message.WorkerId, work);
+			}
 		}
 
 		public void Handle (WorkerFailureMessage message)
@@ -90,13 +91,32 @@ namespace Master
 
 		public void Handle (MapWorkFinishedMessage message){
 			Task task = tasks [message.TaskId];
-			Coordinator coordinator = task.MapCoordinators [Sender];
+			Coordinator coordinator;
+			if (task.MapCoordinators.TryGetValue (Sender, out coordinator)) {
+				foreach(KeyValuePair<string, S3ObjectMetadata> pair in message.MapResult){
+					List<S3ObjectMetadata> keyFiles;
+					if (task.MapResult.TryGetValue (pair.Key, out keyFiles)) {
+						task.MapResult.Remove (pair.Key);
+						keyFiles.Add(pair.Value);
 
-			coordinator.Works.Remove (message.WorkerId);
-			coordinator.
+						//task.MapResult ();
+					}
+				}
+			
+				/*
+			foreach KeyValuePairPair message.MapResult
+				task.MapResult[pair.Key].Add(pair.Value);	*/		
 
+				coordinator.Works.Remove (message.WorkerId);
+				//coordinator.
 
-			throw new NotImplementedException ();
+				/*
+				if (coordinator.Works.Count == 0) {
+					//task.MapCoordinators.Remove
+				}*/
+
+				throw new NotImplementedException ();
+			}
 		}
 
 		public void Handle (ReduceWorkFinishedMessage message){

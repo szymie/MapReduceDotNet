@@ -5,6 +5,15 @@ namespace MapReduceDotNetLib
 {
 	public class WorkConfig
 	{
+		public WorkConfig (int taskId, string username, Dictionary<string, S3ObjectMetadata> filesToProcess, AssemblyMetadata assemblyMetaData)
+		{
+			this.TaskId = taskId;
+			this.Username = username;
+			this.FilesToProcess = filesToProcess;
+			this.AssemblyMetaData = assemblyMetaData;
+			this.ReduceKey = "";
+		}
+
 		public WorkConfig (int taskId, string username, Dictionary<string, S3ObjectMetadata> filesToProcess, AssemblyMetadata assemblyMetaData, string reduceKey)
 		{
 			this.TaskId = taskId;

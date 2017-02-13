@@ -18,13 +18,12 @@ namespace Master
 			this.Id = id;
 		}
 
-		public Coordinator getCoordinatorByActorRef(IActorRef coordinatorActor){
-			Coordinator coordinator;
-			if (!MapCoordinators.TryGetValue (coordinatorActor, out coordinator)) {
-				ReduceCoordinators [coordinatorActor];
+		public bool getCoordinatorByActorRef(IActorRef coordinatorActor, out Coordinator coordinator){
+			if (MapCoordinators.TryGetValue (coordinatorActor, out coordinator) || ReduceCoordinators.TryGetValue(coordinatorActor, out coordinator)) {
+				return true;
 			}
 
-			return coordinator;
+			return false;
 		}
 	}
 }
