@@ -14,13 +14,12 @@ namespace Worker
 
 			var filesToProcess = WorkerConfig.WorkConfig.FilesToProcess;
 			foreach (KeyValuePair<string, List<S3ObjectMetadata>> entry in filesToProcess) {
-				foreach(S3ObjectMetadata file in entry.Value){
-					using (Stream fileStream = file.downStream ()) {
-						LineReader lineReader = new LineReader (fileStream);
+				LineReader lineReader = new LineReader (entry.Value);
+				Reduce.setKey (entry.Key);
 
-						Reduce.reduce (entry.Key, lineReader);
-					}
-				}
+				Reduce.reduce (entry.Key, lineReader);
+
+				lineReader.dispose ();
 			}
 		}
 
