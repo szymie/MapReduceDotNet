@@ -88,12 +88,12 @@ namespace EntryPoint
 		{
 			changeTaskStatus(message.TaskId, "finished");
 
-			foreach(KeyValuePair<string, S3ObjectMetadata> result in message.reduceResult)
+			foreach(Tuple<S3ObjectMetadata, List<string>> result in message.reduceResult)
 			{
 				var resultMetadata = new ResultMetadata()
 				{
-					Key = result.Key,
-					Name = result.Value.Filename,
+					Keys = result.Item2,
+					Name = result.Item1.Filename,
 					TaskId = message.TaskId
 				};
 

@@ -3,7 +3,6 @@ using System.IO;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System.Net;
@@ -69,15 +68,25 @@ namespace MapReduceDotNetLib
 
 		public Stream downStream()
 		{
+			GetObjectResponse response = requestObjectMetadata();
+			return response.ResponseStream;
+		}
+
+		private GetObjectResponse requestObjectMetadata()
+		{
 			GetObjectRequest request = new GetObjectRequest
 			{
 				BucketName = BucketName,
 				Key = Filename
 			};
 
-			GetObjectResponse response = client.GetObject(request);
+			return client.GetObject(request);
+		}
 
-			return response.ResponseStream;
+		public long getSize()
+		{
+			GetObjectResponse response = requestObjectMetadata();
+			return response.ContentLength;
 		}
 
 		public bool CustomRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

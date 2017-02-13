@@ -6,6 +6,6 @@ namespace MapReduceDotNetLib
 	public class TaskFinishedMessage
 	{
 		public int TaskId { get; set; }
-		public Dictionary<string, S3ObjectMetadata> reduceResult;
+		public List<Tuple<S3ObjectMetadata, List<string>>> reduceResult { get; set; }
 	}
 }

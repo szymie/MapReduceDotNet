@@ -6,8 +6,8 @@ namespace MapReduceDotNetLib
 {
 	public class NewTaskMessage
 	{
-		public NewTaskMessage(){
-
+		public NewTaskMessage()
+		{
 		}
 
 		public NewTaskMessage (List<S3ObjectMetadata> inputFiles, AssemblyMetadata assembly, int m, int r, int taskId, string username)

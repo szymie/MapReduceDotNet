@@ -60,6 +60,8 @@
     <Compile Include="src\Work.cs" />
     <Compile Include="src\Messages\DivideResponseMessage.cs" />
     <Compile Include="src\Messages\DivideRequestMessage.cs" />
+    <Compile Include="src\DividerActor.cs" />
+    <Compile Include="src\Divider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
