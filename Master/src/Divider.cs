@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using MapReduceDotNetLib;
+using System.Text;
 
 namespace Master
 {
@@ -76,7 +77,7 @@ namespace Master
 		{
 			long totalSize = InputFiles.Values.Aggregate(0L, (acc, file) => acc + file.getSize());
 
-			long partSize = totalSize / M;
+			long maxFragmentSize = totalSize / M;
 
 			foreach (var pair in InputFiles)
 			{
@@ -92,27 +93,25 @@ namespace Master
 					var fragmentWriter = getCurrentFragmentWriter();
 
 					fragmentWriter.WriteLine(line);
-					currentFragmentSize += 
+					currentFragmentSize += getStringByteSize(line);
 
-
+					if (currentFragmentSize >= maxFragmentSize && currentFragmentNumber != M)
+					{
+						closeCurrentFragmentWriter();
+						//send to S3
+					}
 				}
 
+				fileStreamReader.Close();
 			}
-
-
-
-
 
 			return null;
 		}
 
 		int getStringByteSize(string value)
 		{
-			return System.Text.ASCIIEncoding.Unicode.GetByteCount(value);
+			return ASCIIEncoding.Unicode.GetByteCount(value);
 		}
-
-
-
 	
 	}
 }
