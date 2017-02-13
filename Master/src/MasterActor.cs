@@ -40,10 +40,9 @@ namespace Master
 		}
 
 		public void Handle (NewTaskMessage message){
-			int taskId = taskKeyGenerator.generateKey ();
-			NewTaskData.Add (taskId, message);
 
-			Console.WriteLine("jestem tu");
+			int taskId = taskKeyGenerator.generateKey();
+			NewTaskData.Add(taskId, message);
 
 			if (fileDivider == null)
 			{

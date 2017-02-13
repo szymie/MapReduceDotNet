@@ -23,6 +23,8 @@ namespace Master
 
 		string currentFilename;
 
+
+
 		public Divider(Dictionary<string, S3ObjectMetadata> inputFiles, int m, int taskId, string username)
 		{
 			InputFiles = inputFiles;
@@ -30,6 +32,7 @@ namespace Master
 			TaskId = taskId;
 			Username = username;
 
+			currentFragmentNumber = 0;
 			inputFilesEnumerator = InputFiles.GetEnumerator();
 			inputFilesEnumerator.MoveNext();
 		}
@@ -89,7 +92,7 @@ namespace Master
 
 		bool shouldCloseFragment()
 		{
-			return currentFragmentSize >= maxFragmentSize; // && currentFragmentNumber != M;
+			return currentFragmentSize >= maxFragmentSize && currentFragmentNumber < M;
 		}
 
 		public List<Dictionary<string, S3ObjectMetadata>> divide()
@@ -103,7 +106,7 @@ namespace Master
 			foreach (var pair in InputFiles)
 			{
 				currentFilename = pair.Key;
-				currentFragmentNumber = 0;
+				//currentFragmentNumber = 0;
 
 				using (var fileStreamReader = new StreamReader(pair.Value.downStream()))
 				{
