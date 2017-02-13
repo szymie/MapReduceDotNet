@@ -13,6 +13,7 @@ namespace Master
 		public int M { get; private set; }
 		public int TaskId { get; private set; }
 		public string Username { get; private set; }
+		public List<Dictionary<string, S3ObjectMetadata>> Response { get; private set; }
 
 		int currentFragmentNumber;
 		Dictionary<string, S3ObjectMetadata>.Enumerator inputFilesEnumerator;
@@ -35,6 +36,8 @@ namespace Master
 			currentFragmentNumber = 0;
 			inputFilesEnumerator = InputFiles.GetEnumerator();
 			inputFilesEnumerator.MoveNext();
+
+			Response = new List<Dictionary<string, S3ObjectMetadata>>();
 		}
 
 		string getCurrentFragmentName()
@@ -92,21 +95,19 @@ namespace Master
 
 		bool shouldCloseFragment()
 		{
-			return currentFragmentSize >= maxFragmentSize && currentFragmentNumber < M;
+			return currentFragmentSize >= maxFragmentSize && Response.Count < M - 1;
 		}
 
 		public List<Dictionary<string, S3ObjectMetadata>> divide()
 		{
+			var entry = getNewEntry();
+
 			long totalSize = InputFiles.Values.Aggregate(0L, (acc, file) => acc + file.getSize());
 			maxFragmentSize = totalSize / M;
-
-			Console.WriteLine("totalSize= " + totalSize);
-			Console.WriteLine("maxFragmentSize= " + maxFragmentSize);
 
 			foreach (var pair in InputFiles)
 			{
 				currentFilename = pair.Key;
-				//currentFragmentNumber = 0;
 
 				using (var fileStreamReader = new StreamReader(pair.Value.downStream()))
 				{
@@ -119,15 +120,26 @@ namespace Master
 						if (shouldCloseFragment())
 						{
 							closeCurrentFragmentWriter();
-							//send to S3
+
+							entry.Add(currentFilename, new S3ObjectMetadata("", getCurrentFragmentName()));
+							Response.Add(entry);
+							entry = getNewEntry();
 						}
 					}
+
+					closeCurrentFragmentWriter();
+					entry.Add(currentFilename, new S3ObjectMetadata("", getCurrentFragmentName()));
 				}
 			}
 
-			closeCurrentFragmentWriter();
+			Response.Add(entry);
 
-			return null;
+			return Response;
+		}
+
+		Dictionary<string, S3ObjectMetadata> getNewEntry()
+		{
+			return new Dictionary<string, S3ObjectMetadata>();
 		}
 
 		int getStringByteSize(string value)

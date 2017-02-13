@@ -17,12 +17,14 @@ namespace Master
 
 			var InputFiles = new Dictionary<string, S3ObjectMetadata>();
 
-			InputFiles.Add("x.txt", new S3ObjectMetadata("", "/tmp/x.txt"));
-			InputFiles.Add("y.txt", new S3ObjectMetadata("", "/tmp/y.txt"));
+			InputFiles.Add("a.txt", new S3ObjectMetadata("", "/tmp/a.txt"));
+			InputFiles.Add("b.txt", new S3ObjectMetadata("", "/tmp/b.txt"));
+			InputFiles.Add("c.txt", new S3ObjectMetadata("", "/tmp/b.txt"));
+			InputFiles.Add("d.txt", new S3ObjectMetadata("", "/tmp/b.txt"));
 
 			var newTask = new NewTaskMessage()
 			{
-				M = 3,
+				M = 6,
 				InputFiles = InputFiles,
 				TaskId = 1,
 				Username = "szymie"
