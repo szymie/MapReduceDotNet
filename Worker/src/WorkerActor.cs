@@ -33,7 +33,6 @@ namespace Worker
 			Coordinator = Sender;
 			self = Self;
 			AssemblyMetaData = WorkerConfig.WorkConfig.AssemblyMetaData;
-			ReduceKey = WorkerConfig.WorkConfig.ReduceKey;
 
 			LocalFileUtils = new LocalFilesDirectory (WorkerConfig);
 

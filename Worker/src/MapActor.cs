@@ -1,10 +1,7 @@
 ﻿using System;
 using MapReduceDotNetLib;
-using System.Reflection;
-using System.Threading;
 using System.Collections.Generic;
 using System.IO;
-using Akka.Actor;
 
 namespace Worker
 {
@@ -16,13 +13,13 @@ namespace Worker
 			map = (Map) loadClientAssembly (AssemblyMetaData.MapClassName);
 
 			var filesToProcess = WorkerConfig.WorkConfig.FilesToProcess;
-			foreach (KeyValuePair<string, S3ObjectMetadata> entry in filesToProcess) {
-				string filename = entry.Key;
+			foreach (KeyValuePair<string, List<S3ObjectMetadata>> entry in filesToProcess) {
+				foreach(S3ObjectMetadata file in entry.Value){
+					using (Stream fileStream = file.downStream ()) {
+						LineReader lineReader = new LineReader (fileStream);
 
-				using (Stream fileStream = entry.Value.downStream ()) {
-					LineReader lineReader = new LineReader (fileStream);
-
-					map.map (filename, lineReader);
+						map.map (entry.Key, lineReader);
+					}
 				}
 			}
 

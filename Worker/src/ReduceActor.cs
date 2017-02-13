@@ -2,25 +2,24 @@
 using MapReduceDotNetLib;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 
 namespace Worker
 {
 	public class ReduceActor : WorkerActor
 	{
 		private Reduce Reduce{ get; set; }
-		private string UserKey{ get; set; }
 
-		protected override void workProcessing ()
-		{
+		protected override void workProcessing (){
 			Reduce = (Reduce) loadClientAssembly (AssemblyMetaData.ReduceClassName);
 
 			var filesToProcess = WorkerConfig.WorkConfig.FilesToProcess;
-			foreach (KeyValuePair<string, S3ObjectMetadata> entry in filesToProcess) {
-				using (Stream fileStream = entry.Value.downStream ()) {
-					LineReader lineReader = new LineReader (fileStream);
+			foreach (KeyValuePair<string, List<S3ObjectMetadata>> entry in filesToProcess) {
+				foreach(S3ObjectMetadata file in entry.Value){
+					using (Stream fileStream = file.downStream ()) {
+						LineReader lineReader = new LineReader (fileStream);
 
-					Reduce.reduce (UserKey, lineReader);
+						Reduce.reduce (entry.Key, lineReader);
+					}
 				}
 			}
 		}
@@ -36,9 +35,7 @@ namespace Worker
 
 			resultS3Object.upStream (File.Open(Reduce.UserCreatedFile, FileMode.Open));
 
-			new ReduceWorkFinishedMessage (WorkerId, TaskId, UserKey, resultS3Object);
-
-			Coordinator.Tell(new ReduceWorkFinishedMessage(WorkerId, TaskId, ReduceKey, resultS3Object), self);
+			Coordinator.Tell(new ReduceWorkFinishedMessage (WorkerId, TaskId, Reduce.EmittedKeys, resultS3Object), self);
 		}
 	}
 }

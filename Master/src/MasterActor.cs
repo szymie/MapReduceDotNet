@@ -51,12 +51,23 @@ namespace Master
 			NewTaskMessage newTaskMessage = NewTaskData [message.TaskId];
 
 			foreach(Dictionary<string, S3ObjectMetadata> files in message.Files){
+				Dictionary<string, List<S3ObjectMetadata>> workConfigMap = new Dictionary<string, List<S3ObjectMetadata>> ();
+
+				foreach(KeyValuePair<string, S3ObjectMetadata> pair in files){
+					List<S3ObjectMetadata> mapFileList = new List<S3ObjectMetadata> ();
+					mapFileList.Add (pair.Value);
+
+					workConfigMap.Add (pair.Key, mapFileList);
+				}
+
 				Coordinator coordinator = getNextMapCoordinator ();
+
+
 
 				WorkConfig workConfig = new WorkConfig (
 					task.Id,
 					newTaskMessage.Username,
-					files,
+					workConfigMap,
 					newTaskMessage.Assembly
 				);
 
