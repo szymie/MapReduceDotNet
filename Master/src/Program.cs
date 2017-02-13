@@ -2,6 +2,8 @@
 using Akka.Actor;
 using Akka.Configuration;
 using MapReduceDotNetLib;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace Master
 {
@@ -11,7 +13,20 @@ namespace Master
 		{
 			ActorSystem system = getActorSystem ();
 
-			system.ActorOf<MasterActor>("MasterActor");
+			var master = system.ActorOf<MasterActor>("MasterActor");
+
+			Thread.Sleep (2000);
+
+			List<S3ObjectMetadata> files = new List<S3ObjectMetadata> (){
+				new S3ObjectMetadata("testBucket", "testData1"),
+				new S3ObjectMetadata("testBucket", "testData2")
+			};
+
+			string assemblyRoot = "/home/gemboj/Polibuda/sem2/piksr/";
+			AssemblyMetadata assemblyMetadata = new AssemblyMetadata ("ClientLib", "MyMapper", "MyReduce", new S3ObjectMetadata("testBucket", assemblyRoot + "MapReduceDotNet/ClientLib/bin/Debug/ClientLib.dll"));
+			master.Tell (new NewTaskMessage(
+				files, assemblyMetadata, 3, 3, 0, "username"				
+			));
 
 			Console.ReadLine();
 		}
