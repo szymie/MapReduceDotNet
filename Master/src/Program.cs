@@ -3,8 +3,8 @@ using Akka.Actor;
 using Akka.Configuration;
 using MapReduceDotNetLib;
 using System.Collections.Generic;
-
 using System.Text;
+using System.Threading;
 
 namespace Master
 {
@@ -13,7 +13,23 @@ namespace Master
 		public static void Main (string[] args)
 		{
 			ActorSystem system = getActorSystem ();
-			system.ActorOf<MasterActor>("MasterActor");
+
+			var master = system.ActorOf<MasterActor>("MasterActor");
+
+			Thread.Sleep (2000);
+
+			Dictionary<string, S3ObjectMetadata> files = new Dictionary<string, S3ObjectMetadata> (){
+				{"testData1", new S3ObjectMetadata("testBucket", "testData1")},
+				{"testData2", new S3ObjectMetadata("testBucket", "testData2")}
+			};
+
+			string assemblyRoot = "/home/gemboj/Polibuda/sem2/piksr/";
+			AssemblyMetadata assemblyMetadata = new AssemblyMetadata ("ClientLib", "MyMapper", "MyReduce", new S3ObjectMetadata("testBucket", assemblyRoot + "MapReduceDotNet/ClientLib/bin/Debug/ClientLib.dll"));
+			master.Tell (new NewTaskMessage(
+				files, assemblyMetadata, 3, 3, 0, "username"				
+			));
+
+			Console.ReadLine();
 		}
 
 		private static ActorSystem getActorSystem(){

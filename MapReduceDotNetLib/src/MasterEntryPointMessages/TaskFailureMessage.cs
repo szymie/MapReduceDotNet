@@ -6,5 +6,15 @@ namespace MapReduceDotNetLib
 	{
 		public int TaskId { get; set; }
 		public string Message { get; set; }
+
+		public TaskFailureMessage (){
+			
+		}
+
+		public TaskFailureMessage (int taskId, string message)
+		{
+			this.TaskId = taskId;
+			this.Message = message;
+		}
 	}
 }

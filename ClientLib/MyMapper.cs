@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace ClientLib
 {
-	public class MyWorker : Map
+	public class MyMapper : Map
 	{					
 		public int Counter{ get; set; } = 0;
 
@@ -12,8 +12,7 @@ namespace ClientLib
 		{
 			String line;
 			while((line = lineReader.readLine()) != null){
-				emit ("key:"+Counter%2, line + "; value:" + Counter);
-				Counter += 1;
+				emit (line, "-");
 			}
 		}
 	}
