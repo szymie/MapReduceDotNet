@@ -24,7 +24,7 @@ namespace MapReduceDotNetLib
 
 		public void remove()
 		{
-			File.Delete ("/tmp/" + Filename);
+			File.Delete ("/tmp/s3/" + Filename);
 
 
 			//client.DeleteObject(deleteObjectRequest);
@@ -33,7 +33,7 @@ namespace MapReduceDotNetLib
 		public void upStream(Stream stream)
 		{
 			using (stream) {
-				using (FileStream fileStream = File.Open ("/tmp/" + Filename, FileMode.Create)) {
+				using (FileStream fileStream = File.Open ("/tmp/s3/" + Filename, FileMode.Create)) {
 					stream.CopyTo (fileStream);
 				}
 			}
@@ -43,13 +43,13 @@ namespace MapReduceDotNetLib
 		public Stream downStream()
 		{
 			
-			return File.OpenRead ("/tmp/" + Filename);
+			return File.OpenRead ("/tmp/s3/" + Filename);
 			//throw new NotImplementedException();
 		}
 
 		public long getSize()
 		{
-			return new FileInfo(Filename).Length;
+			return new FileInfo("/tmp/s3/" + Filename).Length;
 		}
 	}
 }
