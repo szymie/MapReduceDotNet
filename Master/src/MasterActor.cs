@@ -7,149 +7,91 @@ using System.IO;
 namespace Master
 {
 	public class MasterActor : TypedActor, IHandle<RegisterMapCoordinatorMessage>, IHandle<NewWorkAckMessage>, IHandle<Terminated>, IHandle<MapWorkFinishedMessage>, IHandle<WorkerFailureMessage>,
-	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>
+	IHandle<RegisterReduceCoordinatorMessage>
 	{
-		private List<Coordinator> validMapCoordinator = new List<Coordinator>();
-		private List<Coordinator> validReduceCoordinator = new List<Coordinator>();
 
-		private int mapCoordinatorsRoundRobinIndex = 0;
-		private int reduceCoordinatorsRoundRobinIndex = 0;
+		public void Handle (RegisterMapCoordinatorMessage message)
+		{
+			Console.WriteLine("new map register ");
+			S3ObjectMetadata testData1 = new S3ObjectMetadata ("testBucket", "/tmp/testData1");
+			S3ObjectMetadata testData2 = new S3ObjectMetadata ("testBucket", "/tmp/testData2");
+			AssemblyMetadata assemblyMetadata = new AssemblyMetadata ("ClientLib", "MyMapper", "MyReduce", new S3ObjectMetadata("testBucket", "/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/ClientLib/bin/Debug/ClientLib.dll"));
 
-		private Dictionary<int, Task> tasks = new Dictionary<int, Task> ();
-		private Dictionary<int, NewTaskMessage> NewTaskData = new Dictionary<int, NewTaskMessage> ();
 
-		private UniqueKeyGenerator coordinatorKeyGenerator = new UniqueKeyGenerator();
-		private UniqueKeyGenerator taskKeyGenerator = new UniqueKeyGenerator();
+			Dictionary<string, List<S3ObjectMetadata>> filesToProcess1 = new Dictionary<string, List<S3ObjectMetadata>> ();
+			filesToProcess1.Add ("testData1", new List<S3ObjectMetadata>(){testData1});
 
-		private IActorRef fileDivider;
+			Dictionary<string, List<S3ObjectMetadata>> filesToProcess2 = new Dictionary<string, List<S3ObjectMetadata>> ();
+			filesToProcess2.Add ("testData2", new List<S3ObjectMetadata>(){testData2});
 
-		public void Handle (RegisterMapCoordinatorMessage message){
-			int coordinatorId = coordinatorKeyGenerator.generateKey ();
-			Coordinator coordinator = new Coordinator (coordinatorId, Sender);
 
-			validMapCoordinator.Add (coordinator);
-			Sender.Tell (new RegisterCoordinatorAckMessage(coordinatorId));
+			Sender.Tell (new RegisterCoordinatorAckMessage(0));
+			//Sender.Tell (new NewWorkMessage(0, new WorkConfig(0, "mapUsername", filesToProcess1, assemblyMetadata)));
+			//Sender.Tell (new NewWorkMessage(1, new WorkConfig(0, "mapUsername", filesToProcess2, assemblyMetadata)));
 		}
 
 		public void Handle (RegisterReduceCoordinatorMessage message){
-			int coordinatorId = coordinatorKeyGenerator.generateKey ();
-			Coordinator coordinator = new Coordinator (coordinatorId, Sender);
-
-			validReduceCoordinator.Add (coordinator);
-			Sender.Tell (new RegisterCoordinatorAckMessage(coordinatorId));
-		}
-
-		public void Handle (NewTaskMessage message){
-			int taskId = taskKeyGenerator.generateKey ();
-			NewTaskData.Add (taskId, message);
-
-			fileDivider.Tell(new DivideRequestMessage (message.M, message.InputFiles, taskId));
-		}
-
-		public void Handle(DivideResponseMessage message){
-			Task task = new Task (message.TaskId);
-			NewTaskMessage newTaskMessage = NewTaskData [message.TaskId];
-
-			foreach(Dictionary<string, S3ObjectMetadata> files in message.Files){
-				Dictionary<string, List<S3ObjectMetadata>> workConfigMap = new Dictionary<string, List<S3ObjectMetadata>> ();
-
-				foreach(KeyValuePair<string, S3ObjectMetadata> pair in files){
-					List<S3ObjectMetadata> mapFileList = new List<S3ObjectMetadata> ();
-					mapFileList.Add (pair.Value);
-
-					workConfigMap.Add (pair.Key, mapFileList);
-				}
-
-				Coordinator coordinator = getNextMapCoordinator ();
+			Console.WriteLine("new reduce register ");
+			S3ObjectMetadata asdf1 = new S3ObjectMetadata ("testBucket", "/tmp/mapUsername-0-0-1-1");
+			S3ObjectMetadata qwer1 = new S3ObjectMetadata ("testBucket", "/tmp/mapUsername-0-0-1-2");
+			S3ObjectMetadata notaword1 = new S3ObjectMetadata ("testBucket", "/tmp/mapUsername-0-0-1-3");
+			S3ObjectMetadata otherword1 = new S3ObjectMetadata ("testBucket", "/tmp/mapUsername-0-0-1-4");
+			S3ObjectMetadata asdf2 = new S3ObjectMetadata ("testBucket", "/tmp/mapUsername-0-0-2-1");
+			S3ObjectMetadata qwer2 = new S3ObjectMetadata ("testBucket", "/tmp/mapUsername-0-0-2-2");
+			AssemblyMetadata assemblyMetadata = new AssemblyMetadata ("ClientLib", "MyWorker", "MyReduce", new S3ObjectMetadata("testBucket", "/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/ClientLib/bin/Debug/ClientLib.dll"));
 
 
-
-				WorkConfig workConfig = new WorkConfig (
-					task.Id,
-					newTaskMessage.Username,
-					workConfigMap,
-					newTaskMessage.Assembly
-				);
-
-				int orderedWorkConfigId = coordinator.storeOrderedWork (workConfig);
-				NewWorkMessage newWorkMessage = new NewWorkMessage (orderedWorkConfigId, workConfig);
-				coordinator.CoordinatorActor.Tell (newWorkMessage);
+			Dictionary<string, List<S3ObjectMetadata>> filesToProcess1 = new Dictionary<string, List<S3ObjectMetadata>> ();
+			filesToProcess1.Add ("asdf", new List<S3ObjectMetadata>(){asdf1, asdf2});
+			filesToProcess1.Add ("notAWord", new List<S3ObjectMetadata>(){notaword1, });
 
 
-				if(!task.MapCoordinators.ContainsKey(coordinator.CoordinatorActor)){
-					task.MapCoordinators.Add(coordinator.CoordinatorActor, coordinator);
-				}
-			}
+			Dictionary<string, List<S3ObjectMetadata>> filesToProcess2 = new Dictionary<string, List<S3ObjectMetadata>> ();
+			filesToProcess2.Add ("qwer", new List<S3ObjectMetadata>(){qwer1, qwer2});
+			filesToProcess2.Add ("otherWord", new List<S3ObjectMetadata>(){otherword1});
+
+
+			Sender.Tell (new RegisterCoordinatorAckMessage(1));
+			Sender.Tell (new NewWorkMessage (2, new WorkConfig (0, "reduceUsername", filesToProcess1, assemblyMetadata)));
+			Sender.Tell (new NewWorkMessage (3, new WorkConfig (0, "reduceUsername", filesToProcess2, assemblyMetadata)));
 		}
 
 		public void Handle (NewWorkAckMessage message){
-			int orderedWorkId = message.OrderedWorkId;
-			Task task = tasks [message.TaskId];
-			Coordinator coordinator;
-			if (task.getCoordinatorByActorRef (Sender, out coordinator)) {
-				WorkConfig orderedWorkConfig = coordinator.OrderedWorks[orderedWorkId];
-				coordinator.OrderedWorks.Remove (orderedWorkId);
-
-				Work work = new Work (message.WorkerId, orderedWorkConfig);
-				coordinator.Works.Add (message.WorkerId, work);
-			}
+			Console.WriteLine ("workAckMessage: " + message.WorkerId);
 		}
 
-		public void Handle (WorkerFailureMessage message)
+		public void Handle (MapWorkFinishedMessage message)
 		{
-			throw new NotImplementedException ();
-		}
-
-		public void Handle (MapWorkFinishedMessage message){
-			Task task = tasks [message.TaskId];
-			Coordinator coordinator;
-			if (task.MapCoordinators.TryGetValue (Sender, out coordinator)) {
-				foreach(KeyValuePair<string, S3ObjectMetadata> pair in message.MapResult){
-					List<S3ObjectMetadata> keyFiles;
-					if (task.MapResult.TryGetValue (pair.Key, out keyFiles)) {
-						task.MapResult.Remove (pair.Key);
-						keyFiles.Add(pair.Value);
-
-						//task.MapResult ();
-					}
-				}
-			
-				/*
-			foreach KeyValuePairPair message.MapResult
-				task.MapResult[pair.Key].Add(pair.Value);	*/		
-
-				coordinator.Works.Remove (message.WorkerId);
-				//coordinator.
-
-				/*
-				if (coordinator.Works.Count == 0) {
-					//task.MapCoordinators.Remove
-				}*/
-
-				throw new NotImplementedException ();
+			Console.WriteLine ("Map Work finished: ");
+			foreach(KeyValuePair<string, S3ObjectMetadata> pair in message.MapResult){
+				Console.WriteLine ("Key: " + pair.Key + " in file: /tmp/" + pair.Value.Filename);
 			}
 		}
 
 		public void Handle (ReduceWorkFinishedMessage message){
-			throw new NotImplementedException ();
+			var filename = "/tmp/" + message.File.Filename;
+
+			Console.WriteLine ("Reduce Work finished with filename " + filename + " and keys: ");
+
+			foreach (string key in message.Keys) {
+				Console.Write (key + " ; ");
+			}
+			Console.WriteLine("");
 		}
 
-
+		public void Handle (WorkerFailureMessage message)
+		{
+			Console.WriteLine ("worker failure: " + message.Message);
+		}
 
 		public void Handle (Terminated message)
 		{
 			throw new NotImplementedException ();
 		}
-			
-		private Coordinator getNextMapCoordinator(){
-			mapCoordinatorsRoundRobinIndex = (mapCoordinatorsRoundRobinIndex++) % validMapCoordinator.Count;
-			return validMapCoordinator[mapCoordinatorsRoundRobinIndex];
-		}
 
-		private Coordinator getNextReduceCoordinator(){
-			reduceCoordinatorsRoundRobinIndex = (reduceCoordinatorsRoundRobinIndex++) % validReduceCoordinator.Count;
-			return validReduceCoordinator[reduceCoordinatorsRoundRobinIndex];
+		public MasterActor ()
+		{			
+
 		}
 	}
 }
-
