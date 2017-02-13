@@ -16,15 +16,15 @@ namespace Master
 		public List<Dictionary<string, S3ObjectMetadata>> Response { get; private set; }
 
 		int currentFragmentNumber;
-		Dictionary<string, S3ObjectMetadata>.Enumerator inputFilesEnumerator;
 
 		StreamWriter fragmentWriter;
 		long currentFragmentSize;
 		long maxFragmentSize;
+		long currentMaxFragmentSize;
 
 		string currentFilename;
 
-
+		bool closed = false;
 
 		public Divider(Dictionary<string, S3ObjectMetadata> inputFiles, int m, int taskId, string username)
 		{
@@ -34,9 +34,6 @@ namespace Master
 			Username = username;
 
 			currentFragmentNumber = 0;
-			inputFilesEnumerator = InputFiles.GetEnumerator();
-			inputFilesEnumerator.MoveNext();
-
 			Response = new List<Dictionary<string, S3ObjectMetadata>>();
 		}
 
@@ -48,7 +45,6 @@ namespace Master
 		string getNextFragmentName()
 		{
 			currentFragmentNumber++;
-			inputFilesEnumerator.MoveNext();
 			return getCurrentFragmentName();
 		}
 
@@ -90,12 +86,12 @@ namespace Master
 		void writeToCurrentFragment(string line)
 		{
 			getCurrentFragmentWriter().WriteLine(line);
-			currentFragmentSize += getStringByteSize(line);
+			currentFragmentSize += getStringByteSize(line + Environment.NewLine);
 		}
 
 		bool shouldCloseFragment()
 		{
-			return currentFragmentSize >= maxFragmentSize && Response.Count < M - 1;
+			return currentFragmentSize >= currentMaxFragmentSize && Response.Count < M - 1;
 		}
 
 		public List<Dictionary<string, S3ObjectMetadata>> divide()
@@ -103,7 +99,11 @@ namespace Master
 			var entry = getNewEntry();
 
 			long totalSize = InputFiles.Values.Aggregate(0L, (acc, file) => acc + file.getSize());
+
+			Console.WriteLine("totalSize= " + totalSize);
+
 			maxFragmentSize = totalSize / M;
+			currentMaxFragmentSize = maxFragmentSize;
 
 			foreach (var pair in InputFiles)
 			{
@@ -117,18 +117,47 @@ namespace Master
 					{
 						writeToCurrentFragment(line);
 
+						closed = false;
+
 						if (shouldCloseFragment())
 						{
 							closeCurrentFragmentWriter();
+							currentMaxFragmentSize = maxFragmentSize;
 
-							entry.Add(currentFilename, new S3ObjectMetadata("", getCurrentFragmentName()));
+							var S3Object = new S3ObjectMetadata("map-reduce-dot-net", getCurrentFragmentName());
+
+							using (var fragmentStream = File.OpenRead(getCurrentFragmentPath()))
+							{
+								S3Object.upStream(fragmentStream);
+							}
+
+							File.Delete(getCurrentFragmentPath());
+
+							entry.Add(currentFilename, S3Object);
 							Response.Add(entry);
 							entry = getNewEntry();
+
+							closed = true;
 						}
 					}
 
-					closeCurrentFragmentWriter();
-					entry.Add(currentFilename, new S3ObjectMetadata("", getCurrentFragmentName()));
+					currentMaxFragmentSize = maxFragmentSize - currentFragmentSize;
+
+					if (!closed)
+					{
+						closeCurrentFragmentWriter();
+
+						var S3Object = new S3ObjectMetadata("map-reduce-dot-net", getCurrentFragmentName());
+
+						using (var fragmentStream = File.OpenRead(getCurrentFragmentPath()))
+						{
+							S3Object.upStream(fragmentStream);
+						}
+
+						File.Delete(getCurrentFragmentPath());
+
+						entry.Add(currentFilename, S3Object);
+					}
 				}
 			}
 
@@ -137,6 +166,8 @@ namespace Master
 			return Response;
 		}
 
+
+
 		Dictionary<string, S3ObjectMetadata> getNewEntry()
 		{
 			return new Dictionary<string, S3ObjectMetadata>();
@@ -144,8 +175,7 @@ namespace Master
 
 		int getStringByteSize(string value)
 		{
-			return ASCIIEncoding.Unicode.GetByteCount(value);
+			return Encoding.UTF8.GetByteCount(value);
 		}
-	
 	}
 }

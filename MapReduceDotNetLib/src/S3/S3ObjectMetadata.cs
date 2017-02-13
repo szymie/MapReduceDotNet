@@ -37,7 +37,7 @@ namespace MapReduceDotNetLib
 
 		public void upStream(Stream stream)
 		{
-			var tmpFileName = $"/tmp/{Filename}";
+			var tmpFileName = $"/tmp/{Filename}.tmp";
 
 			using(var outputFileStream = File.Create(tmpFileName))
 			{
@@ -68,9 +68,9 @@ namespace MapReduceDotNetLib
 
 		public Stream downStream()
 		{
-			//GetObjectResponse response = requestObjectMetadata();
-			//return response.ResponseStream;
-			return File.OpenRead(Filename);
+			GetObjectResponse response = requestObjectMetadata();
+			return response.ResponseStream;
+			//return File.OpenRead(Filename);
 		}
 
 		private GetObjectResponse requestObjectMetadata()
@@ -86,9 +86,9 @@ namespace MapReduceDotNetLib
 
 		public long getSize()
 		{
-			//GetObjectResponse response = requestObjectMetadata();
-			//return response.ContentLength;
-			return new FileInfo(Filename).Length;
+			GetObjectResponse response = requestObjectMetadata();
+			return response.ContentLength;
+			//return new FileInfo(Filename).Length;
 		}
 
 		public bool CustomRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

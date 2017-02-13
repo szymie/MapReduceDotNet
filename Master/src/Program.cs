@@ -4,6 +4,8 @@ using Akka.Configuration;
 using MapReduceDotNetLib;
 using System.Collections.Generic;
 
+using System.Text;
+
 namespace Master
 {
 	class MainClass
@@ -17,14 +19,14 @@ namespace Master
 
 			var InputFiles = new Dictionary<string, S3ObjectMetadata>();
 
-			InputFiles.Add("a.txt", new S3ObjectMetadata("", "/tmp/a.txt"));
-			InputFiles.Add("b.txt", new S3ObjectMetadata("", "/tmp/b.txt"));
-			InputFiles.Add("c.txt", new S3ObjectMetadata("", "/tmp/b.txt"));
-			InputFiles.Add("d.txt", new S3ObjectMetadata("", "/tmp/b.txt"));
+			InputFiles.Add("a.txt", new S3ObjectMetadata("map-reduce-dot-net", "a.txt"));
+			InputFiles.Add("b.txt", new S3ObjectMetadata("map-reduce-dot-net", "b.txt"));
+			InputFiles.Add("c.txt", new S3ObjectMetadata("map-reduce-dot-net", "c.txt"));
+			InputFiles.Add("d.txt", new S3ObjectMetadata("map-reduce-dot-net", "d.txt"));
 
 			var newTask = new NewTaskMessage()
 			{
-				M = 6,
+				M = 8,
 				InputFiles = InputFiles,
 				TaskId = 1,
 				Username = "szymie"
