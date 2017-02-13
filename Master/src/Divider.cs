@@ -20,7 +20,8 @@ namespace Master
 		StreamWriter fragmentWriter;
 		long currentFragmentSize;
 		long maxFragmentSize;
-		long currentMaxFragmentSize;
+
+		long usedSpace = 0;
 
 		string currentFilename;
 
@@ -86,12 +87,15 @@ namespace Master
 		void writeToCurrentFragment(string line)
 		{
 			getCurrentFragmentWriter().WriteLine(line);
-			currentFragmentSize += getStringByteSize(line + Environment.NewLine);
+
+			var bytesCount = getStringByteSize(line + Environment.NewLine);
+			currentFragmentSize += bytesCount;
+			usedSpace += bytesCount;
 		}
 
 		bool shouldCloseFragment()
 		{
-			return currentFragmentSize >= currentMaxFragmentSize && Response.Count < M - 1;
+			return (currentFragmentSize >= maxFragmentSize || usedSpace >= maxFragmentSize) && Response.Count < M - 1;
 		}
 
 		public List<Dictionary<string, S3ObjectMetadata>> divide()
@@ -103,7 +107,6 @@ namespace Master
 			Console.WriteLine("totalSize= " + totalSize);
 
 			maxFragmentSize = totalSize / M;
-			currentMaxFragmentSize = maxFragmentSize;
 
 			foreach (var pair in InputFiles)
 			{
@@ -121,8 +124,9 @@ namespace Master
 
 						if (shouldCloseFragment())
 						{
+							usedSpace = 0;
+
 							closeCurrentFragmentWriter();
-							currentMaxFragmentSize = maxFragmentSize;
 
 							var S3Object = new S3ObjectMetadata("map-reduce-dot-net", getCurrentFragmentName());
 
@@ -141,8 +145,6 @@ namespace Master
 						}
 					}
 
-					currentMaxFragmentSize = maxFragmentSize - currentFragmentSize;
-
 					if (!closed)
 					{
 						closeCurrentFragmentWriter();
@@ -158,6 +160,10 @@ namespace Master
 
 						entry.Add(currentFilename, S3Object);
 					}
+					//else
+					//{
+					//	usedSpace = 0;
+					//}
 				}
 			}
 
