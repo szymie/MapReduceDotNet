@@ -16,7 +16,7 @@ namespace Master
 
 			var master = system.ActorOf<MasterActor>("MasterActor");
 
-			Thread.Sleep (2000);
+			Thread.Sleep (3000);
 
 			Dictionary<string, S3ObjectMetadata> files = new Dictionary<string, S3ObjectMetadata> (){
 				{"testData1", new S3ObjectMetadata("testBucket", "testData1")},
