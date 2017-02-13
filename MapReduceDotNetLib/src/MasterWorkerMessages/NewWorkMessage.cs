@@ -6,11 +6,11 @@ namespace MapReduceDotNetLib
 	{
 		public NewWorkMessage (int workConfigId, WorkConfig workConfig)
 		{
-			this.WorkConfigId = workConfigId;
+			this.OrderedWorkId = workConfigId;
 			this.WorkConfig = workConfig;
 		}
 		
-		public int WorkConfigId{ get; set; }
+		public int OrderedWorkId{ get; set; }
 		public WorkConfig WorkConfig { get; set; }
 	}
 }

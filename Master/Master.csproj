@@ -58,6 +58,8 @@
     <Compile Include="src\Task.cs" />
     <Compile Include="src\Coordinator.cs" />
     <Compile Include="src\Work.cs" />
+    <Compile Include="src\Messages\DivideResponseMessage.cs" />
+    <Compile Include="src\Messages\DivideRequestMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -65,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\Messages\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MapReduceDotNetLib\MapReduceDotNetLib.csproj">

@@ -34,14 +34,11 @@ namespace Worker
 		{
 			int workerId = keyGenerator.generateKey();
 
-
+			MasterActor.Tell (new NewWorkAckMessage(workerId, message.OrderedWorkId, message.WorkConfig.TaskId, CoordinatorId));
 
 			WorkerConfig workerConfig = new WorkerConfig (workerId, message.WorkConfig, CoordinatorId);
 
 			startNewWorker (workerConfig);
-
-			MasterActor.Tell (new NewWorkAckMessage(workerId, message.WorkConfigId));
-
 		}
 
 		private void startNewWorker(WorkerConfig workerConfig){
