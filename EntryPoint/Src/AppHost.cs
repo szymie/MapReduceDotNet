@@ -18,6 +18,9 @@ using System.Data;
 using Akka.Configuration;
 using Akka.Actor;
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace EntryPoint
 {
 	public class AppHost : AppHostHttpListenerBase
@@ -47,20 +50,21 @@ namespace EntryPoint
 
 		void LoadConfiguration()
 		{
-			/*pgIp = Environment.GetEnvironmentVariable(ENV_PG_IP);
+			pgIp = Environment.GetEnvironmentVariable(ENV_PG_IP);
 			pgUser = Environment.GetEnvironmentVariable(ENV_PG_USER);
 			pgDb = Environment.GetEnvironmentVariable(ENV_PG_DB);
 			pgPass = Environment.GetEnvironmentVariable(ENV_PG_PASS);
 			pgPort = Environment.GetEnvironmentVariable(ENV_PG_PORT);
 			redisIp = Environment.GetEnvironmentVariable(ENV_REDIS_IP);
-			redisPort = Environment.GetEnvironmentVariable(ENV_REDIS_PORT);*/
-			pgIp = "localhost";
-			pgUser = "postgres";
-			pgDb = "postgres";
-			pgPass = "postgres";
-			pgPort = "5432";
-			redisIp = pgIp;
-			redisPort = "6379";
+			redisPort = Environment.GetEnvironmentVariable(ENV_REDIS_PORT);
+
+			pgIp = pgIp ?? "localhost";
+			pgUser = pgUser ?? "postgres";
+			pgDb = pgDb ?? "postgres";
+			pgPass = pgPass ?? "postgres";
+			pgPort = pgPort ?? "5432";
+			redisIp = redisIp ?? "localhost";
+			redisPort = redisPort ?? "6379";
 
 			pgConnectionString = string.Format("User ID={0};Password={1};Host={2};Port={3};Database={4};SSL=True",
 				pgUser, pgPass, pgIp, pgPort, pgDb);
@@ -101,7 +105,7 @@ namespace EntryPoint
 				(ICacheClient)c.Resolve<IRedisClientsManager>()
 				.GetCacheClient())
 				.ReusedWithin(Funq.ReuseScope.None);*/
-
+			
 			var pgConnectionFactory = new OrmLiteConnectionFactory(pgConnectionString, PostgreSQLDialectProvider.Instance)
 			{
 				ConnectionFilter = x => new ProfiledDbConnection(x, Profiler.Current)
@@ -144,6 +148,8 @@ namespace EntryPoint
 		{
 			var config = ConfigurationFactory.ParseString(@"
 				akka {  
+					stdout-loglevel = OFF
+				    loglevel = OFF
 					actor {
 						provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
 					}
