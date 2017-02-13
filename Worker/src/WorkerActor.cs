@@ -36,10 +36,10 @@ namespace Worker
 
 			LocalFileUtils = new LocalFilesDirectory (WorkerConfig);
 
-			WorkerThread = new Thread (() => {
-				LocalFileUtils.createDirectory ();
-
+			WorkerThread = new Thread (() => {			
 				try{
+					LocalFileUtils.createDirectory ();
+
 					workProcessing();
 
 					if(Monitor.TryEnter(uploadFilesLock)){
@@ -65,7 +65,7 @@ namespace Worker
 			if (Monitor.TryEnter (uploadFilesLock)) {
 				this.WorkerThread.Abort ();
 
-				this.LocalFileUtils.removeDirectory ();
+				//this.LocalFileUtils.removeDirectory ();
 
 				Monitor.Exit (uploadFilesLock);
 			}

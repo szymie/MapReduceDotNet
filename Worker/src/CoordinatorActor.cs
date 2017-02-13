@@ -66,9 +66,9 @@ namespace Worker
 				if (pair.Value.WorkerId == message.WorkerId) {
 					IActorRef worker = pair.Key;
 
-					workers.Remove (worker);
-
 					worker.Tell (new StopWorkerMessage());
+
+					workers.Remove (worker);
 					Context.Stop (worker);
 
 					return;
