@@ -48,18 +48,31 @@
   <ItemGroup>
     <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Config\WorkerConfig.cs" />
     <Compile Include="src\S3\S3ObjectMetadata.cs" />
     <Compile Include="src\MasterEntryPointMessages\NewTaskMessage.cs" />
-    <Compile Include="src\AssemblyMetadata.cs" />
     <Compile Include="src\MasterEntryPointMessages\TaskFinishedMessage.cs" />
     <Compile Include="src\MasterEntryPointMessages\TaskFailureMessage.cs" />
+    <Compile Include="src\S3ObjectMetadata.cs" />
+    <Compile Include="src\AssemblyMetadata.cs" />
+    <Compile Include="src\MasterWorkerMessages\NewWorkMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\NewWorkAckMessage.cs" />
+    <Compile Include="src\WorkerLogic\Map.cs" />
+    <Compile Include="src\LineReader.cs" />
+    <Compile Include="src\Config\WorkConfig.cs" />
+    <Compile Include="src\UniqueKeyGenerator.cs" />
+    <Compile Include="src\MasterWorkerMessages\RegisterCoordinatorAckMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\RegisterMapCoordinatorMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\MapWorkFinishedMessage.cs" />
+    <Compile Include="src\WorkerLogic\Work.cs" />
+    <Compile Include="src\MasterWorkerMessages\WorkerFailureMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\AbortWorkMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\ReduceWorkFinishedMessage.cs" />
+    <Compile Include="src\MasterWorkerMessages\RegisterReduceCoordinatorMessage.cs" />
+    <Compile Include="src\WorkerLogic\Reduce.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="src\" />
-    <Compile Include="src\WorkerLogic\Worker.cs" />
-    <Compile Include="src\MasterWorkerMessages\RegisterMapWorkerMessage.cs" />
     <Folder Include="src\S3\" />
     <Folder Include="src\Config\" />
     <Folder Include="src\MasterEntryPointMessages\" />

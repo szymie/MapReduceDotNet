@@ -2,7 +2,7 @@
 
 namespace MapReduceDotNetLib
 {
-	public class RegisterMapWorkerMessage{
+	public class RegisterMapCoordinatorMessage{
 
 	}
 }

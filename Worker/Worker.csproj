@@ -56,6 +56,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\CoordinatorActor.cs" />
+    <Compile Include="src\WorkerActor.cs" />
+    <Compile Include="src\CoordinatorMapActor.cs" />
+    <Compile Include="src\MapActor.cs" />
+    <Compile Include="src\Config\WorkerConfig.cs" />
+    <Compile Include="src\Messages\NewWorkerMessage.cs" />
+    <Compile Include="src\Config\LocalFilesDirectory.cs" />
+    <Compile Include="src\Messages\StopWorkerMessage.cs" />
+    <Compile Include="src\CoordinatorReduceActor.cs" />
+    <Compile Include="src\ReduceActor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -69,5 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\Messages\" />
+    <Folder Include="src\Config\" />
   </ItemGroup>
 </Project>

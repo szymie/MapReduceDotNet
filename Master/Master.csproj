@@ -55,6 +55,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\MasterActor.cs" />
+    <Compile Include="src\Task.cs" />
+    <Compile Include="src\Coordinator.cs" />
+    <Compile Include="src\Work.cs" />
+    <Compile Include="src\Messages\DivideResponseMessage.cs" />
+    <Compile Include="src\Messages\DivideRequestMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -62,11 +67,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\Messages\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MapReduceDotNetLib\MapReduceDotNetLib.csproj">
       <Project>{3A45D07E-2FD1-4BFF-B733-97F80495149B}</Project>
       <Name>MapReduceDotNetLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Worker\Worker.csproj">
+      <Project>{51FE728F-7C94-48C1-B163-BFE647CA5133}</Project>
+      <Name>Worker</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

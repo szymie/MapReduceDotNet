@@ -4,15 +4,15 @@ using System.Threading;
 
 namespace ClientLib
 {
-	public class MyWorker : Map
-	{					
+	public class MyReduce : Reduce
+	{
 		public int Counter{ get; set; } = 0;
 
-		public override void map (string key, LineReader lineReader)
+		public override void reduce (string key, LineReader lineReader)
 		{
 			String line;
 			while((line = lineReader.readLine()) != null){
-				emit ("key:"+Counter%2, line + "; value:" + Counter);
+				emit (Counter.ToString() + "dsdfsdf");
 				Counter += 1;
 			}
 		}

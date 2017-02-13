@@ -11,7 +11,7 @@ namespace Master
 		{
 			ActorSystem system = getActorSystem ();
 
-			//system.ActorOf<TestActor>("MasterActor");
+			system.ActorOf<MasterActor>("MasterActor");
 
 			Console.ReadLine();
 		}
