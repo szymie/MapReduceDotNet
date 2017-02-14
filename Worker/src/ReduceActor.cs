@@ -2,6 +2,7 @@
 using MapReduceDotNetLib;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Worker
 {
@@ -34,7 +35,9 @@ namespace Worker
 
 			resultS3Object.upStream (File.Open(Reduce.UserCreatedFile, FileMode.Open));
 
+			Thread.Sleep(WorkerId * 2000);
 			Coordinator.Tell(new ReduceWorkFinishedMessage (WorkerId, TaskId, Reduce.EmittedKeys, resultS3Object), self);
+			Console.WriteLine ("MapWorkFinished sent");
 		}
 	}
 }
