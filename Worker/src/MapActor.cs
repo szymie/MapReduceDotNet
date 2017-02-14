@@ -49,7 +49,8 @@ namespace Worker
 				mapResult.Add (pair.Key, resultS3Object);
 			}
 			Console.WriteLine ("sending MapWorkFinished");
-			Thread.Sleep ((new Random()).Next(1000, 4000));
+			//Thread.Sleep ((new Random()).Next(2000);
+			Thread.Sleep(WorkerId * 2000);
 			Coordinator.Tell(new MapWorkFinishedMessage(WorkerId, TaskId, mapResult), self);
 			Console.WriteLine ("finished");
 		}

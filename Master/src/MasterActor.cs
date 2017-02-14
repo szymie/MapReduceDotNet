@@ -196,14 +196,19 @@ namespace Master
 
 				task.addReduceResult(message.File, message.Keys);
 
-				if (coordinator.Works.ContainsKey (message.WorkerId)) {
+				if (coordinator.Works.ContainsKey (message.WorkerId)) {					
 					coordinator.Works.Remove (message.WorkerId);
+					Console.WriteLine (String.Format("Removed worker, count: {0} : {1}-{2}-{3}", coordinator.countWorksForTask(task.Id), task.Id, coordinator.Id, message.WorkerId));
 				}
+				else{Console.WriteLine (String.Format ("DIDNT Removed worker, count: {0} : {1}-{2}-{3}", coordinator.countWorksForTask(task.Id), task.Id, coordinator.Id, message.WorkerId));}
 
-				if(coordinator.countWorksForTask(task.Id) == 0){
+				if(coordinator.countWorksForTask(task.Id) == 0){					
 					task.ReduceCoordinators.Remove (Sender);
+					Console.WriteLine (String.Format("Removed coordinator, others: {0} : {1}-{2}-{3}", task.ReduceCoordinators.Count, task.Id, coordinator.Id, message.WorkerId));
 				}
 
+
+				//TODO: Co z ordered workami
 				if(task.ReduceCoordinators.Count == 0){
 					endTask (task);
 				}
@@ -264,7 +269,7 @@ namespace Master
 					if (task.MapCoordinators.ContainsKey (coordinatorActor)) {
 						task.MapCoordinators.Remove (coordinatorActor);
 					}
-
+				} else {
 					if (task.ReduceCoordinators.ContainsKey (coordinatorActor)) {
 						task.ReduceCoordinators.Remove (coordinatorActor);
 					}
