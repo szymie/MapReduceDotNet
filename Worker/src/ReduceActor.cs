@@ -34,10 +34,10 @@ namespace Worker
 			);
 
 			resultS3Object.upStream (File.Open(Reduce.UserCreatedFile, FileMode.Open));
-
+			Console.WriteLine ("ReduceWorkFinished sending");
 			Thread.Sleep(WorkerId * 2000);
 			Coordinator.Tell(new ReduceWorkFinishedMessage (WorkerId, TaskId, Reduce.EmittedKeys, resultS3Object), self);
-			Console.WriteLine ("MapWorkFinished sent");
+			Console.WriteLine ("ReduceWorkFinished sent");
 		}
 	}
 }

@@ -207,8 +207,8 @@ namespace Master
 					Console.WriteLine (String.Format("Removed coordinator, others: {0} : {1}-{2}-{3}", task.ReduceCoordinators.Count, task.Id, coordinator.Id, message.WorkerId));
 				}
 
-
 				//TODO: Co z ordered workami
+
 				if(task.ReduceCoordinators.Count == 0){
 					endTask (task);
 				}
