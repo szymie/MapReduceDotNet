@@ -1,6 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 using MapReduceDotNetLib;
+using System.Threading;
 
 namespace Worker
 {
@@ -26,7 +27,8 @@ namespace Worker
 
 		protected override IActorRef createWorkerActor (int workerId)
 		{
-			//Console.WriteLine ("Creating new reduce actor: " + this.CoordinatorId);
+			Console.WriteLine ("Creating new reduce actor: " + this.CoordinatorId);
+			Thread.Sleep (2000);
 			return Context.System.ActorOf<ReduceActor> ("reduceWorker" + workerId);
 		}
 	}
