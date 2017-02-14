@@ -69,6 +69,7 @@
     <Compile Include="src\MasterWorkerMessages\ReduceWorkFinishedMessage.cs" />
     <Compile Include="src\MasterWorkerMessages\RegisterReduceCoordinatorMessage.cs" />
     <Compile Include="src\WorkerLogic\Reduce.cs" />
+    <Compile Include="src\MasterWorkerMessages\CoordinatorSystemInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

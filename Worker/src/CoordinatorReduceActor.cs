@@ -26,7 +26,7 @@ namespace Worker
 
 		protected override IActorRef createWorkerActor (int workerId)
 		{
-			Console.WriteLine ("Creating new reduce actor: " + this.CoordinatorId);
+			//Console.WriteLine ("Creating new reduce actor: " + this.CoordinatorId);
 			return Context.System.ActorOf<ReduceActor> ("reduceWorker" + workerId);
 		}
 	}

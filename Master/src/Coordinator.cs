@@ -12,6 +12,7 @@ namespace Master
 		public Dictionary<int, WorkConfig> OrderedWorks{ get; set;} = new Dictionary<int, WorkConfig>();
 		public IActorRef CoordinatorActor{ get; set; }
 		public bool IsMapCoordinator{ get; set; }
+		public float CpuUsage {	get; set; } = 0;
 
 		private UniqueKeyGenerator orderedWorksKeyGenerator = new UniqueKeyGenerator ();
 

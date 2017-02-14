@@ -26,7 +26,7 @@ namespace Worker
 
 		protected override IActorRef createWorkerActor (int workerId)
 		{
-			Console.WriteLine ("Creating new map actor: " + this.CoordinatorId);
+			//Console.WriteLine ("Creating new map actor: " + this.CoordinatorId);
 			return Context.System.ActorOf<MapActor> ("mapWorker" + workerId);
 		}
 	}

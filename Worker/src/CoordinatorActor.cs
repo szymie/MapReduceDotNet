@@ -4,24 +4,41 @@ using MapReduceDotNetLib;
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
+using System.Diagnostics;
+using System.Collections;
 
 namespace Worker
 {
-	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>, IHandle<RegisterCoordinatorAckMessage>, IHandle<WorkerFailureMessage>, IHandle<AbortWorkMessage>, IHandle<string>
+	public abstract class CoordinatorActor : TypedActor, IHandle<NewWorkMessage>, IHandle<RegisterCoordinatorAckMessage>, IHandle<WorkerFailureMessage>, IHandle<AbortWorkMessage>, IHandle<MonitorSystemInfo>
 	{
+		protected int cpuProcessingQueueLength;
+
 		protected Dictionary<IActorRef, WorkerConfig> workers = new Dictionary<IActorRef, WorkerConfig>();
 		private UniqueKeyGenerator keyGenerator = new UniqueKeyGenerator();
 		protected int CoordinatorId{get;set;} = -1;
 		protected ActorSelection MasterActor{ get; set; }
+		private PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+		private Queue<float> cpuLoadQueue = new Queue<float> ();
+
+
 		public CoordinatorActor ()
 		{
 			MasterActor = getMasterActorRef ();
-			Context.System.Scheduler.ScheduleTellRepeatedly (new TimeSpan(0, 0, 1), new TimeSpan(0,0,1),Self, "",Self);
+			this.cpuProcessingQueueLength = getCpuProcessingQueueLength();
 		}
 
-		public void Handle(string message){
-			Console.WriteLine (String.Format("Number of workers: {0} : {1}", workers.Keys.Count, CoordinatorId));
+		public void Handle(MonitorSystemInfo m){
+			cpuLoadQueue.Enqueue (cpuCounter.NextValue ());
+			if (cpuLoadQueue.Count > 10) {
+				cpuLoadQueue.Dequeue ();
+			}
+			float result = 0;
+			cpuLoadQueue.ToList ().ForEach (value => result = result + value);
+			result = result / cpuLoadQueue.Count;
+
+			MasterActor.Tell(new CoordinatorSystemInfo(result, CoordinatorId));
 		}
+
 
 		ActorSelection getMasterActorRef ()
 		{
@@ -34,6 +51,20 @@ namespace Worker
 			Console.WriteLine ("MASTER_ADDRESS {0}", masterAddress);
 
 			return Context.ActorSelection("akka.tcp://MasterSystem@" + masterAddress + "/user/MasterActor");
+		}
+
+		private int getCpuProcessingQueueLength(){
+			int cpuProcessingQueueLengthInt = 10;
+			string cpuProcessingQueueLengthString = Environment.GetEnvironmentVariable ("CPU_QUEUE_LENGTH");
+			if (cpuProcessingQueueLengthString == null) {				
+				Console.WriteLine ("No CPU_QUEUE_LENGTH found.");
+			} else {
+				cpuProcessingQueueLengthInt = Int32.Parse(cpuProcessingQueueLengthString);
+			}
+
+			Console.WriteLine ("CPU_QUEUE_LENGTH {0}", cpuProcessingQueueLengthInt.ToString());
+
+			return cpuProcessingQueueLengthInt;
 		}
 
 		public void Handle (NewWorkMessage message)
@@ -57,13 +88,14 @@ namespace Worker
 
 		public void Handle (RegisterCoordinatorAckMessage message)
 		{
-			Console.WriteLine ("Registered with id: " + message.CoordinatorId);
+			//Console.WriteLine ("Registered with id: " + message.CoordinatorId);
 			this.CoordinatorId = message.CoordinatorId;
+			Context.System.Scheduler.ScheduleTellRepeatedly (new TimeSpan(0, 0, 1), new TimeSpan(0,0,1), Self, new MonitorSystemInfo(),Self);
 		}
 
 		public void Handle (WorkerFailureMessage message){
-			Console.WriteLine ("Worker failed: " + message.TaskId + "-" + CoordinatorId + "-" + message.WorkerId);
-			Console.WriteLine (message.Message);
+			//Console.WriteLine ("Worker failed: " + message.TaskId + "-" + CoordinatorId + "-" + message.WorkerId);
+			//Console.WriteLine (message.Message);
 			MasterActor.Tell (message);
 
 			workers.Remove (Sender);
@@ -71,7 +103,7 @@ namespace Worker
 		}
 
 		public void Handle(AbortWorkMessage message){
-			Console.WriteLine ("Aborting worker: " + CoordinatorId + "-" + message.WorkerId);		
+			//Console.WriteLine ("Aborting worker: " + CoordinatorId + "-" + message.WorkerId);		
 
 			foreach(IActorRef worker in workers.Keys.ToList()){
 				WorkerConfig workerConfig = workers [worker];
@@ -92,7 +124,7 @@ namespace Worker
 				LocalFilesDirectory dir = new LocalFilesDirectory (workerConfig);
 				dir.removeDirectory ();
 
-				Console.WriteLine ("Restarting worker...");
+				//Console.WriteLine ("Restarting worker...");
 
 				startNewWorker (workerConfig);
 			}
@@ -101,4 +133,3 @@ namespace Worker
 		protected abstract IActorRef createWorkerActor(int workerId);
 	}
 }
-

@@ -8,7 +8,7 @@ using System.Linq;
 namespace Master
 {
 	public class MasterActor : TypedActor, IHandle<RegisterMapCoordinatorMessage>, IHandle<NewWorkAckMessage>, IHandle<Terminated>, IHandle<MapWorkFinishedMessage>, IHandle<WorkerFailureMessage>,
-	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>
+	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>, IHandle<SortCoordinatorsByCpuUsage>
 	{
 		private List<Coordinator> validMapCoordinator = new List<Coordinator>();
 		private List<Coordinator> validReduceCoordinator = new List<Coordinator>();
@@ -21,6 +21,27 @@ namespace Master
 		private UniqueKeyGenerator coordinatorKeyGenerator = new UniqueKeyGenerator();
 
 		private IActorRef fileDivider = Context.System.ActorOf<DividerActor>("dividerActor");
+
+		public MasterActor(){
+			//Context.System.Scheduler.ScheduleTellRepeatedly (new TimeSpan(0, 0, 1), new TimeSpan(0,0,0), Self, new SortCoordinatorsByCpuUsage(), Self);
+		}
+
+		public void Handle(CoordinatorSystemInfo message){
+			Coordinator coordinator;
+			coordinator = validMapCoordinator.Find (coord => coord.Id == message.CoordinatorId);
+			if(coordinator == null){
+				coordinator = validReduceCoordinator.Find (coord => coord.Id == message.CoordinatorId);
+			}
+
+			if(coordinator != null){
+				coordinator.CpuUsage = message.ProcessPercent;
+			}
+		}
+
+		public void Handle(SortCoordinatorsByCpuUsage m){
+			validMapCoordinator = validMapCoordinator.OrderBy(c=>c.CpuUsage).ToList();
+			validReduceCoordinator = validReduceCoordinator.OrderBy(c=>c.CpuUsage).ToList();
+		}
 
 		public void Handle (RegisterMapCoordinatorMessage message){
 			int coordinatorId = coordinatorKeyGenerator.generateKey ();
@@ -92,14 +113,14 @@ namespace Master
 
 					Work work = new Work (task.Id, message.WorkerId, orderedWorkConfig);
 					coordinator.Works.Add (message.WorkerId, work);
-
+					/*
 					if (isMapCoordinator) {
 						Console.WriteLine ("map ack: " + task.Id + "-" + coordinator.Id + "-" + message.WorkerId);
 					} else {
 						Console.WriteLine ("reduce ack: " + task.Id + "-" + coordinator.Id + "-" + message.WorkerId);
-					}
+					}*/
 				} else {
-					Console.WriteLine ("No coord found NewWorkAckMessage");
+					//Console.WriteLine ("No coord found NewWorkAckMessage");
 				}
 			} else {
 				foreach (Coordinator mapCoordinator in validMapCoordinator) {
@@ -126,7 +147,6 @@ namespace Master
 			Task task;
 			Coordinator coordinator;
 
-
 			if (tasks.TryGetValue (message.TaskId, out task)) {
 				if (task.MapCoordinators.TryGetValue (Sender, out coordinator)) {
 					Console.WriteLine ("MapWorkFinished: " + message.TaskId + "-" + coordinator.Id + "-" + message.WorkerId);
@@ -148,7 +168,7 @@ namespace Master
 					foreach (S3ObjectMetadata s3ObjectMetadata in message.MapResult.Values) {
 						s3ObjectMetadata.remove ();
 					}
-					Console.WriteLine ("No coord found MapWorkFinishedMessage");
+					//Console.WriteLine ("No coord found MapWorkFinishedMessage");
 					
 				}
 			} else {
@@ -215,13 +235,13 @@ namespace Master
 
 				if (coordinator.Works.ContainsKey (message.WorkerId)) {					
 					coordinator.Works.Remove (message.WorkerId);
-					Console.WriteLine (String.Format("Removed worker, count: {0} : {1}-{2}-{3}", coordinator.countWorksForTask(task.Id), task.Id, coordinator.Id, message.WorkerId));
+					//Console.WriteLine (String.Format("Removed worker, count: {0} : {1}-{2}-{3}", coordinator.countWorksForTask(task.Id), task.Id, coordinator.Id, message.WorkerId));
 				}
-				else{Console.WriteLine (String.Format ("DIDNT Removed worker, count: {0} : {1}-{2}-{3}", coordinator.countWorksForTask(task.Id), task.Id, coordinator.Id, message.WorkerId));}
+				//else{Console.WriteLine (String.Format ("DIDNT Removed worker, count: {0} : {1}-{2}-{3}", coordinator.countWorksForTask(task.Id), task.Id, coordinator.Id, message.WorkerId));}
 
 				if(coordinator.countWorksForTask(task.Id) == 0){					
 					task.ReduceCoordinators.Remove (Sender);
-					Console.WriteLine (String.Format("Removed coordinator, others: {0} : {1}-{2}-{3}", task.ReduceCoordinators.Count, task.Id, coordinator.Id, message.WorkerId));
+					//Console.WriteLine (String.Format("Removed coordinator, others: {0} : {1}-{2}-{3}", task.ReduceCoordinators.Count, task.Id, coordinator.Id, message.WorkerId));
 				}
 					
 				if(task.ReduceCoordinators.Count == 0){
@@ -229,7 +249,7 @@ namespace Master
 				}
 			} else {
 				message.File.remove ();
-				Console.WriteLine ("No coord found ReduceWorkFinishedMessage");
+				//Console.WriteLine ("No coord found ReduceWorkFinishedMessage");
 			}
 		}
 

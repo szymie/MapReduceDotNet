@@ -29,7 +29,7 @@ namespace Master
 				files, assemblyMetadata, 3, 3, 0, "username"				
 			));
 			master.Tell (new NewTaskMessage(
-				files, assemblyMetadata2, 3, 3, 1, "username"				
+				files, assemblyMetadata, 3, 3, 1, "username"				
 			));
 
 			Console.ReadLine();

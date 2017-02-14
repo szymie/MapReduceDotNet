@@ -9,7 +9,7 @@ namespace ClientLib
 		public override void reduce (string key, LineReader lineReader)
 		{
 			if (key.Equals ("asdf")) {
-				throw new NotImplementedException ();
+				throw new NotImplementedException ("dfadfasdfasfd");
 			} else {
 				Thread.Sleep (10000);
 			}				

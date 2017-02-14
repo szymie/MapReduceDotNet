@@ -48,10 +48,6 @@ namespace Worker
 				catch(Exception e){
 					Coordinator.Tell(new WorkerFailureMessage(WorkerId, TaskId, e.Message), self);
 				}
-				finally{					
-					LocalFileUtils.removeDirectory();
-
-				}
 			});
 
 			WorkerThread.Start ();
