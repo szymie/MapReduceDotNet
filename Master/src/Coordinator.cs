@@ -11,13 +11,15 @@ namespace Master
 		public Dictionary<int, Work> Works{ get; set;} = new Dictionary<int, Work>();
 		public Dictionary<int, WorkConfig> OrderedWorks{ get; set;} = new Dictionary<int, WorkConfig>();
 		public IActorRef CoordinatorActor{ get; set; }
+		public bool IsMapCoordinator{ get; set; }
 
 		private UniqueKeyGenerator orderedWorksKeyGenerator = new UniqueKeyGenerator ();
 
-		public Coordinator (int id, IActorRef coordinatorActor)
+		public Coordinator (int id, IActorRef coordinatorActor, bool isMapCoordinator)
 		{
 			this.Id = id;
 			this.CoordinatorActor = coordinatorActor;
+			this.IsMapCoordinator = isMapCoordinator;
 		}
 
 		public int storeOrderedWork(WorkConfig workConfig){

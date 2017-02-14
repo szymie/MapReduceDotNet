@@ -12,6 +12,7 @@ namespace ClientLib
 			String line;
 			int counter = 0;
 			while((line = lineReader.readLine()) != null){
+				Thread.Sleep (500);
 				counter++;
 			}
 

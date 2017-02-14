@@ -10,7 +10,7 @@ namespace Worker
 	{
 		protected Dictionary<IActorRef, WorkerConfig> workers = new Dictionary<IActorRef, WorkerConfig>();
 		private UniqueKeyGenerator keyGenerator = new UniqueKeyGenerator();
-		private int CoordinatorId{get;set;}
+		protected int CoordinatorId{get;set;}
 		protected ActorSelection MasterActor{ get; set; }
 		public CoordinatorActor ()
 		{
@@ -51,6 +51,7 @@ namespace Worker
 
 		public void Handle (RegisterCoordinatorAckMessage message)
 		{
+			Console.WriteLine ("Registered with id: " + message.CoordinatorId);
 			this.CoordinatorId = message.CoordinatorId;
 		}
 

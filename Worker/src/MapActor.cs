@@ -2,6 +2,7 @@
 using MapReduceDotNetLib;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Worker
 {
@@ -40,13 +41,17 @@ namespace Worker
 	            	bucketName,
 					String.Format ("{0}-{1}-{2}-{3}-{4}", username, TaskId, CoordinatorId, WorkerId, keyGenerator.generateKey())
 	            );
+				Console.WriteLine ("writing to s3...");
+				Thread.Sleep (1000);
 
 				resultS3Object.upStream (File.Open(pair.Value, FileMode.Open));
 
 				mapResult.Add (pair.Key, resultS3Object);
 			}
-
+			Console.WriteLine ("sending MapWorkFinished");
+			Thread.Sleep ((new Random()).Next(1000, 4000));
 			Coordinator.Tell(new MapWorkFinishedMessage(WorkerId, TaskId, mapResult), self);
+			Console.WriteLine ("finished");
 		}
 	}
 }
