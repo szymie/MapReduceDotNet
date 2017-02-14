@@ -80,7 +80,7 @@ namespace EntryPoint
 				UserId = GetCurrentAuthUserId()
 			};
 
-			EntryPointActor.Tell(request);
+			EntryPointActor.Tell(newTask);
 		}
 
 		public object Get(TaskDto request)

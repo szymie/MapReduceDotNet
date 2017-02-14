@@ -148,8 +148,7 @@ namespace EntryPoint
 		{
 			var config = ConfigurationFactory.ParseString(@"
 				akka {  
-					stdout-loglevel = OFF
-				    loglevel = OFF
+					
 					actor {
 						provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
 					}

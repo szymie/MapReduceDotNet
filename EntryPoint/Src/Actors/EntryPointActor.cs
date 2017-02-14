@@ -25,12 +25,14 @@ namespace EntryPoint
 
 		public EntryPointActor()
 		{
+			Db.CreateTableIfNotExists<ResultMetadata>();
 			Db.CreateTableIfNotExists<Failure>();
 			MasterActor = getMasterActorRef();
 		}
 
 		public void Handle(NewTaskRequestMessage message)
 		{
+			Console.WriteLine ("new task");
 			initNewTask(message);
 			fillAssembly(message);
 			fillInputFiles(message);
@@ -78,7 +80,13 @@ namespace EntryPoint
 
 		private void fillInputFiles(NewTaskRequestMessage message)
 		{
-			var inputFiles = Db.Select<InputFileMetadata>(e => message.InputFileIds.Contains(e.Id));
+			var inputFiles = new List<InputFileMetadata>();
+
+			foreach (var fileId in message.InputFileIds)
+			{
+				var inputFile = Db.Select<InputFileMetadata>(entity => entity.Id == fileId).First();
+				inputFiles.Add(inputFile);
+			}
 
 			foreach(var inputFile in inputFiles)
 			{
