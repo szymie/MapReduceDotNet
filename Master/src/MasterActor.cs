@@ -13,9 +13,6 @@ namespace Master
 		private List<Coordinator> validMapCoordinator = new List<Coordinator>();
 		private List<Coordinator> validReduceCoordinator = new List<Coordinator>();
 
-		private int mapCoordinatorsRoundRobinIndex = 0;
-		private int reduceCoordinatorsRoundRobinIndex = 0;
-
 		private Dictionary<int, Task> tasks = new Dictionary<int, Task> ();
 
 		private UniqueKeyGenerator coordinatorKeyGenerator = new UniqueKeyGenerator();
@@ -23,7 +20,7 @@ namespace Master
 		private IActorRef fileDivider = Context.System.ActorOf<DividerActor>("dividerActor");
 
 		public MasterActor(){
-			//Context.System.Scheduler.ScheduleTellRepeatedly (new TimeSpan(0, 0, 1), new TimeSpan(0,0,0), Self, new SortCoordinatorsByCpuUsage(), Self);
+			Context.System.Scheduler.ScheduleTellRepeatedly (new TimeSpan(0, 0, 1), new TimeSpan(0,0,1), Self, new SortCoordinatorsByCpuUsage(), Self);
 		}
 
 		public void Handle(CoordinatorSystemInfo message){
@@ -71,6 +68,7 @@ namespace Master
 			Task task = tasks[message.TaskId];
 			task.addDivideFiles(message.Files);
 
+			var coordinatorGetter = new NextCoordinatorInBulkGetter (validMapCoordinator);
 			foreach(Dictionary<string, S3ObjectMetadata> files in message.Files){
 				Dictionary<string, List<S3ObjectMetadata>> workConfigFiles = new Dictionary<string, List<S3ObjectMetadata>> ();
 
@@ -85,12 +83,11 @@ namespace Master
 					task.AssemblyMetadata
 				);
 
-				startNewMapWork (task, workConfig);
+				startNewMapWork (task, workConfig, coordinatorGetter.next());
 			}
 		}
 
-		private void startNewMapWork(Task task, WorkConfig workConfig){
-			Coordinator coordinator = getNextMapCoordinator ();
+		private void startNewMapWork(Task task, WorkConfig workConfig, Coordinator coordinator){
 			Console.WriteLine ("started map work: " + task.Id + "-" + coordinator.Id);
 
 			if(!task.MapCoordinators.ContainsKey(coordinator.CoordinatorActor)){
@@ -183,13 +180,13 @@ namespace Master
 
 			List<WorkConfig> reduceWorkConfigs = createReduceConfigs (task);
 
+			var coordinatorGetter = new NextCoordinatorInBulkGetter (validReduceCoordinator);
 			foreach (var workConfig in reduceWorkConfigs) {
-				startNewReduceWork (task, workConfig);
+				startNewReduceWork (task, workConfig, coordinatorGetter.next());
 			}
 		}
 
-		private void startNewReduceWork(Task task, WorkConfig workConfig){			
-			Coordinator coordinator = getNextReduceCoordinator ();
+		private void startNewReduceWork(Task task, WorkConfig workConfig, Coordinator coordinator){			
 			Console.WriteLine ("started reduce work: " + task.Id + "-" + coordinator.Id);
 
 			int orderedWorkConfigId = coordinator.storeOrderedWork (workConfig);
@@ -288,12 +285,15 @@ namespace Master
 			Coordinator mapCoord = validMapCoordinator.Find (coord => coord.CoordinatorActor.Equals(coordinatorActor));
 			Coordinator reduceCoord = validReduceCoordinator.Find (coord => coord.CoordinatorActor.Equals(coordinatorActor));
 			Coordinator coordinator;
+			NextCoordinatorInBulkGetter coordinatorGetter;
 			if (mapCoord != null) {
 				coordinator = mapCoord;
 				validMapCoordinator.Remove (coordinator);
+				coordinatorGetter = new NextCoordinatorInBulkGetter (validMapCoordinator);
 			} else {
 				coordinator = reduceCoord;
 				validReduceCoordinator.Remove (coordinator);
+				coordinatorGetter = new NextCoordinatorInBulkGetter (validReduceCoordinator);
 			}
 
 			foreach(Task task in tasks.Values){
@@ -310,31 +310,20 @@ namespace Master
 
 			foreach(Work work in coordinator.Works.Values){
 				if (coordinator.IsMapCoordinator) {
-					startNewMapWork (tasks[work.WorkConfig.TaskId], work.WorkConfig);
+					startNewMapWork (tasks[work.WorkConfig.TaskId], work.WorkConfig, coordinatorGetter.next());
 				} else {
-					startNewReduceWork (tasks[work.WorkConfig.TaskId], work.WorkConfig);
+					startNewReduceWork (tasks[work.WorkConfig.TaskId], work.WorkConfig, coordinatorGetter.next());
 				}
 			}
 
 			foreach(WorkConfig workConfig in coordinator.OrderedWorks.Values){
 				if (coordinator.IsMapCoordinator) {
-					startNewMapWork (tasks[workConfig.TaskId], workConfig);
+					startNewMapWork (tasks[workConfig.TaskId], workConfig, coordinatorGetter.next());
 				} else {
-					startNewReduceWork (tasks[workConfig.TaskId], workConfig);
+					startNewReduceWork (tasks[workConfig.TaskId], workConfig, coordinatorGetter.next());
 				}
 
 			}
-		}
-			
-		private Coordinator getNextMapCoordinator(){
-			mapCoordinatorsRoundRobinIndex = (++mapCoordinatorsRoundRobinIndex) % validMapCoordinator.Count;
-			//Console.WriteLine ("Next map coordinator: " + mapCoordinatorsRoundRobinIndex + " : " + validMapCoordinator.Count);
-			return validMapCoordinator[mapCoordinatorsRoundRobinIndex];
-		}
-
-		private Coordinator getNextReduceCoordinator(){
-			reduceCoordinatorsRoundRobinIndex = (++reduceCoordinatorsRoundRobinIndex) % validReduceCoordinator.Count;
-			return validReduceCoordinator[reduceCoordinatorsRoundRobinIndex];
 		}
 	}
 }
