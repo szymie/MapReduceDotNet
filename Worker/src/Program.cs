@@ -4,6 +4,7 @@ using Akka.Actor;
 using System.Reflection;
 using System.Configuration;
 using System.IO;
+using System.Threading;
 
 namespace Worker
 {
@@ -15,7 +16,8 @@ namespace Worker
 			system.ActorOf<CoordinatorMapActor>("CoordinatorMapActor");
 			system.ActorOf<CoordinatorReduceActor>("CoordinatorReduceActor");
 
-			Console.ReadLine ();
+			ManualResetEvent resetEvent = new ManualResetEvent(false);
+			resetEvent.WaitOne();
 		}
 
 		static ActorSystem createActorSystem (string systemName)

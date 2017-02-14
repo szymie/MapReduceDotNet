@@ -16,7 +16,8 @@ namespace Master
 
 			system.ActorOf<MasterActor>("MasterActor");
 
-			Console.ReadLine();
+			ManualResetEvent resetEvent = new ManualResetEvent(false);
+			resetEvent.WaitOne();
 		}
 
 		private static ActorSystem getActorSystem(){

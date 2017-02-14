@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace EntryPoint
 {
@@ -9,8 +10,8 @@ namespace EntryPoint
 		{
 			var listeningOn = startEntryPoint(args);
 			Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
-			Console.WriteLine("Press <ENTER> key to exit...");
-			Console.ReadLine();
+			ManualResetEvent resetEvent = new ManualResetEvent(false);
+			resetEvent.WaitOne();
 		}
 
 		private static string startEntryPoint(string[] args)
