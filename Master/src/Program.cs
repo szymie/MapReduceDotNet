@@ -24,11 +24,12 @@ namespace Master
 			};
 
 			AssemblyMetadata assemblyMetadata = new AssemblyMetadata ("ClientLib", "MyMapper", "MyReduce", new S3ObjectMetadata("testBucket", "ClientLib.dll"));
+			AssemblyMetadata assemblyMetadata2 = new AssemblyMetadata ("ClientLib", "MyMapper", "MyInvalidReduce", new S3ObjectMetadata("testBucket", "ClientLib.dll"));
 			master.Tell (new NewTaskMessage(
 				files, assemblyMetadata, 3, 3, 0, "username"				
 			));
 			master.Tell (new NewTaskMessage(
-				files, assemblyMetadata, 3, 3, 1, "username"				
+				files, assemblyMetadata2, 3, 3, 1, "username"				
 			));
 
 			Console.ReadLine();

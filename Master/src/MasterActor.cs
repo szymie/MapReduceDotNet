@@ -98,11 +98,28 @@ namespace Master
 					} else {
 						Console.WriteLine ("reduce ack: " + task.Id + "-" + coordinator.Id + "-" + message.WorkerId);
 					}
-				}
-				else {
+				} else {
 					Console.WriteLine ("No coord found NewWorkAckMessage");
 				}
-			} 
+			} else {
+				foreach (Coordinator mapCoordinator in validMapCoordinator) {
+					if (mapCoordinator.OrderedWorks.ContainsKey (orderedWorkId)) {
+						WorkConfig orderedWorkConfig = mapCoordinator.OrderedWorks [orderedWorkId];
+						Sender.Tell (new AbortWorkMessage(message.WorkerId));
+
+						mapCoordinator.OrderedWorks.Remove (orderedWorkId);
+					}
+				}
+
+				foreach (Coordinator reduceCoordinator in validReduceCoordinator) {
+					if (reduceCoordinator.OrderedWorks.ContainsKey (orderedWorkId)) {
+						WorkConfig orderedWorkConfig = reduceCoordinator.OrderedWorks [orderedWorkId];
+						Sender.Tell (new AbortWorkMessage(message.WorkerId));
+
+						reduceCoordinator.OrderedWorks.Remove (orderedWorkId);
+					}
+				}
+			}
 		}
 
 		public void Handle (MapWorkFinishedMessage message){
@@ -206,9 +223,7 @@ namespace Master
 					task.ReduceCoordinators.Remove (Sender);
 					Console.WriteLine (String.Format("Removed coordinator, others: {0} : {1}-{2}-{3}", task.ReduceCoordinators.Count, task.Id, coordinator.Id, message.WorkerId));
 				}
-
-				//TODO: Co z ordered workami
-
+					
 				if(task.ReduceCoordinators.Count == 0){
 					endTask (task);
 				}
@@ -235,16 +250,13 @@ namespace Master
 		}
 
 		public void Handle (WorkerFailureMessage message)
-		{
-			Console.WriteLine (message.Message);
-
+		{	
 			Task task;
 			if(tasks.TryGetValue(message.TaskId, out task)){
 				tasks.Remove (message.TaskId);
 
+				Console.WriteLine ("Aborting task: " + message.Message);
 				task.abort(message.Message);
-
-
 			}
 		}
 

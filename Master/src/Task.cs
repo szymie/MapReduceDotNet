@@ -88,7 +88,7 @@ namespace Master
 				coordinator.abort (Id);
 			}
 
-			foreach(Coordinator coordinator in MapCoordinators.Values){
+			foreach(Coordinator coordinator in ReduceCoordinators.Values){
 				coordinator.abort (Id);
 			}
 
