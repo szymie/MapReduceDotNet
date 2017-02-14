@@ -128,7 +128,7 @@ namespace Master
 
 							closeCurrentFragmentWriter();
 
-							var S3Object = new S3ObjectMetadata("map-reduce-dot-net", getCurrentFragmentName());
+							var S3Object = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), getCurrentFragmentName());
 
 							using (var fragmentStream = File.OpenRead(getCurrentFragmentPath()))
 							{
@@ -149,7 +149,7 @@ namespace Master
 					{
 						closeCurrentFragmentWriter();
 
-						var S3Object = new S3ObjectMetadata("map-reduce-dot-net", getCurrentFragmentName());
+						var S3Object = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), getCurrentFragmentName());
 
 						using (var fragmentStream = File.OpenRead(getCurrentFragmentPath()))
 						{

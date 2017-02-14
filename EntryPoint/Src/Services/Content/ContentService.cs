@@ -55,9 +55,9 @@ namespace EntryPoint
 			if (entity != null)
 			{
 				var objectKey = $"{GetCurrentAuthUserId()}-{type}-{entity.Id}";
-				var S3Object = new S3ObjectMetadata("map-reduce-dot-net", objectKey);
+				var S3Object = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), objectKey);
 
-				//S3Object.upStreamThroughLocalBuffer(request.RequestStream);
+				S3Object.upStreamThroughLocalBuffer(request.RequestStream);
 
 				entity.IsUploaded = true;
 				Db.Save(entity);

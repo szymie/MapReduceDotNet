@@ -46,7 +46,7 @@ namespace EntryPoint
 
 				if(entity != null)
 				{
-					var S3Object = new S3ObjectMetadata("map-reduce-dot-net", entity.Name);
+					var S3Object = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), entity.Name);
 
 					//var tmpFileName = $"/tmp/{S3Object.Filename}";
 

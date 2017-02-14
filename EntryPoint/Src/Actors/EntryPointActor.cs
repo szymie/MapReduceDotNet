@@ -72,7 +72,7 @@ namespace EntryPoint
 				Namespace = message.Assembly.Namespace,
 				MapClassName = message.Assembly.MapClassName,
 				ReduceClassName = message.Assembly.ReduceClassName,
-				File = new S3ObjectMetadata("map-reduce-dot-net", $"{message.UserId}-assembly-{message.Assembly.Id}")
+				File = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), $"{message.UserId}-assembly-{message.Assembly.Id}")
 			};
 		}
 
@@ -83,7 +83,7 @@ namespace EntryPoint
 			foreach(var inputFile in inputFiles)
 			{
 				NewTask.InputFiles.Add(inputFile.Name,
-					new S3ObjectMetadata("map-reduce-dot-net", $"{message.UserId}-input-{inputFile.Id}"));
+					new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), $"{message.UserId}-input-{inputFile.Id}"));
 			}
 		}
 

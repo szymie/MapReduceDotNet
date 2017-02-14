@@ -125,7 +125,7 @@ namespace EntryPoint
 				{
 					Db.DeleteById<Entity>(dto.Id);
 
-					var S3Object = new S3ObjectMetadata("map-reduce-dot-net", $"{GetCurrentAuthUserId()}-{type}-{dto.Id}");
+					var S3Object = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), $"{GetCurrentAuthUserId()}-{type}-{dto.Id}");
 					S3Object.remove();
 				}
 			}
