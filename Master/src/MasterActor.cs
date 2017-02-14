@@ -3,53 +3,72 @@ using Akka.Actor;
 using MapReduceDotNetLib;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Master
 {
 	public class MasterActor : TypedActor, IHandle<RegisterMapCoordinatorMessage>, IHandle<NewWorkAckMessage>, IHandle<Terminated>, IHandle<MapWorkFinishedMessage>, IHandle<WorkerFailureMessage>,
-	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>
+	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>, IHandle<SortCoordinatorsByCpuUsage>
 	{
 		private List<Coordinator> validMapCoordinator = new List<Coordinator>();
 		private List<Coordinator> validReduceCoordinator = new List<Coordinator>();
 
-		private int mapCoordinatorsRoundRobinIndex = 0;
-		private int reduceCoordinatorsRoundRobinIndex = 0;
-
 		private Dictionary<int, Task> tasks = new Dictionary<int, Task> ();
 
 		private UniqueKeyGenerator coordinatorKeyGenerator = new UniqueKeyGenerator();
-		private UniqueKeyGenerator taskKeyGenerator = new UniqueKeyGenerator();
 
 		private IActorRef fileDivider = Context.System.ActorOf<DividerActor>("dividerActor");
 
+		public MasterActor(){
+			Context.System.Scheduler.ScheduleTellRepeatedly (new TimeSpan(0, 0, 1), new TimeSpan(0,0,1), Self, new SortCoordinatorsByCpuUsage(), Self);
+		}
+
+		public void Handle(CoordinatorSystemInfo message){
+			Coordinator coordinator;
+			coordinator = validMapCoordinator.Find (coord => coord.Id == message.CoordinatorId);
+			if(coordinator == null){
+				coordinator = validReduceCoordinator.Find (coord => coord.Id == message.CoordinatorId);
+			}
+
+			if(coordinator != null){
+				coordinator.CpuUsage = message.ProcessPercent;
+			}
+		}
+
+		public void Handle(SortCoordinatorsByCpuUsage m){
+			validMapCoordinator = validMapCoordinator.OrderBy(c=>c.CpuUsage).ToList();
+			validReduceCoordinator = validReduceCoordinator.OrderBy(c=>c.CpuUsage).ToList();
+		}
+
 		public void Handle (RegisterMapCoordinatorMessage message){
 			int coordinatorId = coordinatorKeyGenerator.generateKey ();
-			Coordinator coordinator = new Coordinator (coordinatorId, Sender);
+			Coordinator coordinator = new Coordinator (coordinatorId, Sender, true);
 
 			validMapCoordinator.Add (coordinator);
+			Context.Watch (Sender);
 			Sender.Tell (new RegisterCoordinatorAckMessage(coordinatorId));
 		}
 
 		public void Handle (RegisterReduceCoordinatorMessage message){
 			int coordinatorId = coordinatorKeyGenerator.generateKey ();
-			Coordinator coordinator = new Coordinator (coordinatorId, Sender);
+			Coordinator coordinator = new Coordinator (coordinatorId, Sender, false);
 
 			validReduceCoordinator.Add (coordinator);
+			Context.Watch (Sender);
 			Sender.Tell (new RegisterCoordinatorAckMessage(coordinatorId));
 		}
 
 		public void Handle (NewTaskMessage message){
-			int taskId = taskKeyGenerator.generateKey ();
+			tasks.Add (message.TaskId, new Task(message, Sender));
 
-			tasks.Add (taskId, new Task(message, Sender));
-
-			fileDivider.Tell(new DivideRequestMessage(message.M, message.InputFiles, taskId, message.Username));
+			fileDivider.Tell(new DivideRequestMessage(message.M, message.InputFiles, message.TaskId, message.Username));
 		}
 
 		public void Handle(DivideResponseMessage message){
 			Task task = tasks[message.TaskId];
 			task.addDivideFiles(message.Files);
 
+			var coordinatorGetter = new NextCoordinatorInBulkGetter (validMapCoordinator);
 			foreach(Dictionary<string, S3ObjectMetadata> files in message.Files){
 				Dictionary<string, List<S3ObjectMetadata>> workConfigFiles = new Dictionary<string, List<S3ObjectMetadata>> ();
 
@@ -64,34 +83,59 @@ namespace Master
 					task.AssemblyMetadata
 				);
 
-				startNewMapWork (task, workConfig);
+				startNewMapWork (task, workConfig, coordinatorGetter.next());
 			}
 		}
 
-		private void startNewMapWork(Task task, WorkConfig workConfig){
-			Coordinator coordinator = getNextMapCoordinator ();
+		private void startNewMapWork(Task task, WorkConfig workConfig, Coordinator coordinator){
+			Console.WriteLine ("started map work: " + task.Id + "-" + coordinator.Id);
 
 			if(!task.MapCoordinators.ContainsKey(coordinator.CoordinatorActor)){
 				task.MapCoordinators.Add(coordinator.CoordinatorActor, coordinator);
 			}
 
 			int orderedWorkConfigId = coordinator.storeOrderedWork (workConfig);
-
 			coordinator.CoordinatorActor.Tell (new NewWorkMessage (orderedWorkConfigId, workConfig));
 		}
 
 		public void Handle (NewWorkAckMessage message){
 			int orderedWorkId = message.OrderedWorkId;
 			Task task;
-			if(tasks.TryGetValue(message.TaskId, out task)){
+			if (tasks.TryGetValue (message.TaskId, out task)) {
 				Coordinator coordinator;
 				bool isMapCoordinator;
 				if (task.getCoordinatorByActorRef (Sender, out coordinator, out isMapCoordinator)) {
-					WorkConfig orderedWorkConfig = coordinator.OrderedWorks[orderedWorkId];
+					WorkConfig orderedWorkConfig = coordinator.OrderedWorks [orderedWorkId];
 					coordinator.OrderedWorks.Remove (orderedWorkId);
 
 					Work work = new Work (task.Id, message.WorkerId, orderedWorkConfig);
 					coordinator.Works.Add (message.WorkerId, work);
+					/*
+					if (isMapCoordinator) {
+						Console.WriteLine ("map ack: " + task.Id + "-" + coordinator.Id + "-" + message.WorkerId);
+					} else {
+						Console.WriteLine ("reduce ack: " + task.Id + "-" + coordinator.Id + "-" + message.WorkerId);
+					}*/
+				} else {
+					//Console.WriteLine ("No coord found NewWorkAckMessage");
+				}
+			} else {
+				foreach (Coordinator mapCoordinator in validMapCoordinator) {
+					if (mapCoordinator.OrderedWorks.ContainsKey (orderedWorkId)) {
+						WorkConfig orderedWorkConfig = mapCoordinator.OrderedWorks [orderedWorkId];
+						Sender.Tell (new AbortWorkMessage(message.WorkerId));
+
+						mapCoordinator.OrderedWorks.Remove (orderedWorkId);
+					}
+				}
+
+				foreach (Coordinator reduceCoordinator in validReduceCoordinator) {
+					if (reduceCoordinator.OrderedWorks.ContainsKey (orderedWorkId)) {
+						WorkConfig orderedWorkConfig = reduceCoordinator.OrderedWorks [orderedWorkId];
+						Sender.Tell (new AbortWorkMessage(message.WorkerId));
+
+						reduceCoordinator.OrderedWorks.Remove (orderedWorkId);
+					}
 				}
 			}
 		}
@@ -99,21 +143,31 @@ namespace Master
 		public void Handle (MapWorkFinishedMessage message){
 			Task task;
 			Coordinator coordinator;
-			if (tasks.TryGetValue (message.TaskId, out task) && task.MapCoordinators.TryGetValue (Sender, out coordinator)) {
 
-				task.addMapResult (message.MapResult);
+			if (tasks.TryGetValue (message.TaskId, out task)) {
+				if (task.MapCoordinators.TryGetValue (Sender, out coordinator)) {
+					Console.WriteLine ("MapWorkFinished: " + message.TaskId + "-" + coordinator.Id + "-" + message.WorkerId);
 
-				if (coordinator.Works.ContainsKey (message.WorkerId)) {
-					coordinator.Works.Remove (message.WorkerId);
+					task.addMapResult (message.MapResult);
+
+					if (coordinator.Works.ContainsKey (message.WorkerId)) {
+						coordinator.Works.Remove (message.WorkerId);
+					}
+
+					if (coordinator.countWorksForTask (task.Id) == 0) {
+						task.MapCoordinators.Remove (Sender);
+					}
+
+					if (task.MapCoordinators.Count == 0) {
+						startReduceProcessing (task);
+					}
+				} else {
+					foreach (S3ObjectMetadata s3ObjectMetadata in message.MapResult.Values) {
+						s3ObjectMetadata.remove ();
+					}
+					//Console.WriteLine ("No coord found MapWorkFinishedMessage");
+					
 				}
-
-				if (coordinator.countWorksForTask (task.Id) == 0) {
-					task.MapCoordinators.Remove (Sender);
-				}
-
-				if (task.MapCoordinators.Count == 0) {
-					startReduceProcessing (task);
-				}				 
 			} else {
 				foreach (S3ObjectMetadata s3ObjectMetadata in message.MapResult.Values) {
 					s3ObjectMetadata.remove ();
@@ -126,13 +180,14 @@ namespace Master
 
 			List<WorkConfig> reduceWorkConfigs = createReduceConfigs (task);
 
+			var coordinatorGetter = new NextCoordinatorInBulkGetter (validReduceCoordinator);
 			foreach (var workConfig in reduceWorkConfigs) {
-				startNewReduceWork (task, workConfig);
+				startNewReduceWork (task, workConfig, coordinatorGetter.next());
 			}
 		}
 
-		private void startNewReduceWork(Task task, WorkConfig workConfig){
-			Coordinator coordinator = getNextMapCoordinator ();
+		private void startNewReduceWork(Task task, WorkConfig workConfig, Coordinator coordinator){			
+			Console.WriteLine ("started reduce work: " + task.Id + "-" + coordinator.Id);
 
 			int orderedWorkConfigId = coordinator.storeOrderedWork (workConfig);
 
@@ -171,27 +226,33 @@ namespace Master
 			Task task;
 			Coordinator coordinator;
 			if (tasks.TryGetValue(message.TaskId, out task) && task.ReduceCoordinators.TryGetValue (Sender, out coordinator)) {
+				Console.WriteLine ("ReduceWorkFinished: " + message.TaskId + "-" + coordinator.Id + "-" + message.WorkerId);
 
 				task.addReduceResult(message.File, message.Keys);
 
-				if (coordinator.Works.ContainsKey (message.WorkerId)) {
+				if (coordinator.Works.ContainsKey (message.WorkerId)) {					
 					coordinator.Works.Remove (message.WorkerId);
+					//Console.WriteLine (String.Format("Removed worker, count: {0} : {1}-{2}-{3}", coordinator.countWorksForTask(task.Id), task.Id, coordinator.Id, message.WorkerId));
 				}
+				//else{Console.WriteLine (String.Format ("DIDNT Removed worker, count: {0} : {1}-{2}-{3}", coordinator.countWorksForTask(task.Id), task.Id, coordinator.Id, message.WorkerId));}
 
-				if(coordinator.countWorksForTask(task.Id) == 0){
+				if(coordinator.countWorksForTask(task.Id) == 0){					
 					task.ReduceCoordinators.Remove (Sender);
+					//Console.WriteLine (String.Format("Removed coordinator, others: {0} : {1}-{2}-{3}", task.ReduceCoordinators.Count, task.Id, coordinator.Id, message.WorkerId));
 				}
-
+					
 				if(task.ReduceCoordinators.Count == 0){
 					endTask (task);
 				}
 			} else {
 				message.File.remove ();
+				//Console.WriteLine ("No coord found ReduceWorkFinishedMessage");
 			}
 		}
 
 		void endTask (Task task)
 		{
+			Console.WriteLine ("End task: " + task.Id);
 			task.deleteMapFiles ();
 
 			TaskFinishedMessage taskFinishedMessage = new TaskFinishedMessage (){
@@ -206,67 +267,63 @@ namespace Master
 		}
 
 		public void Handle (WorkerFailureMessage message)
-		{
+		{	
 			Task task;
 			if(tasks.TryGetValue(message.TaskId, out task)){
 				tasks.Remove (message.TaskId);
 
+				Console.WriteLine ("Aborting task: " + message.Message);
 				task.abort(message.Message);
 			}
 		}
 
 		public void Handle (Terminated message)
 		{
+			Console.WriteLine("Coordinator terminated");
 			IActorRef coordinatorActor = message.ActorRef;
-			foreach (Coordinator coordinator in validMapCoordinator) {
-				if (coordinator.CoordinatorActor.Equals (coordinatorActor)) {
-					validMapCoordinator.Remove (coordinator);
-				}
-			}
 
-			foreach (Coordinator coordinator in validReduceCoordinator) {
-				if (coordinator.CoordinatorActor.Equals (coordinatorActor)) {
-					validReduceCoordinator.Remove (coordinator);
-				}
+			Coordinator mapCoord = validMapCoordinator.Find (coord => coord.CoordinatorActor.Equals(coordinatorActor));
+			Coordinator reduceCoord = validReduceCoordinator.Find (coord => coord.CoordinatorActor.Equals(coordinatorActor));
+			Coordinator coordinator;
+			NextCoordinatorInBulkGetter coordinatorGetter;
+			if (mapCoord != null) {
+				coordinator = mapCoord;
+				validMapCoordinator.Remove (coordinator);
+				coordinatorGetter = new NextCoordinatorInBulkGetter (validMapCoordinator);
+			} else {
+				coordinator = reduceCoord;
+				validReduceCoordinator.Remove (coordinator);
+				coordinatorGetter = new NextCoordinatorInBulkGetter (validReduceCoordinator);
 			}
 
 			foreach(Task task in tasks.Values){
-				Coordinator coordinator;
-				bool isMapCoordinator;
-				if (task.getCoordinatorByActorRef (coordinatorActor, out coordinator, out isMapCoordinator)) {
-					if (isMapCoordinator) {
+				if (coordinator.IsMapCoordinator) {
+					if (task.MapCoordinators.ContainsKey (coordinatorActor)) {
 						task.MapCoordinators.Remove (coordinatorActor);
-					} else {
+					}
+				} else {
+					if (task.ReduceCoordinators.ContainsKey (coordinatorActor)) {
 						task.ReduceCoordinators.Remove (coordinatorActor);
-					}
-
-					foreach(Work work in coordinator.Works.Values){
-						if (isMapCoordinator) {
-							startNewMapWork (task, work.WorkConfig);
-						} else {
-							startNewReduceWork (task, work.WorkConfig);
-						}
-					}
-
-					foreach(WorkConfig workConfig in coordinator.OrderedWorks.Values){
-						if (isMapCoordinator) {
-							startNewMapWork (task, workConfig);
-						} else {
-							startNewReduceWork (task, workConfig);
-						}
 					}
 				}
 			}
-		}
-			
-		private Coordinator getNextMapCoordinator(){
-			mapCoordinatorsRoundRobinIndex = (mapCoordinatorsRoundRobinIndex++) % validMapCoordinator.Count;
-			return validMapCoordinator[mapCoordinatorsRoundRobinIndex];
-		}
 
-		private Coordinator getNextReduceCoordinator(){
-			reduceCoordinatorsRoundRobinIndex = (reduceCoordinatorsRoundRobinIndex++) % validReduceCoordinator.Count;
-			return validReduceCoordinator[reduceCoordinatorsRoundRobinIndex];
+			foreach(Work work in coordinator.Works.Values){
+				if (coordinator.IsMapCoordinator) {
+					startNewMapWork (tasks[work.WorkConfig.TaskId], work.WorkConfig, coordinatorGetter.next());
+				} else {
+					startNewReduceWork (tasks[work.WorkConfig.TaskId], work.WorkConfig, coordinatorGetter.next());
+				}
+			}
+
+			foreach(WorkConfig workConfig in coordinator.OrderedWorks.Values){
+				if (coordinator.IsMapCoordinator) {
+					startNewMapWork (tasks[workConfig.TaskId], workConfig, coordinatorGetter.next());
+				} else {
+					startNewReduceWork (tasks[workConfig.TaskId], workConfig, coordinatorGetter.next());
+				}
+
+			}
 		}
 	}
 }

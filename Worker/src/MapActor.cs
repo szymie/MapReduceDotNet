@@ -2,6 +2,7 @@
 using MapReduceDotNetLib;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Worker
 {
@@ -46,7 +47,10 @@ namespace Worker
 				mapResult.Add (pair.Key, resultS3Object);
 			}
 
+			Console.WriteLine ("MapWorkFinished sending");
+			Thread.Sleep(WorkerId * 2000);
 			Coordinator.Tell(new MapWorkFinishedMessage(WorkerId, TaskId, mapResult), self);
+			Console.WriteLine ("MapWorkFinished sent");
 		}
 	}
 }

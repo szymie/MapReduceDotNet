@@ -12,6 +12,7 @@ namespace ClientLib
 		{
 			String line;
 			while((line = lineReader.readLine()) != null){
+				Thread.Sleep (500);
 				emit (line, "-");
 			}
 		}

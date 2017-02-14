@@ -65,6 +65,7 @@
     <Compile Include="src\Messages\StopWorkerMessage.cs" />
     <Compile Include="src\CoordinatorReduceActor.cs" />
     <Compile Include="src\ReduceActor.cs" />
+    <Compile Include="src\Messages\MonitorSystemInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

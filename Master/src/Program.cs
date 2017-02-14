@@ -22,9 +22,12 @@ namespace Master
 
 		private static ActorSystem getActorSystem(){
 			AkkaConfig akkaConfig = getAkkaConfig ();
-
+			//stdout-loglevel = OFF
+			//loglevel = OFF
 			var configString = String.Format(@"
-				akka {{  
+				akka {{  					
+					stdout-loglevel = OFF
+					loglevel = OFF
 					actor {{
 						provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
 					}}

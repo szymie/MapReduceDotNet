@@ -62,6 +62,8 @@
     <Compile Include="src\Messages\DivideRequestMessage.cs" />
     <Compile Include="src\DividerActor.cs" />
     <Compile Include="src\Divider.cs" />
+    <Compile Include="src\Messages\SortCoordinatorsByCpuUsage.cs" />
+    <Compile Include="src\NextCoordinatorInBulkGetter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

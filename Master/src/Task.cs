@@ -51,20 +51,15 @@ namespace Master
 		public void addMapResult (Dictionary<string, S3ObjectMetadata> mapResult)
 		{
 			foreach (KeyValuePair<string, S3ObjectMetadata> pair in mapResult) {
-				List<S3ObjectMetadata> keyFiles;
-				if (MapResult.TryGetValue (pair.Key, out keyFiles)) {
-					MapResult.Remove (pair.Key);
-					keyFiles.Add (pair.Value);
 
-					MapResult.Add (pair.Key, keyFiles);
+				if(MapResult.ContainsKey(pair.Key)){
+					MapResult[pair.Key].Add(pair.Value);
 					MapFiles.Add (pair.Value);
 				} else {
-					mapResult.Add (pair.Key, pair.Value);
+					MapResult.Add (pair.Key, new List<S3ObjectMetadata>(){ pair.Value});
 					MapFiles.Add (pair.Value);
 				}
 			}
-
-			throw new NotImplementedException ();
 		}
 
 		public void addReduceResult (S3ObjectMetadata file, List<string> keys)
@@ -93,7 +88,7 @@ namespace Master
 				coordinator.abort (Id);
 			}
 
-			foreach(Coordinator coordinator in MapCoordinators.Values){
+			foreach(Coordinator coordinator in ReduceCoordinators.Values){
 				coordinator.abort (Id);
 			}
 
