@@ -5,6 +5,7 @@ using MapReduceDotNetLib;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Net.NetworkInformation;
 
 namespace Master
 {
@@ -61,7 +62,11 @@ namespace Master
 
 			string publicHostname = Environment.GetEnvironmentVariable ("MASTER_PUBLICHOSTNAME");
 			if (publicHostname == null) {
-				publicHostname = "localhost";
+				publicHostname = getIpv4Eth0 ();
+
+				if(publicHostname == null){
+					publicHostname = "localhost";
+				}
 				Console.WriteLine ("No MASTER_PUBLICHOSTNAME found.");
 			}
 
@@ -70,6 +75,32 @@ namespace Master
 			Console.WriteLine ("public hostname: " + publicHostname);
 
 			return new AkkaConfig (port, hostname, publicHostname);
+		}
+
+		private static string getIpv4Eth0(){
+			try{
+				foreach(NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+				{
+					if(ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+					{
+						//Console.WriteLine(ni.Name);
+						if(ni.Name.Equals("eth0")){
+							foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+							{
+								if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+								{
+									return ip.Address.ToString();
+								}
+							}
+						}
+					}  
+				}		
+			}
+			catch(Exception e){
+				return null;
+			}
+
+			return null;
 		}
 	}
 
