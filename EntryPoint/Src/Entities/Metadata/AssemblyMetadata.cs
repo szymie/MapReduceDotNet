@@ -6,7 +6,7 @@ using MapReduceDotNetLib;
 
 namespace EntryPoint
 {
-	public class AssemblyMetadata : InputFileMetadata, IOwnable
+	public class AssemblyMetadata : InputFileMetadata, Uploadable
 	{
 		public string Namespace { get; set; }
 		public string MapClassName { get; set; }

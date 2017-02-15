@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace EntryPoint
 {
-	public class Metadata : Entity, IOwnable
+	public class Metadata : Entity, Uploadable
 	{
 		public string Description { get; set; }
 		public string Name { get; set; }

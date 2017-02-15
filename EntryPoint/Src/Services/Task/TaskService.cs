@@ -53,16 +53,16 @@ namespace EntryPoint
 
 		private void validateNewTaskRequest(TaskDto request)
 		{
-			if (!existsAndIsOwnedByCurrentUser<AssemblyMetadata>(request.AssemblyId))
+			if (!isUploadedAndOwnedByCurrentUser<AssemblyMetadata>(request.AssemblyId))
 			{
-				throw new HttpError(HttpStatusCode.BadRequest, "Assembly does not exist or you are not its owner");
+				throw new HttpError(HttpStatusCode.BadRequest, "Assembly does not exist or is not uploaded or you are not its owner");
 			}
 
 			foreach (int inputFileId in request.InputFileIds)
 			{
-				if (!existsAndIsOwnedByCurrentUser<InputFileMetadata>(inputFileId))
+				if (!isUploadedAndOwnedByCurrentUser<InputFileMetadata>(inputFileId))
 				{
-					throw new HttpError(HttpStatusCode.BadRequest, "Input file does not exist or you are not its owner");
+					throw new HttpError(HttpStatusCode.BadRequest, "Input file does not exist or is not uploaded or you are not its owner");
 				}
 			}
 		}
