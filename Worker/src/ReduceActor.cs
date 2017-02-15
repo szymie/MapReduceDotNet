@@ -32,12 +32,17 @@ namespace Worker
 				bucketName,
 				String.Format ("{0}-{1}-{2}-{3}", username, TaskId, CoordinatorId, WorkerId)
 			);
+
+			Stream stream = null;
 			try{
-				resultS3Object.upStream (File.Open(Reduce.UserCreatedFile, FileMode.Open));
+				stream = File.Open (Reduce.UserCreatedFile, FileMode.Open);
 			}
 			catch(Exception e){
 				throw new Exception ("No data emitted during reduce");
 			}
+
+			resultS3Object.upStream (stream);
+			
 			Console.WriteLine ("ReduceWorkFinished sending");
 			//Thread.Sleep(WorkerId * 2000);
 			Coordinator.Tell(new ReduceWorkFinishedMessage (WorkerId, TaskId, Reduce.EmittedKeys, resultS3Object), self);

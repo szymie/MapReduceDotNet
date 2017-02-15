@@ -17,7 +17,27 @@ namespace Master
 
 			var master = system.ActorOf<MasterActor>("MasterActor");
 
+			//Thread.Sleep (5000);
 
+			/*
+			Dictionary<string, S3ObjectMetadata> files = new Dictionary<string, S3ObjectMetadata> (){
+				{"testData1", new S3ObjectMetadata("3edcvfr4", "testData1")},
+				{"testData2", new S3ObjectMetadata("3edcvfr4", "testData2")}
+			};
+
+			AssemblyMetadata assemblyMetadata = new AssemblyMetadata ("ClientLib", "MyMapper", "MyReduce", new S3ObjectMetadata("3edcvfr4", "ClientLib.dll"));
+			*/
+			//AssemblyMetadata assemblyMetadata2 = new AssemblyMetadata ("ClientLib", "MyMapper", "MyInvalidReduce", new S3ObjectMetadata("3edcvfr4", "ClientLib.dll"));
+
+			/*
+			master.Tell (new NewTaskMessage (
+				files, assemblyMetadata, 3, 3, 0, "username"				
+			));
+			*/
+
+			/*master.Tell (new NewTaskMessage(
+				files, assemblyMetadata, 3, 3, 1, "username"				
+			));*/
 
 
 

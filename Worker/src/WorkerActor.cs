@@ -18,6 +18,7 @@ namespace Worker
 		protected Thread WorkerThread{ get; set; }
 		protected IActorRef self{ get; set; }
 		protected AssemblyMetadata AssemblyMetaData{ get; set; }
+		protected Object uploadLock = new object ();
 
 		public WorkerActor ()
 		{
@@ -38,15 +39,23 @@ namespace Worker
 				try{
 					LocalFileUtils.createDirectory ();
 
+
 					workProcessing();
 
-					uploadResult();
+					if(Monitor.TryEnter(uploadLock)){
+						uploadResult();
+
+						Monitor.Exit (uploadLock);
+					}
 				}
 				catch(ThreadAbortException e){
 
 				}
 				catch(Exception e){
 					Coordinator.Tell(new WorkerFailureMessage(WorkerId, TaskId, e.Message), self);
+				}
+				finally{
+					this.LocalFileUtils.removeDirectory ();
 				}
 			});
 
@@ -61,8 +70,12 @@ namespace Worker
 		protected abstract void uploadResult ();
 
 		protected override void PostStop(){
-			this.WorkerThread.Abort ();
-			this.LocalFileUtils.removeDirectory ();
+			if (Monitor.TryEnter (uploadLock)) {
+				this.WorkerThread.Abort ();
+				this.LocalFileUtils.removeDirectory ();
+				
+				Monitor.Exit (uploadLock);				
+			}
 		}
 
 		protected Work loadClientAssembly(string className){
