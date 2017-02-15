@@ -381,7 +381,7 @@ namespace Master
 
 			IActorRef oldSs = message.ActorRef;
 			List<Task> oldSsTasks = validSSWithSentReduceResults [oldSs];
-
+			validSSWithSentReduceResults.Remove (oldSs);
 
 			IActorRef newSS = getSSActorRef();
 
@@ -484,6 +484,8 @@ namespace Master
 
 		public void Handle(RegisterEntryPointMessage message){
 			Console.WriteLine ("Registred EntryPoint: " + Sender.Path.ToString());
+			Console.WriteLine ("Valid ss: " + validSSWithSentReduceResults.Keys.Count);
+			Console.WriteLine ("Not sent results: " + notSentReduceResult.Count);
 
 			List<Task> tasksSentToNewSS = new List<Task> ();
 
