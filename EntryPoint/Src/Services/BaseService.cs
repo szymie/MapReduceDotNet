@@ -29,8 +29,6 @@ namespace EntryPoint
 	
 		protected bool existsAndIsOwnedByCurrentUser<U>(int id) where U : Entity, IOwnable
 		{
-			Console.WriteLine(Db == null);
-
 			return Db.Select<U>(entity => entity.Id == id && entity.OwnerId == GetCurrentAuthUserId()).Count > 0;
 		}
 

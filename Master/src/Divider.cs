@@ -75,13 +75,16 @@ namespace Master
 			return fragmentWriter;
 		}
 
-		void closeCurrentFragmentWriter()
+		bool closeCurrentFragmentWriter()
 		{
 			if (fragmentWriter != null)
 			{
 				fragmentWriter.Close();
 				fragmentWriter = null;
+				return true;
 			}
+
+			return false;
 		}
 
 		void writeToCurrentFragment(string line)
@@ -147,23 +150,22 @@ namespace Master
 
 					if (!closed)
 					{
-						closeCurrentFragmentWriter();
+						var currentFragmentClosed = closeCurrentFragmentWriter();
 
-						var S3Object = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), getCurrentFragmentName());
-
-						using (var fragmentStream = File.OpenRead(getCurrentFragmentPath()))
+						if (currentFragmentClosed)
 						{
-							S3Object.upStream(fragmentStream);
+							var S3Object = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), getCurrentFragmentName());
+
+							using (var fragmentStream = File.OpenRead(getCurrentFragmentPath()))
+							{
+								S3Object.upStream(fragmentStream);
+							}
+
+							File.Delete(getCurrentFragmentPath());
+
+							entry.Add(currentFilename, S3Object);
 						}
-
-						File.Delete(getCurrentFragmentPath());
-
-						entry.Add(currentFilename, S3Object);
 					}
-					//else
-					//{
-					//	usedSpace = 0;
-					//}
 				}
 			}
 
