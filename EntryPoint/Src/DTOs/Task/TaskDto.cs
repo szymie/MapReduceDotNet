@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace EntryPoint
 {
 	[Route("/api/tasks", "GET,POST")]
-	[Route("/api/tasks/{Id}", "GET")]
+	[Route("/api/tasks/{Id}", "GET,DELETE")]
 	public class TaskDto
 	{
 		public int? Id { get; set; }

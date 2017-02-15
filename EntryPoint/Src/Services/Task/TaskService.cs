@@ -118,9 +118,23 @@ namespace EntryPoint
 			}
 			else
 			{
-				return new HttpResult(HttpStatusCode.NotFound);
+				return new HttpResult(HttpStatusCode.NotFound, "Not found");
 			}
 		}
 
+		public object Delete(TaskDto request)
+		{
+			var entity = Db.Select<Task>(e => e.OwnerId == GetCurrentAuthUserId() && e.Id == request.Id.Value && request.Status == "in progress")
+						.FirstOrDefault();
+
+			if (entity != null)
+			{
+				return new HttpResult(HttpStatusCode.OK, "Task aborted");
+			}
+			else
+			{
+				return new HttpResult(HttpStatusCode.BadRequest, "Task does not exist or in not in progress");
+			}
+		}
 	}
 }

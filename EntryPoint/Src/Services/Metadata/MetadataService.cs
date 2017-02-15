@@ -97,8 +97,7 @@ namespace EntryPoint
 			}
 			else
 			{
-				return new HttpResult(HttpStatusCode.NotFound);
-				//return HttpError.NotFound("Not found");
+				return new HttpResult(HttpStatusCode.NotFound, "Not found");
 			}
 		}
 
@@ -130,7 +129,7 @@ namespace EntryPoint
 				}
 			}
 
-			return new HttpResult { StatusCode = HttpStatusCode.NoContent };
+			return new HttpResult(HttpStatusCode.NoContent, "No content");
 		}
 	}
 }
