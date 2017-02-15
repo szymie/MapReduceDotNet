@@ -15,7 +15,11 @@ namespace Master
 		{
 			ActorSystem system = getActorSystem ();
 
-			system.ActorOf<MasterActor>("MasterActor");
+			var master = system.ActorOf<MasterActor>("MasterActor");
+
+
+
+
 
 			ManualResetEvent resetEvent = new ManualResetEvent(false);
 			resetEvent.WaitOne();
@@ -27,8 +31,6 @@ namespace Master
 			//loglevel = OFF
 			var configString = String.Format(@"
 				akka {{  					
-					stdout-loglevel = OFF
-					loglevel = OFF
 					actor {{
 						provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
 					}}

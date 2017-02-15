@@ -39,7 +39,7 @@ namespace Worker
 				throw new Exception ("No data emitted during reduce");
 			}
 			Console.WriteLine ("ReduceWorkFinished sending");
-			Thread.Sleep(WorkerId * 2000);
+			//Thread.Sleep(WorkerId * 2000);
 			Coordinator.Tell(new ReduceWorkFinishedMessage (WorkerId, TaskId, Reduce.EmittedKeys, resultS3Object), self);
 			Console.WriteLine ("ReduceWorkFinished sent");
 		}

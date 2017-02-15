@@ -69,6 +69,7 @@ namespace Worker
 
 		public void Handle (NewWorkMessage message)
 		{
+			Console.WriteLine ("New work message: " + CoordinatorId);
 			int workerId = keyGenerator.generateKey();
 
 			MasterActor.Tell (new NewWorkAckMessage(workerId, message.OrderedWorkId, message.WorkConfig.TaskId, CoordinatorId));
@@ -88,14 +89,14 @@ namespace Worker
 
 		public void Handle (RegisterCoordinatorAckMessage message)
 		{
-			//Console.WriteLine ("Registered with id: " + message.CoordinatorId);
+			Console.WriteLine ("Registered with id: " + message.CoordinatorId);
 			this.CoordinatorId = message.CoordinatorId;
 			Context.System.Scheduler.ScheduleTellRepeatedly (new TimeSpan(0, 0, 1), new TimeSpan(0,0,1), Self, new MonitorSystemInfo(),Self);
 		}
 
 		public void Handle (WorkerFailureMessage message){
-			//Console.WriteLine ("Worker failed: " + message.TaskId + "-" + CoordinatorId + "-" + message.WorkerId);
-			//Console.WriteLine (message.Message);
+			Console.WriteLine ("Worker failed: " + message.TaskId + "-" + CoordinatorId + "-" + message.WorkerId);
+			Console.WriteLine (message.Message);
 			MasterActor.Tell (message);
 
 			workers.Remove (Sender);
@@ -103,7 +104,7 @@ namespace Worker
 		}
 
 		public void Handle(AbortWorkMessage message){
-			//Console.WriteLine ("Aborting worker: " + CoordinatorId + "-" + message.WorkerId);		
+			Console.WriteLine ("Aborting worker: " + CoordinatorId + "-" + message.WorkerId);		
 
 			foreach(IActorRef worker in workers.Keys.ToList()){
 				WorkerConfig workerConfig = workers [worker];
@@ -124,7 +125,7 @@ namespace Worker
 				LocalFilesDirectory dir = new LocalFilesDirectory (workerConfig);
 				dir.removeDirectory ();
 
-				//Console.WriteLine ("Restarting worker...");
+				Console.WriteLine ("Restarting worker...");
 
 				startNewWorker (workerConfig);
 			}

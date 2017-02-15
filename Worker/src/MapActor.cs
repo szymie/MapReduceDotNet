@@ -48,7 +48,7 @@ namespace Worker
 			}
 
 			Console.WriteLine ("MapWorkFinished sending");
-			Thread.Sleep(WorkerId * 2000);
+			//Thread.Sleep(WorkerId * 2000);
 			Coordinator.Tell(new MapWorkFinishedMessage(WorkerId, TaskId, mapResult), self);
 			Console.WriteLine ("MapWorkFinished sent");
 		}

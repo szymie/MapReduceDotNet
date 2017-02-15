@@ -10,6 +10,10 @@ namespace Master
 
 		public NextCoordinatorInBulkGetter (List<Coordinator> coordinators)
 		{
+			if (coordinators.Count == 0) {
+				throw new Exception ("No coordinators");
+			}
+
 			this.Coordinators = coordinators;
 		}
 
