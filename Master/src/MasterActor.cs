@@ -505,19 +505,10 @@ namespace Master
 		public void Handle(TaskReceivedAckMessage message){
 			List<Task> sentTasks;
 			if (validSSWithSentReduceResults.TryGetValue (Sender, out sentTasks)) {
-				
-				Task task = null;
-				foreach(Task _task in sentTasks){
-					if (task.Id == message.TaskId) {
-						task = _task;
-						break;
-					}
-				}
-
-				if (task != null) {
-					sentTasks.Remove (task);
+				sentTasks.RemoveAll (task => {					
 					Console.WriteLine ("SS Ack for end task: " + task.Id);
-				}
+					return task.Id == message.TaskId;
+				});
 			}
 		}
 
