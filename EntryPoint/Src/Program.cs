@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using MapReduceDotNetLib;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace EntryPoint
 {
