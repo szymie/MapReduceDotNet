@@ -41,9 +41,9 @@ namespace EntryPoint
 			fillAssembly(message);
 			fillInputFiles(message);
 
-			MasterActor.Tell(NewTask);
-
 			usernameOfTask.Add(message.TaskId, message.Username);
+
+			MasterActor.Tell(NewTask);
 		}
 
 		private ActorSelection getMasterActorRef()
@@ -117,6 +117,12 @@ namespace EntryPoint
 				Db.Save(resultMetadata);
 			}
 
+			var taskId = message.TaskId;
+			var filePattern = $"{usernameOfTask[taskId]}-{taskId}-(\\d+)-(\\d+)-(\\d+)-(\\d+)";
+			Regex regex = new Regex(filePattern);
+
+			deleteUnusedFiles(key => regex.IsMatch(key));
+
 			usernameOfTask.Remove(message.TaskId);
 
 			replyWithAck(message.TaskId);
@@ -129,22 +135,18 @@ namespace EntryPoint
 			Db.Update(task);
 		}
 
-		private void deleteUnusedFilesAfterFinished(int taskId)
+		private void deleteUnusedFiles(Func<string, bool> matches)
 		{
 			var bucketName = Environment.GetEnvironmentVariable("S3_BUCKET_NAME");
 			var S3Bucket = new S3Bucket(bucketName);
 
 			S3Bucket.fetchKeys();
 
-			var filePattern = $"{usernameOfTask[taskId]}-{taskId}-(\\d+)-(\\d+)-(\\d+)-(\\d+)";
-
-			Regex regex = new Regex(filePattern);
-
 			while (S3Bucket.moveNext())
 			{
 				var currentKey = S3Bucket.getCurrentKey();
 
-				if (regex.IsMatch(currentKey))
+				if (matches.Invoke(currentKey))
 				{
 					var S3Object = new S3ObjectMetadata(bucketName, currentKey);
 					S3Object.remove();
@@ -152,14 +154,11 @@ namespace EntryPoint
 			}
 		}
 
-
 		private void replyWithAck(int taskId)
 		{
 			var ack = new TaskReceivedAckMessage() { TaskId = taskId };
 			MasterActor.Tell(ack);
 		}
-
-
 
 		public void Handle(TaskFailureMessage message)
 		{
@@ -173,32 +172,14 @@ namespace EntryPoint
 
 			Db.Save(failure);
 
-			deleteUnusedFilesAfterFinished(message.TaskId);
+			var taskId = message.TaskId;
+			var filePattern = $"{usernameOfTask[taskId]}-{taskId}";
+
+			deleteUnusedFiles(key => key.StartsWith(filePattern, StringComparison.CurrentCulture));
 
 			usernameOfTask.Remove(message.TaskId);
 
 			replyWithAck(message.TaskId);
-		}
-
-		private void deleteUnusedFilesAfterFailure(int taskId)
-		{
-			var bucketName = Environment.GetEnvironmentVariable("S3_BUCKET_NAME");
-			var S3Bucket = new S3Bucket(bucketName);
-
-			S3Bucket.fetchKeys();
-
-			var filePattern = $"{usernameOfTask[taskId]}-{taskId}";
-
-			while (S3Bucket.moveNext())
-			{
-				var currentKey = S3Bucket.getCurrentKey();
-
-				if (currentKey.StartsWith(filePattern, StringComparison.CurrentCulture))
-				{
-					var S3Object = new S3ObjectMetadata(bucketName, currentKey);
-					S3Object.remove();
-				}
-			}
 		}
 
 		public virtual void Dispose()
