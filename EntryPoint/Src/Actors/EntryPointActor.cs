@@ -28,6 +28,7 @@ namespace EntryPoint
 			Db.CreateTableIfNotExists<ResultMetadata>();
 			Db.CreateTableIfNotExists<Failure>();
 			MasterActor = getMasterActorRef();
+			MasterActor.Tell(new RegisterEntryPointMessage());
 		}
 
 		public void Handle(NewTaskRequestMessage message)
@@ -110,6 +111,14 @@ namespace EntryPoint
 
 				Db.Save(resultMetadata);
 			}
+
+			replyWithAck(message.TaskId);
+		}
+
+		private void replyWithAck(int taskId)
+		{
+			var ack = new TaskReceivedAckMessage() { TaskId = taskId };
+			MasterActor.Tell(ack);
 		}
 
 		private void changeTaskStatus(int id, string status)
@@ -117,7 +126,6 @@ namespace EntryPoint
 			var task = Db.Select<Task>(e => e.Id == id).First();
 			task.Status = status;
 			Db.Update(task);
-
 		}
 
 		public void Handle(TaskFailureMessage message)
@@ -131,6 +139,8 @@ namespace EntryPoint
 			};
 
 			Db.Save(failure);
+
+			replyWithAck(message.TaskId);
 		}
 
 		public virtual void Dispose()
