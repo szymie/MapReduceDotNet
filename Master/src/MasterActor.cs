@@ -8,7 +8,7 @@ using System.Linq;
 namespace Master
 {
 	public class MasterActor : TypedActor, IHandle<RegisterMapCoordinatorMessage>, IHandle<NewWorkAckMessage>, IHandle<Terminated>, IHandle<MapWorkFinishedMessage>, IHandle<WorkerFailureMessage>,
-	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>, IHandle<SortCoordinatorsByCpuUsage>, IHandle<TaskAbortMessage>, IHandle<TaskReceivedAckMessage>, IHandle<RegisterEntryPoint>
+	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>, IHandle<SortCoordinatorsByCpuUsage>, IHandle<TaskAbortMessage>, IHandle<TaskReceivedAckMessage>, IHandle<RegisterEntryPointMessage>
 	{
 		private List<Coordinator> validMapCoordinator = new List<Coordinator>();
 		private List<Coordinator> validReduceCoordinator = new List<Coordinator>();
@@ -384,7 +384,6 @@ namespace Master
 			IActorRef newSS = getSSActorRef();
 
 			if (newSS == null) {
-				//notSentReduceResult.Add (oldSsTasks);
 				notSentReduceResult.AddRange(oldSsTasks);
 			} else {
 				foreach(Task task in oldSsTasks){
@@ -481,7 +480,7 @@ namespace Master
 			}
 		}
 
-		public void Handle(RegisterEntryPoint message){
+		public void Handle(RegisterEntryPointMessage message){
 			Console.WriteLine ("Registred EntryPoint: " + Sender.Path.ToString());
 
 			List<Task> tasksSentToNewSS = new List<Task> ();
