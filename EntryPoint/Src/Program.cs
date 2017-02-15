@@ -9,10 +9,20 @@ namespace EntryPoint
 	{
 		public static void Main(string[] args)
 		{
-			var listeningOn = startEntryPoint(args);
-			Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
-			ManualResetEvent resetEvent = new ManualResetEvent(false);
-			resetEvent.WaitOne();
+			var bucket = new S3Bucket("map-reduce-dot-net");
+
+			bucket.fetchKeys();
+
+			while(bucket.moveNext())
+			{
+				Console.WriteLine(bucket.getCurrentKey());
+			} 
+
+
+			//var listeningOn = startEntryPoint(args);
+			//Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
+			//ManualResetEvent resetEvent = new ManualResetEvent(false);
+			//resetEvent.WaitOne();
 		}
 
 		private static string startEntryPoint(string[] args)

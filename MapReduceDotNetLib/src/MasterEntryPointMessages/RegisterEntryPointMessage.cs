@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MapReduceDotNetLib
 {
-	public class RegisterEntryPoint
+	public class RegisterEntryPointMessage
 	{
 
 	}

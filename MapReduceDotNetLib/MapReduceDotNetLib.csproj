@@ -74,6 +74,7 @@
     <Compile Include="src\S3\S3Bucket.cs" />
     <Compile Include="src\MasterEntryPointMessages\RegisterEntryPointMessage.cs" />
     <Compile Include="src\MasterEntryPointMessages\TaskReceivedAckMessage.cs" />
+    <Compile Include="src\S3\BaseS3.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
