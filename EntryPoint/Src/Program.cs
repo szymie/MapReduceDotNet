@@ -9,8 +9,6 @@ namespace EntryPoint
 	{
 		public static void Main(string[] args)
 		{
-			RemoveMyFiles.removeFiles ();
-
 			var listeningOn = startEntryPoint(args);
 			Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn);
 			ManualResetEvent resetEvent = new ManualResetEvent(false);
