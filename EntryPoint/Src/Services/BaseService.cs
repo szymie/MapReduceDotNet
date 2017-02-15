@@ -3,6 +3,7 @@ using System.Net;
 using ServiceStack.Common.Web;
 using ServiceStack.ServiceInterface;
 using ServiceStack.OrmLite;
+using System.Linq;
 
 namespace EntryPoint
 {
@@ -27,9 +28,14 @@ namespace EntryPoint
 			return id;
 		}
 	
-		protected bool existsAndIsOwnedByCurrentUser<U>(int id) where U : Entity, IOwnable
+		protected bool existsAndIsOwnedByCurrentUser<U>(int id) where U : Entity, Ownable
 		{
 			return Db.Select<U>(entity => entity.Id == id && entity.OwnerId == GetCurrentAuthUserId()).Count > 0;
+		}
+
+		protected bool isUploadedAndOwnedByCurrentUser<U>(int id) where U : Entity, Uploadable
+		{	       
+			return Db.Select<U>(entity => entity.Id == id && entity.OwnerId == GetCurrentAuthUserId() && entity.IsUploaded).Count > 0;
 		}
 
 		protected bool exists<U>(int id) where U : Entity

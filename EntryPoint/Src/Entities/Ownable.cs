@@ -1,7 +1,7 @@
 ﻿using System;
 namespace EntryPoint
 {
-	public interface IOwnable
+	public interface Ownable
 	{
 		int OwnerId { get; set; }
 	}

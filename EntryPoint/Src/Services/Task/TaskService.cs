@@ -53,16 +53,18 @@ namespace EntryPoint
 
 		private void validateNewTaskRequest(TaskDto request)
 		{
-			if (!existsAndIsOwnedByCurrentUser<AssemblyMetadata>(request.AssemblyId))
+			Console.WriteLine("AssemblyId= " + request.AssemblyId);
+
+			if (!isUploadedAndOwnedByCurrentUser<AssemblyMetadata>(request.AssemblyId))
 			{
-				throw new HttpError(HttpStatusCode.BadRequest, "Assembly does not exist or you are not its owner");
+				throw new HttpError(HttpStatusCode.BadRequest, "Assembly does not exist or is not uploaded or you are not its owner");
 			}
 
 			foreach (int inputFileId in request.InputFileIds)
 			{
-				if (!existsAndIsOwnedByCurrentUser<InputFileMetadata>(inputFileId))
+				if (!isUploadedAndOwnedByCurrentUser<InputFileMetadata>(inputFileId))
 				{
-					throw new HttpError(HttpStatusCode.BadRequest, "Input file does not exist or you are not its owner");
+					throw new HttpError(HttpStatusCode.BadRequest, "Input file does not exist or is not uploaded or you are not its owner");
 				}
 			}
 		}
@@ -116,9 +118,23 @@ namespace EntryPoint
 			}
 			else
 			{
-				return new HttpResult(HttpStatusCode.NotFound);
+				return new HttpResult(HttpStatusCode.NotFound, "Not found");
 			}
 		}
 
+		public object Delete(TaskDto request)
+		{
+			var entity = Db.Select<Task>(e => e.OwnerId == GetCurrentAuthUserId() && e.Id == request.Id.Value && request.Status == "in progress")
+						.FirstOrDefault();
+
+			if (entity != null)
+			{
+				return new HttpResult(HttpStatusCode.OK, "Task aborted");
+			}
+			else
+			{
+				return new HttpResult(HttpStatusCode.BadRequest, "Task does not exist or in not in progress");
+			}
+		}
 	}
 }

@@ -13,8 +13,6 @@ namespace EntryPoint
 	[Authenticate]
 	public class ContentService : BaseService
 	{
-		private const string all = "0";
-
 		public ContentService()
 		{
 			Db.CreateTableIfNotExists<InputFileMetadata>();

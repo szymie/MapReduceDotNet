@@ -108,7 +108,7 @@
     <Compile Include="Src\Entities\Task\Task.cs" />
     <Compile Include="Src\Validators\TaskDtoValidator.cs" />
     <Compile Include="Src\Entities\Entity.cs" />
-    <Compile Include="Src\Entities\IOwnable.cs" />
+    <Compile Include="Src\Entities\Ownable.cs" />
     <Compile Include="Src\DTOs\Results\ResultsDto.cs" />
     <Compile Include="Src\DTOs\Metadata\MetadataDtoResponse.cs" />
     <Compile Include="Src\DTOs\Results\ResultsDtoResponse.cs" />
@@ -121,6 +121,7 @@
     <Compile Include="Src\DTOs\Status\StatusDto.cs" />
     <Compile Include="Src\DTOs\Status\StatusDtoResponse.cs" />
     <Compile Include="Src\Services\Status\StatusService.cs" />
+    <Compile Include="Src\Entities\Uploadable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Src\" />

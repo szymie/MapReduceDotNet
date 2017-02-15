@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace EntryPoint
 {
-	public class Task : Entity, IOwnable
+	public class Task : Entity, Ownable
 	{
 		public string Status { get; set; }
 		//[References(typeof(AssemblyMetadata))]	//is that necessary?

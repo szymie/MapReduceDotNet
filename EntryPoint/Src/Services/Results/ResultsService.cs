@@ -48,18 +48,7 @@ namespace EntryPoint
 				{
 					var S3Object = new S3ObjectMetadata(Environment.GetEnvironmentVariable("S3_BUCKET_NAME"), entity.Name);
 
-					//var tmpFileName = $"/tmp/{S3Object.Filename}";
-
 					S3Object.downStream().CopyTo(Response.OutputStream);
-
-					//using (var outputFileStream = File.Create(tmpFileName))
-					//{
-					//	S3Object.downStream().CopyTo(outputFileStream);
-					//}
-
-					//var result = new HttpResult(new FileInfo(tmpFileName), true);
-
-					//File.Delete(tmpFileName);
 
 					return Response;
 				}
