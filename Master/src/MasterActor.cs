@@ -8,7 +8,7 @@ using System.Linq;
 namespace Master
 {
 	public class MasterActor : TypedActor, IHandle<RegisterMapCoordinatorMessage>, IHandle<NewWorkAckMessage>, IHandle<Terminated>, IHandle<MapWorkFinishedMessage>, IHandle<WorkerFailureMessage>,
-	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>, IHandle<SortCoordinatorsByCpuUsage>
+	IHandle<RegisterReduceCoordinatorMessage>, IHandle<NewTaskMessage>, IHandle<DivideResponseMessage>, IHandle<SortCoordinatorsByCpuUsage>, IHandle<TaskAbortMessage>
 	{
 		private List<Coordinator> validMapCoordinator = new List<Coordinator>();
 		private List<Coordinator> validReduceCoordinator = new List<Coordinator>();
@@ -385,6 +385,15 @@ namespace Master
 					startNewReduceWork (tasks[workConfig.TaskId], workConfig, coordinatorGetter.next());
 				}
 
+			}
+		}
+
+		public void Handle(TaskAbortMessage message){
+			Task task;
+
+			if (tasks.TryGetValue (message.TaskId, out task)) {
+				tasks.Remove (message.TaskId);
+				task.abort ("Task aborted.");
 			}
 		}
 	}
