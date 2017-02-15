@@ -66,17 +66,20 @@ namespace Master
 			ReduceFiles.Add (file);
 		}
 
-		public void sendResult (IActorRef sender)
+		public void sendResult (IActorRef receiver)
 		{
 			if (abortMessage != null) {
-				sender.Tell (new TaskFailureMessage (Id, abortMessage));
+				var message = new TaskFailureMessage (Id, abortMessage);
+				message.Username = this.Username;
+				receiver.Tell (message);
 			} else {
 				TaskFinishedMessage taskFinishedMessage = new TaskFinishedMessage (){
 					TaskId = Id,
 					reduceResult = ReduceResult
 				};
+				taskFinishedMessage.Username = this.Username;
 
-				sender.Tell (taskFinishedMessage);
+				receiver.Tell (taskFinishedMessage);
 			}
 		}
 
