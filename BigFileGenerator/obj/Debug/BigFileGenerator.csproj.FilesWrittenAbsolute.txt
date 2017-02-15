@@ -1,0 +1,5 @@
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/BigFileGenerator/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/BigFileGenerator/bin/Debug/BigFileGenerator.exe.mdb
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/BigFileGenerator/bin/Debug/BigFileGenerator.exe
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/BigFileGenerator/obj/Debug/BigFileGenerator.exe
+/home/gemboj/Polibuda/sem2/piksr/MapReduceDotNet/BigFileGenerator/obj/Debug/BigFileGenerator.exe.mdb
