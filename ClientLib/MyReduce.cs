@@ -16,6 +16,8 @@ namespace ClientLib
 				counter++;
 			}
 
+			Thread.Sleep(5000);
+
 			emit(key + " : " + counter);
 		}
 	}

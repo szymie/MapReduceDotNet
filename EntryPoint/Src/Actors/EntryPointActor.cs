@@ -25,7 +25,7 @@ namespace EntryPoint
 		private NewTaskMessage NewTask { get; set; }
 		private ActorSelection MasterActor { get; set; }
 
-		private Dictionary<int, string> usernameOfTask;
+		private Dictionary<int, string> usernameOfTask = new Dictionary<int, string>();
 
 		public EntryPointActor()
 		{
