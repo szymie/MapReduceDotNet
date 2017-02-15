@@ -53,6 +53,8 @@ namespace EntryPoint
 
 		private void validateNewTaskRequest(TaskDto request)
 		{
+			Console.WriteLine("AssemblyId= " + request.AssemblyId);
+
 			if (!isUploadedAndOwnedByCurrentUser<AssemblyMetadata>(request.AssemblyId))
 			{
 				throw new HttpError(HttpStatusCode.BadRequest, "Assembly does not exist or is not uploaded or you are not its owner");
