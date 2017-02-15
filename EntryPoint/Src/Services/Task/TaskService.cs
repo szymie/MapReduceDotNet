@@ -129,6 +129,7 @@ namespace EntryPoint
 
 			if (entity != null)
 			{
+				//send request to master
 				return new HttpResult(HttpStatusCode.OK, "Task aborted");
 			}
 			else
