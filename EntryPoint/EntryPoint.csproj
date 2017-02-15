@@ -122,6 +122,7 @@
     <Compile Include="Src\DTOs\Status\StatusDtoResponse.cs" />
     <Compile Include="Src\Services\Status\StatusService.cs" />
     <Compile Include="Src\Entities\Uploadable.cs" />
+    <Compile Include="Src\Messages\TaskAbortRequestMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Src\" />
