@@ -6,6 +6,8 @@ using System.Data;
 using ServiceStack.OrmLite;
 using ServiceStack.WebHost.Endpoints.Support;
 using System.Linq;
+using System.Text.RegularExpressions;
+
 
 namespace EntryPoint
 {
@@ -23,19 +25,23 @@ namespace EntryPoint
 		private NewTaskMessage NewTask { get; set; }
 		private ActorSelection MasterActor { get; set; }
 
+		private Dictionary<int, string> usernameOfTask;
+
 		public EntryPointActor()
 		{
 			Db.CreateTableIfNotExists<ResultMetadata>();
 			Db.CreateTableIfNotExists<Failure>();
 			MasterActor = getMasterActorRef();
+			MasterActor.Tell(new RegisterEntryPointMessage());
 		}
 
 		public void Handle(NewTaskRequestMessage message)
 		{
-			Console.WriteLine ("new task");
 			initNewTask(message);
 			fillAssembly(message);
 			fillInputFiles(message);
+
+			usernameOfTask.Add(message.TaskId, message.Username);
 
 			MasterActor.Tell(NewTask);
 		}
@@ -110,6 +116,16 @@ namespace EntryPoint
 
 				Db.Save(resultMetadata);
 			}
+
+			var taskId = message.TaskId;
+			var filePattern = $"{usernameOfTask[taskId]}-{taskId}-(\\d+)-(\\d+)-(\\d+)-(\\d+)";
+			Regex regex = new Regex(filePattern);
+
+			deleteUnusedFiles(key => regex.IsMatch(key));
+
+			usernameOfTask.Remove(message.TaskId);
+
+			replyWithAck(message.TaskId);
 		}
 
 		private void changeTaskStatus(int id, string status)
@@ -117,7 +133,31 @@ namespace EntryPoint
 			var task = Db.Select<Task>(e => e.Id == id).First();
 			task.Status = status;
 			Db.Update(task);
+		}
 
+		private void deleteUnusedFiles(Func<string, bool> matches)
+		{
+			var bucketName = Environment.GetEnvironmentVariable("S3_BUCKET_NAME");
+			var S3Bucket = new S3Bucket(bucketName);
+
+			S3Bucket.fetchKeys();
+
+			while (S3Bucket.moveNext())
+			{
+				var currentKey = S3Bucket.getCurrentKey();
+
+				if (matches.Invoke(currentKey))
+				{
+					var S3Object = new S3ObjectMetadata(bucketName, currentKey);
+					S3Object.remove();
+				}
+			}
+		}
+
+		private void replyWithAck(int taskId)
+		{
+			var ack = new TaskReceivedAckMessage() { TaskId = taskId };
+			MasterActor.Tell(ack);
 		}
 
 		public void Handle(TaskFailureMessage message)
@@ -131,6 +171,15 @@ namespace EntryPoint
 			};
 
 			Db.Save(failure);
+
+			var taskId = message.TaskId;
+			var filePattern = $"{usernameOfTask[taskId]}-{taskId}";
+
+			deleteUnusedFiles(key => key.StartsWith(filePattern, StringComparison.CurrentCulture));
+
+			usernameOfTask.Remove(message.TaskId);
+
+			replyWithAck(message.TaskId);
 		}
 
 		public virtual void Dispose()
