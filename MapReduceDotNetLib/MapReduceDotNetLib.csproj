@@ -71,6 +71,7 @@
     <Compile Include="src\WorkerLogic\Reduce.cs" />
     <Compile Include="src\MasterWorkerMessages\CoordinatorSystemInfo.cs" />
     <Compile Include="src\Remover\RemoveMyFiles.cs" />
+    <Compile Include="src\MasterEntryPointMessages\TaskAbortMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

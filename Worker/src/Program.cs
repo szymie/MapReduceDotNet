@@ -13,8 +13,6 @@ namespace Worker
 	{
 		public static void Main (string[] args)
 		{
-			RemoveMyFiles.removeFiles ();
-
 			ActorSystem system = createActorSystem ("WorkerSystem");
 			system.ActorOf<CoordinatorMapActor>("CoordinatorMapActor");
 			system.ActorOf<CoordinatorReduceActor>("CoordinatorReduceActor");
