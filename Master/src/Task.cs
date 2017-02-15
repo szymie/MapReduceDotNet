@@ -13,8 +13,7 @@ namespace Master
 		public Dictionary<string, S3ObjectMetadata> InputFiles{ get; set; }
 		public AssemblyMetadata AssemblyMetadata{ get; set; }
 		public string Username{ get; set; }
-		public IActorRef SS{ get; set; }
-
+		public string abortMessage = null;
 
 		public Dictionary<IActorRef, Coordinator> MapCoordinators{ get; set; } = new Dictionary<IActorRef, Coordinator>();
 		public Dictionary<IActorRef, Coordinator> ReduceCoordinators{ get; set; } = new Dictionary<IActorRef, Coordinator>();
@@ -28,7 +27,7 @@ namespace Master
 
 
 
-		public Task (NewTaskMessage newTaskMessage, IActorRef ss)
+		public Task (NewTaskMessage newTaskMessage)
 		{
 			this.Id = newTaskMessage.TaskId;
 			this.M = newTaskMessage.M;
@@ -36,7 +35,6 @@ namespace Master
 			this.InputFiles = newTaskMessage.InputFiles;
 			this.AssemblyMetadata = newTaskMessage.Assembly;
 			this.Username = newTaskMessage.Username;
-			this.SS = ss;
 		}
 
 		public void addDivideFiles (List<Dictionary<string, S3ObjectMetadata>> files)
@@ -68,6 +66,20 @@ namespace Master
 			ReduceFiles.Add (file);
 		}
 
+		public void sendResult (IActorRef sender)
+		{
+			if (abortMessage != null) {
+				sender.Tell (new TaskFailureMessage (Id, abortMessage));
+			} else {
+				TaskFinishedMessage taskFinishedMessage = new TaskFinishedMessage (){
+					TaskId = Id,
+					reduceResult = ReduceResult
+				};
+
+				sender.Tell (taskFinishedMessage);
+			}
+		}
+
 		public bool getCoordinatorByActorRef(IActorRef coordinatorActor, out Coordinator coordinator, out bool isMapCoordinator){
 			if (MapCoordinators.TryGetValue (coordinatorActor, out coordinator)){
 				isMapCoordinator = true;
@@ -92,13 +104,11 @@ namespace Master
 				coordinator.abort (Id);
 			}
 
-
 			deleteDividerFiles ();
 			deleteMapFiles ();
 			deleteReduceFiles ();
 
-
-			SS.Tell (new TaskFailureMessage (Id, message));
+			abortMessage = message;
 		}
 
 		public void deleteDividerFiles(){
