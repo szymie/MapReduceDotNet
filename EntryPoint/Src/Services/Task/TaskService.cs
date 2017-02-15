@@ -129,7 +129,9 @@ namespace EntryPoint
 
 			if (entity != null)
 			{
-				//send request to master
+				EntryPointActor.Tell(new TaskAbortRequestMessage() { TaskId = entity.Id });
+				entity.Status = "aborted";
+				Db.Save(entity);
 				return new HttpResult(HttpStatusCode.OK, "Task aborted");
 			}
 			else

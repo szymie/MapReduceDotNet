@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace EntryPoint
 {
-	public class EntryPointActor : TypedActor,IHandle<NewTaskRequestMessage>, IHandle<TaskFinishedMessage>, IHandle<TaskFailureMessage>, IDisposable
+	public class EntryPointActor : TypedActor,IHandle<NewTaskRequestMessage>, IHandle<TaskFinishedMessage>, IHandle<TaskFailureMessage>, IHandle<TaskAbortRequestMessage>, IDisposable
 	{
 		private IDbConnection db;
 		public virtual IDbConnection Db
@@ -139,6 +139,11 @@ namespace EntryPoint
 			{
 				db.Dispose();
 			}
+		}
+
+		public void Handle(TaskAbortRequestMessage message)
+		{
+			MasterActor.Tell(new TaskAbortMessage() { TaskId = message.TaskId });
 		}
 	}
 }
