@@ -46,6 +46,7 @@ namespace Master
 
 			validMapCoordinator.Add (coordinator);
 			Context.Watch (Sender);
+			Console.WriteLine ("Map coordinator registered with id: " + coordinatorId);
 			Sender.Tell (new RegisterCoordinatorAckMessage(coordinatorId));
 		}
 
@@ -55,6 +56,7 @@ namespace Master
 
 			validReduceCoordinator.Add (coordinator);
 			Context.Watch (Sender);
+			Console.WriteLine ("Reduce coordinator registered with id: " + coordinatorId);
 			Sender.Tell (new RegisterCoordinatorAckMessage(coordinatorId));
 		}
 
@@ -63,6 +65,8 @@ namespace Master
 				Sender.Tell (new TaskFailureMessage(message.TaskId, "No coordinators"));
 				return;
 			}
+
+			Console.WriteLine ("Got new task: " + message.TaskId);
 			tasks.Add (message.TaskId, new Task(message, Sender));
 
 			fileDivider.Tell(new DivideRequestMessage(message.M, message.InputFiles, message.TaskId, message.Username));
@@ -72,6 +76,12 @@ namespace Master
 			Task task = null;
 
 			if (tasks.TryGetValue (message.TaskId, out task)) {
+				if(message.Files.Count == 0){
+					tasks.Remove (task.Id);
+					task.abort ("No files to map");
+					return;
+				}
+
 				task.addDivideFiles (message.Files);
 
 				NextCoordinatorInBulkGetter coordinatorGetter = null;
@@ -200,6 +210,12 @@ namespace Master
 
 			List<WorkConfig> reduceWorkConfigs = createReduceConfigs (task);
 
+			if(reduceWorkConfigs.Count == 0){
+				tasks.Remove (task.Id);
+				task.abort ("No files to reduce");
+				return;
+			}
+
 			NextCoordinatorInBulkGetter coordinatorGetter = null;
 			try{
 				coordinatorGetter= new NextCoordinatorInBulkGetter (validReduceCoordinator);
@@ -230,8 +246,11 @@ namespace Master
 		}
 
 		private List<WorkConfig> createReduceConfigs(Task task){
-			List<WorkConfig> reduceWorkConfigs = new List<WorkConfig> (task.R);
-			for (int i = 0; i < task.R; i++) {
+			int reduceConfigNum = Math.Min (task.R, task.MapResult.Count);
+
+			List<WorkConfig> reduceWorkConfigs = new List<WorkConfig> (reduceConfigNum);
+
+			for (int i = 0; i < reduceConfigNum; i++) {
 				reduceWorkConfigs.Add (new WorkConfig(task.Id, task.Username, new Dictionary<string, List<S3ObjectMetadata>>(), task.AssemblyMetadata));
 			}
 

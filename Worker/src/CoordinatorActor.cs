@@ -35,7 +35,7 @@ namespace Worker
 			float result = 0;
 			cpuLoadQueue.ToList ().ForEach (value => result = result + value);
 			result = result / cpuLoadQueue.Count;
-
+			Console.WriteLine (String.Format("Cpu usage from last {0} measurements: {1}%", cpuLoadQueue.Count, result));
 			MasterActor.Tell(new CoordinatorSystemInfo(result, CoordinatorId));
 		}
 
