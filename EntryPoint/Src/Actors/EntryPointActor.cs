@@ -25,8 +25,6 @@ namespace EntryPoint
 		private NewTaskMessage NewTask { get; set; }
 		private ActorSelection MasterActor { get; set; }
 
-		private Dictionary<int, string> usernameOfTask = new Dictionary<int, string>();
-
 		public EntryPointActor()
 		{
 			Db.CreateTableIfNotExists<ResultMetadata>();
@@ -40,8 +38,6 @@ namespace EntryPoint
 			initNewTask(message);
 			fillAssembly(message);
 			fillInputFiles(message);
-
-			usernameOfTask.Add(message.TaskId, message.Username);
 
 			MasterActor.Tell(NewTask);
 		}
@@ -118,12 +114,10 @@ namespace EntryPoint
 			}
 
 			var taskId = message.TaskId;
-			var filePattern = $"{usernameOfTask[taskId]}-{taskId}-(\\d+)-(\\d+)-(\\d+)-(\\d+)";
+			var filePattern = $"{message.Username}-{taskId}-(\\d+)-(\\d+)-(\\d+)-(\\d+)";
 			Regex regex = new Regex(filePattern);
 
 			deleteUnusedFiles(key => regex.IsMatch(key));
-
-			usernameOfTask.Remove(message.TaskId);
 
 			replyWithAck(message.TaskId);
 		}
@@ -173,11 +167,9 @@ namespace EntryPoint
 			Db.Save(failure);
 
 			var taskId = message.TaskId;
-			var filePattern = $"{usernameOfTask[taskId]}-{taskId}";
+			var filePattern = $"{message.Username}-{taskId}";
 
 			deleteUnusedFiles(key => key.StartsWith(filePattern, StringComparison.CurrentCulture));
-
-			usernameOfTask.Remove(message.TaskId);
 
 			replyWithAck(message.TaskId);
 		}
