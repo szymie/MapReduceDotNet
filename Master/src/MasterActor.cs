@@ -377,6 +377,8 @@ namespace Master
 		}
 
 		public void handleSSTermination(Terminated message){
+			Console.WriteLine("SS terminated");
+
 			IActorRef oldSs = message.ActorRef;
 			List<Task> oldSsTasks = validSSWithSentReduceResults [oldSs];
 
@@ -495,14 +497,15 @@ namespace Master
 			}
 
 			validSSWithSentReduceResults.Add (Sender, tasksSentToNewSS);
+			Context.Watch (Sender);
 		}
 
 		public void Handle(TaskReceivedAckMessage message){
-			List<Task> tasks;
-			if (validSSWithSentReduceResults.TryGetValue (Sender, out tasks)) {
+			List<Task> sentTasks;
+			if (validSSWithSentReduceResults.TryGetValue (Sender, out sentTasks)) {
 				
 				Task task = null;
-				foreach(Task _task in tasks){
+				foreach(Task _task in sentTasks){
 					if (task.Id == message.TaskId) {
 						task = _task;
 						break;
@@ -510,7 +513,8 @@ namespace Master
 				}
 
 				if (task != null) {
-					tasks.Remove (task);
+					sentTasks.Remove (task);
+					Console.WriteLine ("SS Ack for end task: " + task.Id);
 				}
 			}
 		}
