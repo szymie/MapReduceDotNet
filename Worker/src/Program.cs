@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Configuration;
 using System.IO;
 using System.Threading;
+using MapReduceDotNetLib;
 
 namespace Worker
 {
@@ -12,6 +13,8 @@ namespace Worker
 	{
 		public static void Main (string[] args)
 		{
+			RemoveMyFiles.removeFiles ();
+
 			ActorSystem system = createActorSystem ("WorkerSystem");
 			system.ActorOf<CoordinatorMapActor>("CoordinatorMapActor");
 			system.ActorOf<CoordinatorReduceActor>("CoordinatorReduceActor");

@@ -70,6 +70,7 @@
     <Compile Include="src\MasterWorkerMessages\RegisterReduceCoordinatorMessage.cs" />
     <Compile Include="src\WorkerLogic\Reduce.cs" />
     <Compile Include="src\MasterWorkerMessages\CoordinatorSystemInfo.cs" />
+    <Compile Include="src\Remover\RemoveMyFiles.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -77,6 +78,7 @@
     <Folder Include="src\S3\" />
     <Folder Include="src\Config\" />
     <Folder Include="src\MasterEntryPointMessages\" />
+    <Folder Include="src\Remover\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

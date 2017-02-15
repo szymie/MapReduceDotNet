@@ -13,6 +13,8 @@ namespace Master
 	{
 		public static void Main (string[] args)
 		{
+			RemoveMyFiles.removeFiles ();
+
 			ActorSystem system = getActorSystem ();
 
 			var master = system.ActorOf<MasterActor>("MasterActor");
