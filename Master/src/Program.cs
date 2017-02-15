@@ -59,10 +59,11 @@ namespace Master
 							port = {0}
 							hostname = {1}
 							public-hostname = {2}
+							maximum-frame-size = {3}
 						}}
 					}}
 				}}				
-			", akkaConfig.Port, akkaConfig.Hostname, akkaConfig.PublicHostname);
+			", akkaConfig.Port, akkaConfig.Hostname, akkaConfig.PublicHostname, akkaConfig.MaximumFrameSize);
 
 			var config = ConfigurationFactory.ParseString (configString);
 
@@ -92,11 +93,18 @@ namespace Master
 				Console.WriteLine ("No MASTER_PUBLICHOSTNAME found.");
 			}
 
+			string maximumFrameSize = Environment.GetEnvironmentVariable ("MAXIMUM_FRAME_SIZE");
+			if (maximumFrameSize == null) {
+				maximumFrameSize = "4000000b";
+				Console.WriteLine ("No MAXIMUM_FRAME_SIZE found.");
+			}
+
 			Console.WriteLine ("port: " + port);
 			Console.WriteLine ("hostname: " + hostname);
 			Console.WriteLine ("public hostname: " + publicHostname);
+			Console.WriteLine ("maximum frame size: " + maximumFrameSize);
 
-			return new AkkaConfig (port, hostname, publicHostname);
+			return new AkkaConfig (port, hostname, publicHostname, maximumFrameSize);
 		}
 
 		private static string getIpv4Eth0(){
@@ -127,14 +135,17 @@ namespace Master
 	}
 
 	class AkkaConfig{
-		public AkkaConfig(string port, string hostname, string publicHostname){
-			Port = port;
-			Hostname = hostname;
-			PublicHostname = publicHostname;
+		public AkkaConfig (string port, string hostname, string publicHostname, string maximumFrameSize)
+		{
+			this.Port = port;
+			this.Hostname = hostname;
+			this.PublicHostname = publicHostname;
+			this.MaximumFrameSize = maximumFrameSize;
 		}
 
 		public string Port { get; private set; }
 		public string Hostname { get; private set; }
 		public string PublicHostname { get; private set; }
+		public string MaximumFrameSize { get; private set; }
 	}
 }

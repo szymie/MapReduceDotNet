@@ -22,18 +22,28 @@ namespace Worker
 
 		static ActorSystem createActorSystem (string systemName)
 		{
-			var config = ConfigurationFactory.ParseString(@"
-				akka {  
-					actor {
+
+			string maximumFrameSize = Environment.GetEnvironmentVariable ("MAXIMUM_FRAME_SIZE");
+			if (maximumFrameSize == null) {
+				maximumFrameSize = "4000000b";
+				Console.WriteLine ("No MAXIMUM_FRAME_SIZE found.");
+			}
+
+			var config = ConfigurationFactory.ParseString(String.Format(@"
+				akka {{  
+					actor {{
 						provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
-					}
-					remote {
-						helios.tcp {
+					}}
+					remote {{
+						helios.tcp {{
 							port = 0
-						}
-					}
-				}
-			");
+							maximum-frame-size = {0}
+						}}
+					}}
+				}}
+			", maximumFrameSize));
+
+			Console.WriteLine ("maximum frame size: " + maximumFrameSize);
 
 			return ActorSystem.Create(systemName, config);
 		}

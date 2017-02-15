@@ -89,7 +89,7 @@ namespace Worker
 
 		public void Handle (RegisterCoordinatorAckMessage message)
 		{
-			Console.WriteLine ("Registered with id: " + message.CoordinatorId);
+			Console.WriteLine ("Registered with id - " + message.CoordinatorId);
 			this.CoordinatorId = message.CoordinatorId;
 			Context.System.Scheduler.ScheduleTellRepeatedly (new TimeSpan(0, 0, 1), new TimeSpan(0,0,1), Self, new MonitorSystemInfo(),Self);
 		}
