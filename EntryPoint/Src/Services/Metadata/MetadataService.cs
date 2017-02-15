@@ -12,8 +12,6 @@ namespace EntryPoint
 	[Authenticate]
 	public class MetadataService : BaseService
 	{
-		private const string all = "0";
-
 		public MetadataService()
 		{			
 			Db.CreateTableIfNotExists<InputFileMetadata>();
