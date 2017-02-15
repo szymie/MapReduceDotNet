@@ -23,6 +23,8 @@ namespace EntryPoint
 		private NewTaskMessage NewTask { get; set; }
 		private ActorSelection MasterActor { get; set; }
 
+		private Dictionary<int, string> usernameOfTask;
+
 		public EntryPointActor()
 		{
 			Db.CreateTableIfNotExists<ResultMetadata>();
@@ -33,12 +35,13 @@ namespace EntryPoint
 
 		public void Handle(NewTaskRequestMessage message)
 		{
-			Console.WriteLine ("new task");
 			initNewTask(message);
 			fillAssembly(message);
 			fillInputFiles(message);
 
 			MasterActor.Tell(NewTask);
+
+			usernameOfTask.Add(message.TaskId, message.Username);
 		}
 
 		private ActorSelection getMasterActorRef()
@@ -112,6 +115,8 @@ namespace EntryPoint
 				Db.Save(resultMetadata);
 			}
 
+			usernameOfTask.Remove(message.TaskId);
+
 			replyWithAck(message.TaskId);
 		}
 
@@ -140,7 +145,32 @@ namespace EntryPoint
 
 			Db.Save(failure);
 
+
+
+			usernameOfTask.Remove(message.TaskId);
+
 			replyWithAck(message.TaskId);
+		}
+
+		private void deleteUnusedFiles(int taskId)
+		{
+			var bucketName = Environment.GetEnvironmentVariable("S3_BUCKET_NAME");
+			var S3Bucket = new S3Bucket(bucketName);
+
+			S3Bucket.fetchKeys();
+
+			var filePattern = $"{usernameOfTask[taskId]}-{taskId}";
+
+			while (S3Bucket.moveNext())
+			{
+				var currentKey = S3Bucket.getCurrentKey();
+
+				if (currentKey.StartsWith(filePattern, StringComparison.CurrentCulture))
+				{
+					var S3Object = new S3ObjectMetadata(bucketName, currentKey);
+					S3Object.remove();
+				}
+			}
 		}
 
 		public virtual void Dispose()
