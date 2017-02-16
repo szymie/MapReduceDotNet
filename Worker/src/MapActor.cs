@@ -23,7 +23,6 @@ namespace Worker
 					lineReader.dispose ();
 				}
 			}
-
 		}
 
 		protected override void uploadResult ()
