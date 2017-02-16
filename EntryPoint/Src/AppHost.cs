@@ -98,13 +98,13 @@ namespace EntryPoint
 			Plugins.Add(new SessionFeature());
 			Plugins.Add(new RequestLogsFeature());
 
-			container.Register<ICacheClient>(new MemoryCacheClient());
-			/*container.Register<IRedisClientsManager>(c =>
+			//container.Register<ICacheClient>(new MemoryCacheClient());
+			container.Register<IRedisClientsManager>(c =>
 				new PooledRedisClientManager(redisConnectionString));
 			container.Register<ICacheClient>(c =>
 				(ICacheClient)c.Resolve<IRedisClientsManager>()
 				.GetCacheClient())
-				.ReusedWithin(Funq.ReuseScope.None);*/
+				.ReusedWithin(Funq.ReuseScope.None);
 			
 			var pgConnectionFactory = new OrmLiteConnectionFactory(pgConnectionString, PostgreSQLDialectProvider.Instance)
 			{
