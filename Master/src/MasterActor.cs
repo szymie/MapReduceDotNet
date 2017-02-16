@@ -498,7 +498,7 @@ namespace Master
 				task.sendResult (Sender);
 			}
 
-			validSSWithSentReduceResults.Add (Sender, tasksSentToNewSS);
+			validSSWithSentReduceResults[Sender] = tasksSentToNewSS;
 			Context.Watch (Sender);
 		}
 
